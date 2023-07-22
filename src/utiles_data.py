@@ -1,13 +1,13 @@
-import os
 from typing import List, Tuple
+
 import glob2
-import torch
-from tqdm import tqdm
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
 from torch.utils.data import Dataset
-from transformers import CanineTokenizer, TrainingArguments, Trainer
+from tqdm import tqdm
+from transformers import AutoTokenizer
 
 matplotlib.use('Tkagg')
 
@@ -59,7 +59,10 @@ class Nikud:
     sign_2_name = {sign: name for name, sign in nikud_dict.items()}
     nikud_sin = [nikud_dict["RAFE"], nikud_dict["SHIN_YEMANIT"], nikud_dict["SHIN_SMALIT"]]
     dagesh = [nikud_dict["RAFE"], nikud_dict['DAGESH OR SHURUK']]  # note that DAGESH and SHURUK are one and the same
-    nikud = [nikud_dict["RAFE"]] + [v for k, v in nikud_dict.items() if ((v not in nikud_sin) or (v not in dagesh))]
+    nikud = []
+    for v in nikud_dict.values():
+        if v not in dagesh + nikud_sin:
+            nikud.append(v)
     all_nikud_ord = {v for v in nikud_dict.values()}
     all_nikud_chr = {chr(v) for v in nikud_dict.values()}
 
@@ -77,9 +80,18 @@ class Letters:
     SPECIAL_TOKENS = ['H', 'O', '5']
     ENDINGS_TO_REGULAR = dict(zip('ךםןףץ', 'כמנפצ'))
 
+
+class Letter:
+    def __init__(self, letter):
+        self.letter = letter
+        self.normalized = None
+        self.dagesh = None
+        self.sin = None
+        self.nikud = None
+
     def normalize(self, letter):
-        if letter in self.VALID_LETTERS: return letter
-        if letter in self.ENDINGS_TO_REGULAR: return self.ENDINGS_TO_REGULAR[letter]
+        if letter in Letters.VALID_LETTERS: return letter
+        if letter in Letters.ENDINGS_TO_REGULAR: return Letters.ENDINGS_TO_REGULAR[letter]
         if letter in ['\n', '\t']: return ' '
         if letter in ['־', '‒', '–', '—', '―', '−']: return '-'
         if letter == '[': return '('
@@ -97,31 +109,40 @@ class Letters:
     def can_sin(self, letter):
         return letter == 'ש'
 
-    def can_niqqud(self, letter):
+    def can_nikud(self, letter):
         return letter in ('אבגדהוזחטיכלמנסעפצקרשת' + 'ךן')
 
-    def get_label_letter(self, letter, labels):
-        dagesh = True if self.can_dagesh(letter) else False
-        sin = True if self.can_sin(letter) else False
-        niqqud = True if self.can_niqqud(letter) else False
-        normalized = self.normalize(letter)
+    def get_label_letter(self, labels):
+        dagesh = True if self.can_dagesh(self.letter) else False
+        sin = True if self.can_sin(self.letter) else False
+        nikud = True if self.can_nikud(self.letter) else False
+        normalized = self.normalize(self.letter)
         i = 0
-        if dagesh and ord(labels[0]) == Nikud.DAGESH_LETTER:
+        if dagesh and i < len(labels) and labels[0] == Nikud.DAGESH_LETTER:
             dagesh = labels[0]
             i += 1
         else:
             dagesh = ''
-        if sin and labels[i] in Nikud.nikud_sin:
+        if sin and i < len(labels) and labels[i] in Nikud.nikud_sin:
             sin = labels[i]
             i += 1
         else:
-            sin =''
-        if labels[i] in Nikud.nikud:
+            sin = ''
+
+        if nikud and i < len(labels) and labels[i] in Nikud.nikud:
             nikud = labels[i]
             i += 1
-        if letter == 'ו' and dagesh == Nikud.DAGESH_LETTER and niqqud == Nikud.RAFE:
+        else:
+            nikud = ''
+
+        if self.letter == 'ו' and dagesh == Nikud.DAGESH_LETTER and nikud == Nikud.RAFE:
             dagesh = Nikud.RAFE
-            niqqud = Nikud.DAGESH_LETTER
+            nikud = Nikud.DAGESH_LETTER
+
+        self.normalized = normalized
+        self.dagesh = dagesh
+        self.sin = sin
+        self.nikud = nikud
 
 
 def text_contains_nikud(text):
@@ -132,6 +153,7 @@ class NikudDataset(Dataset):
 
     def __init__(self, folder='../data/hebrew_diacritized', split=None, val_size=0.1):
         self.data = self.read_data_folder(folder)
+        self.max_length = None
 
     def read_data_folder(self, folder_path: str):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
@@ -157,23 +179,28 @@ class NikudDataset(Dataset):
             sentance_length = len(sen)
             while index < sentance_length:
                 label = []
-                text += sen[index]
+                l = Letter(sen[index])
                 if sen[index] in Letters.hebrew:
                     index += 1
-                    while index < sentance_length and sen[index] in Nikud.any_niqud:
-                        label.append(sen[index])
+                    while index < sentance_length and ord(sen[index]) in Nikud.all_nikud_ord:
+                        label.append(ord(sen[index]))
                         index += 1
                 else:
                     index += 1
-                print([Nikud.sign_2_name[s] for s in label])
-                labels.append(label)
+                # print([Nikud.sign_2_name[s] for s in label])
+                l.get_label_letter(label)
+                text += l.normalized
+                labels.append(l)
 
             data.append((text, labels))
 
         return data
 
     def show_data_labels(self):
-        vowels = [vowel for _, label_list in self.data for vowels in label_list for vowel in vowels]
+        vowels = [label.nikud for _, label_list in self.data for label in label_list if label.nikud != ""]
+        dageshs = [label.dagesh for _, label_list in self.data for label in label_list if label.dagesh != ""]
+        sin = [label.sin for _, label_list in self.data for label in label_list if label.sin != ""]
+        vowels = vowels + dageshs + sin
         unique_vowels, label_counts = np.unique(vowels, return_counts=True)
         unique_vowels_names = [Nikud.sign_2_name[vowel] for vowel in unique_vowels]
         fig, ax = plt.subplots(figsize=(16, 6))
@@ -182,7 +209,7 @@ class NikudDataset(Dataset):
         bar_width = 0.15
         ax.bar(bar_positions, list(label_counts), bar_width)
 
-        ax.set_title("Distribution of labels in each dataset")
+        ax.set_title("Distribution of Vowels in dataset")
         ax.set_xlabel('Vowels')
         ax.set_ylabel('Count')
         ax.legend(loc='right', bbox_to_anchor=(1, 0.85))
@@ -196,7 +223,7 @@ class NikudDataset(Dataset):
         for s, _ in self.data:
             if len(s) > max_length:
                 max_length = len(s)
-        return max_length
+        self.max_length = max_length
 
     def __len__(self):
         return self.data.shape[0]
@@ -226,14 +253,13 @@ class NikudCollator:
         # return {**X, 'labels': y}
 
 
-def prepare_data(data, tokenizer, label2id, max_length, batch_size=8):
+def prepare_data(data, tokenizer, label2id, batch_size=8):
+    data.calc_max_length()
+    max_length = data.max_length
     dataset = []
-    for index in range(len(data)):
-        sentence, label = data[index]
-        sentence = sentence.replace("<e1>", "")
-        sentence = sentence.replace("</e1>", "")
-        sentence = sentence.replace("<e2>", "")
-        sentence = sentence.replace("</e2>", "")
+    for index in range(len(data.data)):
+        sentence, label = data.data[index]
+
         encoded_sequence = tokenizer.encode_plus(
             sentence,
             add_special_tokens=True,
@@ -255,9 +281,9 @@ def main():
     # all_data = read_data_folder(folder_path)
     dataset = NikudDataset()
     dataset.show_data_labels()
-    tokenizer = CanineTokenizer.from_pretrained("google/canine-c")
-    NikudCollator(tokenizer)
-    prepare_data(dataset, tokenizer, Nikud.label2id, 0, batch_size=8)
+    DMtokenizer = AutoTokenizer.from_pretrained("imvladikon/alephbertgimmel-base-512")
+    # NikudCollator(DMtokenizer)
+    prepare_data(dataset, DMtokenizer, Nikud.nikud_2_id, batch_size=8)
 
 
 if __name__ == '__main__':
