@@ -253,12 +253,10 @@ class NikudCollator:
         # return {**X, 'labels': y}
 
 
-def prepare_data(data, tokenizer, label2id, batch_size=8):
-    data.calc_max_length()
-    max_length = data.max_length
+def prepare_data(data, tokenizer, max_length, batch_size=8):
     dataset = []
-    for index in range(len(data.data)):
-        sentence, label = data.data[index]
+    for index in range(len(data)):
+        sentence, label = data[index]
 
         encoded_sequence = tokenizer.encode_plus(
             sentence,
@@ -270,7 +268,7 @@ def prepare_data(data, tokenizer, label2id, batch_size=8):
             return_tensors='pt'
         )
 
-        dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label2id[label]))
+        dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
 
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
     return data_loader
