@@ -253,7 +253,7 @@ class NikudDataset(Dataset):
         for s, _ in self.data:
             if len(s) > max_length:
                 max_length = len(s)
-        self.max_length = max_length
+        self.max_length = max_length +1
 
     def __len__(self):
         return self.data.shape[0]
@@ -285,7 +285,7 @@ class NikudCollator:
 
 def prepare_data(data, tokenizer, max_length, batch_size=8, name="train"):
     dataset = []
-    for sentence, label in tqdm(data, desc=f"prepare data {name}"):
+    for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
         encoded_sequence = tokenizer.encode_plus(
             sentence,
             add_special_tokens=True,

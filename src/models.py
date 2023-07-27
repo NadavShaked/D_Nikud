@@ -232,7 +232,7 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
             best_model_weights = copy.deepcopy(model.state_dict())
 
     # Load the weights of the best model
-    model.load_state_dict(best_model_weights)
+    # model.load_state_dict(best_model_weights) - TODO - MAKE IT WORK
 
 
 def evaluate(model, test_data):
