@@ -19,6 +19,8 @@ from tqdm import tqdm
 from transformers import AutoModelForMaskedLM, AutoTokenizer, AutoConfig, RobertaForMaskedLM
 from transformers import TrainingArguments
 import torch.nn.functional as F
+
+from src.plot_helpers import plot_results
 from src.utiles_data import NikudDataset, prepare_data, Nikud, Letters, DEBUG_MODE
 
 # DL
@@ -83,7 +85,7 @@ class DiacritizationModel(nn.Module):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.LayerNorm = nn.LayerNorm(config.hidden_size)
         self.classifier_nikud = nn.Linear(config.hidden_size, Nikud.LEN_NIKUD)
-        self.classifier_shin = nn.Linear(config.hidden_size, Nikud.LEN_SIN)
+        self.classifier_sin = nn.Linear(config.hidden_size, Nikud.LEN_SIN)
         self.classifier_dagesh = nn.Linear(config.hidden_size, Nikud.LEN_DAGESH)
         self.softmax = nn.Softmax(dim=-1)
 
@@ -99,15 +101,15 @@ class DiacritizationModel(nn.Module):
         dagesh_logits = self.classifier_dagesh(normalized_hidden_states)
         dagesh_probs = self.softmax(dagesh_logits)
 
-        # Classifier for Shin
-        shin_logits = self.classifier_shin(normalized_hidden_states)
-        shin_probs = self.softmax(shin_logits)
+        # Classifier for Sin
+        sin_logits = self.classifier_sin(normalized_hidden_states)
+        sin_probs = self.softmax(sin_logits)
 
         # Return the probabilities for each diacritical mark
-        return nikud_probs, dagesh_probs, shin_probs
+        return nikud_probs, dagesh_probs, sin_probs
 
 
-def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_shin, optimizer=None):
+def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, optimizer=None):
     best_accuracy = 0.0
     best_model_weights = None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -115,22 +117,18 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
 
     criterion_nikud.to(device)
     criterion_dagesh.to(device)
-    criterion_shin.to(device)
+    criterion_sin.to(device)
 
     train_loader = train_data
     dev_loader = dev_data
     max_length = None
     for epoch in tqdm(range(n_epochs), desc="Training"):
         model.train()
-        train_loss_nikud = 0.0
-        train_loss_dagesh = 0.0
-        train_loss_shin = 0.0
-        sum_nikud = 0.0
-        sum_dagesh = 0.0
-        sum_shin = 0.0
+        train_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
-        for i, data in enumerate(train_loader):
-            if DEBUG_MODE and i > 100:
+        for index_data, data in enumerate(train_loader):
+            if DEBUG_MODE and index_data > 100:
                 break
             (inputs, attention_mask, labels) = data
             if max_length is None:
@@ -140,192 +138,168 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
             labels = labels.to(device)
 
             optimizer.zero_grad()
-            nikud_probs, dagesh_probs, shin_probs = model(inputs, attention_mask)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
             # sep_id = 2
             # length_sentences = np.where(np.array(inputs.data) == sep_id)[1] - 1
+            for i, (probs, name_class) in enumerate(
+                    zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
+                                                                                 probs.shape[2],
+                                                                                 probs.shape[1])
+                loss = criterion_nikud(reshaped_tensor, labels[:, :, i]).to(device)
 
-            reshaped_tensor_nikud = torch.transpose(nikud_probs, 1, 2).contiguous().view(nikud_probs.shape[0],
-                                                                                         nikud_probs.shape[2],
-                                                                                         nikud_probs.shape[1])
-            nikud_labels = labels[:, :, 0]
-            loss_nikud = criterion_nikud(reshaped_tensor_nikud, nikud_labels).to(device)
+                num_relevant = (labels[:, :, i] != -1).sum()
+                train_loss[name_class] += loss.item() * num_relevant
+                sum[name_class] += num_relevant
 
-            num_relevant = (nikud_labels != -1).sum()
-            train_loss_nikud += loss_nikud.item() * num_relevant
-            sum_nikud += num_relevant
-
-            dagesh_labels = labels[:, :, 1]
-            reshaped_tensor_dagesh = torch.transpose(dagesh_probs, 1, 2).contiguous().view(dagesh_probs.shape[0],
-                                                                                           dagesh_probs.shape[2],
-                                                                                           dagesh_probs.shape[1])
-            loss_dagesh = criterion_dagesh(reshaped_tensor_dagesh, dagesh_labels).to(device)
-
-            num_relevant = (dagesh_labels != -1).sum()
-            train_loss_dagesh += loss_dagesh.item() * num_relevant
-            sum_dagesh += num_relevant
-
-            shin_labels = labels[:, :, 2]
-            reshaped_tensor_shin = torch.transpose(shin_probs, 1, 2).contiguous().view(shin_probs.shape[0],
-                                                                                       shin_probs.shape[2],
-                                                                                       shin_probs.shape[1])
-            loss_shin = criterion_shin(reshaped_tensor_shin, shin_labels).to(device)
-
-            num_relevant = (shin_labels != -1).sum()
-            train_loss_shin += loss_shin.item() * num_relevant
-            sum_shin += num_relevant
-
-            loss_nikud.backward(retain_graph=True)
-            loss_dagesh.backward(retain_graph=True)
-            loss_shin.backward(retain_graph=True)
+                loss.backward(retain_graph=True)
 
             optimizer.step()
 
-        train_loss_nikud /= sum_nikud
-        train_loss_dagesh /= sum_dagesh
-        train_loss_shin /= sum_shin
+        for name_class in train_loss.keys():
+            train_loss[name_class] /= sum[name_class]
 
         tqdm.write(
-            f"Epoch {epoch + 1}/{n_epochs}, Train train_loss_nikud: {train_loss_nikud:.4f}, "
-            f"Train train_loss_dagesh: {train_loss_dagesh:.4f}, Train train_loss_shin: {train_loss_shin:.4f}")
+            f"Epoch {epoch + 1}/{n_epochs}, Train train_loss_nikud: {train_loss['nikud']:.4f}, "
+            f"Train train_loss_dagesh: {train_loss['dagesh']:.4f}, Train train_loss_sin: {train_loss['sin']:.4f}")
 
         model.eval()
-        dev_loss_nikud = 0.0
-        dev_loss_dagesh = 0.0
-        dev_loss_shin = 0.0
-        correct_preds_nikud = 0
-        correct_preds_dagesh = 0
-        correct_preds_shin = 0
-        sum_nikud = 0.0
-        sum_dagesh = 0.0
-        sum_shin = 0.0
+        dev_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        dev_accuracy = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        correct_preds = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        masks = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        predictions = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+
         correct_preds_letter = 0.0
+
+        sum_all = 0.0
         with torch.no_grad():
-            for data in dev_loader:
+            for index_data, data in enumerate(dev_loader):
                 (inputs, attention_mask, labels) = data
 
                 inputs = inputs.to(device)
                 attention_mask = attention_mask.to(device)
                 labels = labels.to(device)
 
-                nikud_probs, dagesh_probs, shin_probs = model(inputs, attention_mask)
+                nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
-                reshaped_tensor_nikud = torch.transpose(nikud_probs, 1, 2).contiguous().view(nikud_probs.shape[0],
-                                                                                             nikud_probs.shape[2],
-                                                                                             nikud_probs.shape[1])
-                loss_nikud = criterion_nikud(reshaped_tensor_nikud, nikud_labels).to(device)
-                nikud_labels = labels[:, :, 0]
-                mask_nikud = nikud_labels != -1
-                num_relevant = (mask_nikud).sum()
-                sum_nikud += num_relevant
-                _, preds_nikud = torch.max(nikud_probs, 2)
-                dev_loss_nikud += loss_nikud.item() * num_relevant
-                correct_preds_nikud += torch.sum(preds_nikud[mask_nikud] == nikud_labels[mask_nikud])
+                for i, (probs, name_class) in enumerate(
+                        zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                    reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
+                                                                                     probs.shape[2],
+                                                                                     probs.shape[1])
+                    loss = criterion_nikud(reshaped_tensor, labels[:, :, i]).to(device)
+                    mask = labels[:, :, i] != -1
+                    num_relevant = mask.sum()
+                    sum[name_class] += num_relevant
+                    _, preds = torch.max(nikud_probs, 2)
+                    dev_loss[name_class] += loss.item() * num_relevant
+                    correct_preds[name_class] += torch.sum(preds[mask] == labels[:, :, i][mask])
+                    masks[name_class] = mask
+                    predictions[name_class] = preds
+                    labels_class[name_class] = labels[:, :, i]
 
-                reshaped_tensor_dagesh = torch.transpose(dagesh_probs, 1, 2).contiguous().view(dagesh_probs.shape[0],
-                                                                                               dagesh_probs.shape[2],
-                                                                                               dagesh_probs.shape[1])
-                loss_dagesh = criterion_dagesh(reshaped_tensor_dagesh, dagesh_labels).to(device)
-                dagesh_labels = labels[:, :, 1]
-                mask_dagesh = dagesh_labels != -1
-                num_relevant = mask_dagesh.sum()
-                sum_dagesh += num_relevant
-                _, preds_dagesh = torch.max(dagesh_probs, 2)
-                dev_loss_dagesh += loss_dagesh.item() * num_relevant
-                correct_preds_dagesh += torch.sum(preds_dagesh[mask_dagesh] == dagesh_labels[mask_dagesh])
+                mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
+                correct_preds_letter += torch.sum(
+                    torch.logical_and(torch.logical_and(predictions["sin"][mask_all_or] == \
+                                                        labels_class["sin"][mask_all_or],
+                                                        predictions["dagesh"][mask_all_or] == \
+                                                        labels_class["dagesh"][mask_all_or]),
+                                      predictions["nikud"][mask_all_or] == \
+                                      labels_class["nikud"][mask_all_or]))
+                sum_all += mask_all_or.sum()
 
-                reshaped_tensor_shin = torch.transpose(shin_probs, 1, 2).contiguous().view(shin_probs.shape[0],
-                                                                                           shin_probs.shape[2],
-                                                                                           shin_probs.shape[1])
-                loss_shin = criterion_shin(reshaped_tensor_shin, shin_labels).to(device)
-                shin_labels = labels[:, :, 2]
-                mask_sin = shin_labels != -1
-                num_relevant = mask_sin.sum()
-                sum_shin += num_relevant
-                _, preds_shin = torch.max(shin_probs, 2)
-                dev_loss_shin += loss_shin.item() * num_relevant
-                correct_preds_shin += torch.sum(preds_shin[mask_sin] == shin_labels[mask_sin])
+        for name_class in dev_loss.keys():
+            dev_loss[name_class] /= sum[name_class]
+            dev_accuracy[name_class] = correct_preds[name_class].double() / sum[name_class]
 
-                correct_preds_letter = 0
-
-        dev_loss_nikud /= sum_nikud
-        dev_loss_dagesh /= sum_dagesh
-        dev_loss_shin /= sum_shin
-
-        dev_accuracy_nikud = correct_preds_nikud.double() / sum_nikud
-        dev_accuracy_dagesh = correct_preds_dagesh.double() / sum_dagesh
-        dev_accuracy_shin = correct_preds_shin.double() / sum_shin
+        dev_accuracy_letter = correct_preds_letter.double() / sum_all
 
         tqdm.write(
-            f"Epoch {epoch + 1}/{n_epochs}, Dev Nikud Loss: {dev_loss_nikud:.4f}, Dev Nikud Accuracy: {dev_accuracy_nikud:.4f}"
-            f", Dev dagesh Loss: {dev_loss_dagesh:.4f}, Dev dagesh Accuracy: {dev_accuracy_dagesh:.4f}"
-            f", Dev shin Loss: {dev_loss_shin:.4f}, Dev shin Accuracy: {dev_accuracy_shin:.4f}")
+            f"Epoch {epoch + 1}/{n_epochs}, "
+            f"Dev Nikud Loss: {dev_loss['nikud']:.4f}, Dev Nikud Accuracy: {dev_accuracy['nikud']:.4f}"
+            f", Dev dagesh Loss: {dev_loss['dagesh']:.4f}, Dev dagesh Accuracy: {dev_accuracy['dagesh']:.4f}"
+            f", Dev sin Loss: {dev_loss['sin']:.4f}, Dev sin Accuracy: {dev_accuracy['sin']:.4f}"
+            f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
 
         # calc accuracy by letter
 
-
-        if dev_accuracy_nikud > best_accuracy:
-            best_accuracy = dev_accuracy_nikud
+        if dev_accuracy_letter > best_accuracy:
+            best_accuracy = dev_accuracy_letter
             best_model_weights = copy.deepcopy(model.state_dict())
 
     # Load the weights of the best model
     model.load_state_dict(best_model_weights)
 
 
-def evaluate(model, test_data, report_filename="results"):
+def evaluate(model, test_data):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
 
     true_labels = []
     predicted_labels = []
+    predicted_labels_2_report = []
+    masks = []
+    reports = {}
+    correct_preds = {"nikud": 0, "dagesh": 0, "sin": 0}
+    sum = {"nikud": 0, "dagesh": 0, "sin": 0}
+
+    word_level_correct = 0.0
+    letter_level_correct = 0.0
 
     with torch.no_grad():
         for data in test_data:
-            if is_MTB:
-                (inputs, attention_mask, labels, e1_starts, e2_starts) = data
-                e1_starts = e1_starts.to(device)
-                e2_starts = e2_starts.to(device)
-            else:
-                (inputs, attention_mask, labels) = data
+            (inputs, attention_mask, labels) = data
 
             inputs = inputs.to(device)
             attention_mask = attention_mask.to(device)
             labels = labels.to(device)
 
-            if is_MTB:
-                outputs = model(inputs, attention_mask, e1_starts, e2_starts)
-                _, preds = torch.max(outputs, 1)
-            else:
-                outputs = model(inputs, attention_mask=attention_mask)
-                _, preds = torch.max(outputs[0], 1)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
-            true_labels.extend(labels.cpu().numpy())
-            predicted_labels.extend(preds.cpu().numpy())
+            for i, (probs, name_class) in enumerate(
+                    zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                mask = labels[:, :, i] != -1
+                num_relevant = mask.sum()
+                sum[name_class] += num_relevant
+                _, preds = torch.max(probs, 2)
+                correct_preds[name_class] += torch.sum(preds[mask] == labels[:, :, i][mask])
+                predicted_labels.append(preds)
+                masks.append(mask)
+                true_labels.extend(labels[:, :, i][mask].cpu().numpy())
+                predicted_labels_2_report.extend(preds[mask].cpu().numpy())
 
-    report = classification_report(true_labels, predicted_labels, target_names=list(Nikud.nikud_2_id.keys()),
-                                   output_dict=True)
+            mask_all_or = torch.logical_or(torch.logical_or(masks[0], masks[1]), masks[2])
+            mask_correct_letter = torch.logical_and(torch.logical_and(predicted_labels[0][mask_all_or] == \
+                                                                      labels[:, :, 0][mask_all_or],
+                                                                      predicted_labels[1][mask_all_or] == \
+                                                                      labels[:, :, 1][mask_all_or]),
+                                                    predicted_labels[2][mask_all_or] == \
+                                                    labels[:, :, 2][mask_all_or])
+            letter_level_correct += torch.sum(mask_correct_letter)
 
-    df = pd.DataFrame(report).transpose()
-    df = df[cols]
+    for i, name in enumerate(["nikud", "dagesh", "sin"]):
+        report = classification_report(true_labels[i], predicted_labels_2_report[i],
+                                       target_names=list(Nikud.label_2_id[name].keys()),
+                                       output_dict=True)
+        reports["name"] = report
 
-    print(tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f"))
+        cm = confusion_matrix(true_labels, predicted_labels)
+        cm_df = pd.DataFrame(cm, index=list(Nikud.label_2_id[name].keys()), columns=list(Nikud.label_2_id[name].keys()))
 
-    cm = confusion_matrix(true_labels, predicted_labels)
-    cm_df = pd.DataFrame(cm, index=list(Nikud.nikud_2_id.keys()), columns=list(Nikud.nikud_2_id.keys()))
+        # Display confusion matrix
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(cm_df, annot=True, cmap="Blues", fmt="d")
+        plt.title("Confusion Matrix")
+        plt.xlabel("True Label")
+        plt.ylabel("Predicted Label")
+        plt.show()
 
-    # Display confusion matrix
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(cm_df, annot=True, cmap="Blues", fmt="d")
-    plt.title("Confusion Matrix")
-    plt.xlabel("True Label")
-    plt.ylabel("Predicted Label")
-    plt.show()
-
-    # Save report to CSV
-    df.to_csv(report_filename)
-
-    print(f"Evaluation report saved to {report_filename}")
+    return reports, word_level_correct, letter_level_correct
 
 
 OUTPUT_DIR = 'models/trained/latest'
@@ -370,7 +344,6 @@ def main():
 
     print('Loading tokenizer...')
     DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    # prepare_data(dataset, DMtokenizer, Nikud.nikud_2_id, batch_size=8)
     mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=8, name="train")
     mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=8, name="dev")
     mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=8, name="test")
@@ -379,29 +352,30 @@ def main():
     all_model_params_MTB = model_DM.named_parameters()
     top_layer_params = get_parameters(all_model_params_MTB)
     optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
-    criterion = nn.CrossEntropyLoss().to(DEVICE)
 
     print('Creating trainer...')
     criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-    criterion_shin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-    training(model_DM, 5, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_shin,
+    criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
+    training(model_DM, 5, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
              optimizer=optimizer)
 
-    evaluate(model_DM, mtb_test_dl)
+    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl)
+    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl)
+
+    print(f"Diacritization Model")
+    print(f"Dev dataset")
+    print(f"Letter level accuracy: {letter_level_correct_dev}")
+    print(f"Word level accuracy: {word_level_correct_dev}")
+    print("--------------------")
+    print("Test dataset")
+    print(f"Letter level accuracy: {letter_level_correct_test}")
+    print(f"Word level accuracy: {word_level_correct_test}")
+
+    plot_results(report_dev, report_filename="results_dev")
+    plot_results(report_test, report_filename="results_test")
+
     print('Done')
-    # trainer = Trainer(
-    #     model=model_DM,
-    #     args=training_args,
-    #     train_dataset=train_dataset,
-    #     eval_dataset=eval_dataset
-    # )
-    #
-    # print(f'Training... (on device: {device})')
-    # trainer.train()
-    #
-    # print(f'Saving to: {OUTPUT_DIR}')
-    # trainer.save_model(f'{OUTPUT_DIR}')
 
 
 if __name__ == '__main__':

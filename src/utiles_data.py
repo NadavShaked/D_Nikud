@@ -67,29 +67,21 @@ class Nikud:
     all_nikud_ord = {v for v in nikud_dict.values()}
     all_nikud_chr = {chr(v) for v in nikud_dict.values()}
 
-    nikud_2_id = {label: i for i, label in enumerate(nikud)}
-    id_2_nikud = {i: label for i, label in enumerate(nikud)}
-    nikud_2_id["WITHOUT"] = len(nikud_2_id)
-    id_2_nikud[len(id_2_nikud)] = "WITHOUT"
-
-    dagesh_2_id = {label: i for i, label in enumerate(dagesh)}
-    id_2_dagesh = {i: label for i, label in enumerate(dagesh)}
-    dagesh_2_id["WITHOUT"] = len(dagesh_2_id)
-    id_2_dagesh[len(id_2_dagesh)] = "WITHOUT"
-
-    sin_2_id = {label: i for i, label in enumerate(sin)}
-    id_2_sin = {i: label for i, label in enumerate(sin)}
-    sin_2_id["WITHOUT"] = len(sin_2_id)
-    id_2_sin[len(id_2_sin)] = "WITHOUT"
+    label_2_id = {"nikud": {label: i for i, label in enumerate(nikud + ["WITHOUT"])},
+                  "dagesh": {label: i for i, label in enumerate(dagesh + ["WITHOUT"])},
+                  "sin": {label: i for i, label in enumerate(sin + ["WITHOUT"])}}
+    id_2_label = {"nikud": {i: label for i, label in enumerate(nikud + ["WITHOUT"])},
+                  "dagesh": {i: label for i, label in enumerate(dagesh + ["WITHOUT"])},
+                  "sin": {i: label for i, label in enumerate(sin + ["WITHOUT"])}}
 
     DAGESH_LETTER = nikud_dict['DAGESH OR SHURUK']
     RAFE = nikud_dict['RAFE']
     PAD = -1
     IRRELEVANT = PAD
 
-    LEN_NIKUD = len(id_2_nikud)
-    LEN_DAGESH = len(id_2_dagesh)
-    LEN_SIN = len(id_2_sin)
+    LEN_NIKUD = len(label_2_id["nikud"])
+    LEN_DAGESH = len(label_2_id["dagesh"])
+    LEN_SIN = len(label_2_id["sin"])
 
 
 class Letters:
@@ -132,47 +124,35 @@ class Letter:
 
     def get_label_letter(self, labels):
         # todo - consider reorgenize func
-        dagesh = True if self.can_dagesh(self.letter) else False
-        sin = True if self.can_sin(self.letter) else False
-        nikud = True if self.can_nikud(self.letter) else False
+        dagesh_sin_nikud = [True if self.can_dagesh(self.letter) else False,
+                            True if self.can_sin(self.letter) else False,
+                            True if self.can_nikud(self.letter) else False]
+
+        labels_ids = {"nikud": Nikud.IRRELEVANT,
+                  "dagesh": Nikud.IRRELEVANT,
+                  "sin": Nikud.IRRELEVANT}
+
         normalized = self.normalize(self.letter)
         i = 0
-        # notice - order is important : dagesh then sin and then nikud
-        if dagesh:
-            if i < len(labels) and labels[0] == Nikud.DAGESH_LETTER:
-                dagesh = Nikud.dagesh_2_id[labels[0]]
-                i += 1
-            else:
-                dagesh = Nikud.dagesh_2_id["WITHOUT"]
-        else:
-            dagesh = Nikud.IRRELEVANT
+        for index, (name_class, group) in enumerate(
+                zip(["dagesh", "sin", "nikud"], [[Nikud.DAGESH_LETTER], Nikud.sin, Nikud.nikud])):
+            # notice - order is important : dagesh then sin and then nikud
+            if dagesh_sin_nikud[index]:
+                if i < len(labels) and labels[i] in group:
+                    labels_ids[name_class] = Nikud.label_2_id[name_class][labels[i]]
+                    i += 1
+                else:
+                    labels_ids[name_class] = Nikud.label_2_id[name_class]["WITHOUT"]
 
-        if sin:
-            if i < len(labels) and labels[i] in Nikud.sin:
-                sin = Nikud.sin_2_id[labels[i]]
-                i += 1
-            else:
-                sin = Nikud.sin_2_id["WITHOUT"]
-        else:
-            sin = Nikud.IRRELEVANT
-
-        if nikud:
-            if i < len(labels) and labels[i] in Nikud.nikud:
-                nikud = Nikud.nikud_2_id[labels[i]]
-                i += 1
-            else:
-                nikud = Nikud.nikud_2_id["WITHOUT"]
-        else:
-            nikud = Nikud.IRRELEVANT
-
-        if self.letter == 'ו' and dagesh == Nikud.DAGESH_LETTER and nikud == Nikud.nikud_2_id["WITHOUT"]:
-            dagesh = Nikud.RAFE
-            nikud = Nikud.DAGESH_LETTER
+        if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
+                Nikud.label_2_id["nikud"]["WITHOUT"]:
+            labels_ids["dagesh"] = Nikud.RAFE
+            labels_ids["nikud"] = Nikud.DAGESH_LETTER
 
         self.normalized = normalized
-        self.dagesh = dagesh
-        self.sin = sin
-        self.nikud = nikud
+        self.dagesh = labels_ids["dagesh"]
+        self.sin = labels_ids["sin"]
+        self.nikud = labels_ids["nikud"]
 
     def name_of(self, letter):
         if 'א' <= letter <= 'ת':
@@ -238,7 +218,6 @@ class NikudDataset(Dataset):
                         index += 1
                 else:
                     index += 1
-                # print([Nikud.sign_2_name[s] for s in label])
                 l.get_label_letter(label)
                 text += l.normalized
                 labels.append(l)
@@ -332,10 +311,6 @@ def main():
     # folder_path = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized"  # Replace with the root path of the folder containing sub-folders with .txt files
     # all_data = read_data_folder(folder_path)
     dataset = NikudDataset()
-    dataset.show_data_labels()
-    DMtokenizer = AutoTokenizer.from_pretrained("imvladikon/alephbertgimmel-base-512")
-    # NikudCollator(DMtokenizer)
-    prepare_data(dataset, DMtokenizer, Nikud.nikud_2_id, batch_size=8)
 
 
 if __name__ == '__main__':
