@@ -1,3 +1,4 @@
+import os.path
 from typing import List, Tuple
 
 import glob2
@@ -57,25 +58,42 @@ class Nikud:
                   'SHIN_SMALIT': 1474}
 
     sign_2_name = {sign: name for name, sign in nikud_dict.items()}
-    nikud_sin = [nikud_dict["RAFE"], nikud_dict["SHIN_YEMANIT"], nikud_dict["SHIN_SMALIT"]]
+    sin = [nikud_dict["RAFE"], nikud_dict["SHIN_YEMANIT"], nikud_dict["SHIN_SMALIT"]]
     dagesh = [nikud_dict["RAFE"], nikud_dict['DAGESH OR SHURUK']]  # note that DAGESH and SHURUK are one and the same
     nikud = []
     for v in nikud_dict.values():
-        if v not in dagesh + nikud_sin:
+        if v not in sin:
             nikud.append(v)
     all_nikud_ord = {v for v in nikud_dict.values()}
     all_nikud_chr = {chr(v) for v in nikud_dict.values()}
 
-    nikud_2_id = {label: (i + 1) for i, label in enumerate(all_nikud_ord)}
-    id_2_nikud = {(i + 1): label for i, label in enumerate(all_nikud_ord)}
+    nikud_2_id = {label: i for i, label in enumerate(nikud)}
+    id_2_nikud = {i: label for i, label in enumerate(nikud)}
+    nikud_2_id["WITHOUT"] = len(nikud_2_id)
+    id_2_nikud[len(id_2_nikud)] = "WITHOUT"
+
+    dagesh_2_id = {label: i for i, label in enumerate(dagesh)}
+    id_2_dagesh = {i: label for i, label in enumerate(dagesh)}
+    dagesh_2_id["WITHOUT"] = len(dagesh_2_id)
+    id_2_dagesh[len(id_2_dagesh)] = "WITHOUT"
+
+    sin_2_id = {label: i for i, label in enumerate(sin)}
+    id_2_sin = {i: label for i, label in enumerate(sin)}
+    sin_2_id["WITHOUT"] = len(sin_2_id)
+    id_2_sin[len(id_2_sin)] = "WITHOUT"
 
     DAGESH_LETTER = nikud_dict['DAGESH OR SHURUK']
     RAFE = nikud_dict['RAFE']
+    PAD = -1
+    IRRELEVANT = PAD
+
+    LEN_NIKUD = len(id_2_nikud)
+    LEN_DAGESH = len(id_2_dagesh)
+    LEN_SIN = len(id_2_sin)
 
 
 class Letters:
     hebrew = [chr(c) for c in range(0x05d0, 0x05ea + 1)]
-    niqud = Nikud()
     VALID_LETTERS = [' ', '!', '"', "'", '(', ')', ',', '-', '.', ':', ';', '?'] + hebrew
     SPECIAL_TOKENS = ['H', 'O', '5']
     ENDINGS_TO_REGULAR = dict(zip('ךםןףץ', 'כמנפצ'))
@@ -98,7 +116,7 @@ class Letter:
         if letter == ']': return ')'
         if letter in ['´', '‘', '’']: return "'"
         if letter in ['“', '”', '״']: return '"'
-        if letter.isdigit(): return '5'
+        if letter.isdigit() and int(letter) != 1: return '5'
         if letter == '…': return ','
         if letter in ['ײ', 'װ', 'ױ']: return 'H'
         return 'O'
@@ -113,29 +131,41 @@ class Letter:
         return letter in ('אבגדהוזחטיכלמנסעפצקרשת' + 'ךן')
 
     def get_label_letter(self, labels):
+        # todo - consider reorgenize func
         dagesh = True if self.can_dagesh(self.letter) else False
         sin = True if self.can_sin(self.letter) else False
         nikud = True if self.can_nikud(self.letter) else False
         normalized = self.normalize(self.letter)
         i = 0
-        if dagesh and i < len(labels) and labels[0] == Nikud.DAGESH_LETTER:
-            dagesh = labels[0]
-            i += 1
+        # notice - order is important : dagesh then sin and then nikud
+        if dagesh:
+            if i < len(labels) and labels[0] == Nikud.DAGESH_LETTER:
+                dagesh = Nikud.dagesh_2_id[labels[0]]
+                i += 1
+            else:
+                dagesh = Nikud.dagesh_2_id["WITHOUT"]
         else:
-            dagesh = ''
-        if sin and i < len(labels) and labels[i] in Nikud.nikud_sin:
-            sin = labels[i]
-            i += 1
-        else:
-            sin = ''
+            dagesh = Nikud.IRRELEVANT
 
-        if nikud and i < len(labels) and labels[i] in Nikud.nikud:
-            nikud = labels[i]
-            i += 1
+        if sin:
+            if i < len(labels) and labels[i] in Nikud.sin:
+                sin = Nikud.sin_2_id[labels[i]]
+                i += 1
+            else:
+                sin = Nikud.sin_2_id["WITHOUT"]
         else:
-            nikud = ''
+            sin = Nikud.IRRELEVANT
 
-        if self.letter == 'ו' and dagesh == Nikud.DAGESH_LETTER and nikud == Nikud.RAFE:
+        if nikud:
+            if i < len(labels) and labels[i] in Nikud.nikud:
+                nikud = Nikud.nikud_2_id[labels[i]]
+                i += 1
+            else:
+                nikud = Nikud.nikud_2_id["WITHOUT"]
+        else:
+            nikud = Nikud.IRRELEVANT
+
+        if self.letter == 'ו' and dagesh == Nikud.DAGESH_LETTER and nikud == Nikud.nikud_2_id["WITHOUT"]:
             dagesh = Nikud.RAFE
             nikud = Nikud.DAGESH_LETTER
 
@@ -143,6 +173,27 @@ class Letter:
         self.dagesh = dagesh
         self.sin = sin
         self.nikud = nikud
+
+    def name_of(self, letter):
+        if 'א' <= letter <= 'ת':
+            return letter
+        if letter == Nikud.DAGESH_LETTER: return 'דגש\שורוק'
+        if letter == Nikud.KAMATZ: return 'קמץ'
+        if letter == Nikud.PATAKH: return 'פתח'
+        if letter == Nikud.TZEIRE: return 'צירה'
+        if letter == Nikud.SEGOL: return 'סגול'
+        if letter == Nikud.SHVA: return 'שוא'
+        if letter == Nikud.HOLAM: return 'חולם'
+        if letter == Nikud.KUBUTZ: return 'קובוץ'
+        if letter == Nikud.HIRIK: return 'חיריק'
+        if letter == Nikud.REDUCED_KAMATZ: return 'חטף-קמץ'
+        if letter == Nikud.REDUCED_PATAKH: return 'חטף-פתח'
+        if letter == Nikud.REDUCED_SEGOL: return 'חטף-סגול'
+        if letter == Nikud.SHIN_SMALIT: return 'שין-שמאלית'
+        if letter == Nikud.SHIN_YEMANIT: return 'שין-ימנית'
+        if letter.isprintable():
+            return letter
+        return "לא ידוע ({})".format(hex(ord(letter)))
 
 
 def text_contains_nikud(text):
@@ -159,7 +210,7 @@ class NikudDataset(Dataset):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
         all_data = []
         if DEBUG_MODE:
-            all_files = all_files[:2]
+            all_files = all_files[:1]
         for file in all_files:
             all_data.extend(self.read_data(file))
         return all_data
@@ -169,8 +220,8 @@ class NikudDataset(Dataset):
         with open(filepath, 'r', encoding='utf-8') as file:
             file_data = file.read()
         data_list = file_data.split("\n")
-        for sen in tqdm(data_list):
-            if sen == "" or not text_contains_nikud(sen):
+        for sen in tqdm(data_list, desc=f"Source: {os.path.basename(filepath)}"):
+            if sen == "" or not text_contains_nikud(sen):  # todo- mabye add check for every word
                 continue
             # split_sentences = sen.split('\n')
             labels = []
@@ -253,11 +304,9 @@ class NikudCollator:
         # return {**X, 'labels': y}
 
 
-def prepare_data(data, tokenizer, max_length, batch_size=8):
+def prepare_data(data, tokenizer, max_length, batch_size=8, name="train"):
     dataset = []
-    for index in range(len(data)):
-        sentence, label = data[index]
-
+    for sentence, label in tqdm(data, desc=f"prepare data {name}"):
         encoded_sequence = tokenizer.encode_plus(
             sentence,
             add_special_tokens=True,
@@ -267,6 +316,11 @@ def prepare_data(data, tokenizer, max_length, batch_size=8):
             return_attention_mask=True,
             return_tensors='pt'
         )
+
+        label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+        label = torch.tensor(
+            [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
+                                                                 range(max_length - len(label) - 1)])
 
         dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
 
