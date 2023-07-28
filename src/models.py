@@ -346,9 +346,9 @@ def main():
 
     print('Loading tokenizer...')
     DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=32, name="train")
-    mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=32, name="dev")
-    mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=32, name="test")
+    mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=8, name="train")
+    mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=8, name="dev")
+    mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=8, name="test")
     print('Loading model...')
     model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
     all_model_params_MTB = model_DM.named_parameters()
