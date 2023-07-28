@@ -90,21 +90,23 @@ class DiacritizationModel(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, input_ids, attention_mask):
-        last_hidden_state = self.model(input_ids, attention_mask=attention_mask)
-        normalized_hidden_states = self.LayerNorm(last_hidden_state)
+        try:
+            last_hidden_state = self.model(input_ids, attention_mask=attention_mask)
+            normalized_hidden_states = self.LayerNorm(last_hidden_state)
 
-        # Classifier for Nikud
-        nikud_logits = self.classifier_nikud(normalized_hidden_states)
-        nikud_probs = self.softmax(nikud_logits)
+            # Classifier for Nikud
+            nikud_logits = self.classifier_nikud(normalized_hidden_states)
+            nikud_probs = self.softmax(nikud_logits)
 
-        # Classifier for Dagesh
-        dagesh_logits = self.classifier_dagesh(normalized_hidden_states)
-        dagesh_probs = self.softmax(dagesh_logits)
+            # Classifier for Dagesh
+            dagesh_logits = self.classifier_dagesh(normalized_hidden_states)
+            dagesh_probs = self.softmax(dagesh_logits)
 
-        # Classifier for Sin
-        sin_logits = self.classifier_sin(normalized_hidden_states)
-        sin_probs = self.softmax(sin_logits)
-
+            # Classifier for Sin
+            sin_logits = self.classifier_sin(normalized_hidden_states)
+            sin_probs = self.softmax(sin_logits)
+        except:
+            a=1
         # Return the probabilities for each diacritical mark
         return nikud_probs, dagesh_probs, sin_probs
 

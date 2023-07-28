@@ -183,8 +183,8 @@ def text_contains_nikud(text):
 class NikudDataset(Dataset):
 
     def __init__(self, folder='../data/hebrew_diacritized', split=None, val_size=0.1):
+        self.max_length = 0
         self.data = self.read_data_folder(folder)
-        self.max_length = None
 
     def read_data_folder(self, folder_path: str):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
@@ -193,17 +193,21 @@ class NikudDataset(Dataset):
             all_files = all_files[:100]
         for file in all_files:
             all_data.extend(self.read_data(file))
-        print(f"All data: " + len(all_data))
+        # print(f"All data: " + len(all_data))
         return all_data
 
     def read_data(self, filepath: str) -> List[Tuple[str, list]]:
         data = []
         with open(filepath, 'r', encoding='utf-8') as file:
             file_data = file.read()
-        data_list = file_data.split("\n")
+        data_list = self.split_text(file_data)
+
         for sen in tqdm(data_list, desc=f"Source: {os.path.basename(filepath)}"):
             if sen == "" or not text_contains_nikud(sen):  # todo- mabye add check for every word
                 continue
+            length_max = len(sen)
+            if length_max > self.max_length:
+                self.max_length = length_max
             # split_sentences = sen.split('\n')
             labels = []
             text = ""
@@ -227,6 +231,18 @@ class NikudDataset(Dataset):
 
         return data
 
+    def split_text(self, file_data):
+        file_data = file_data.replace(". ", ".\n")
+        file_data = file_data.replace("? ", "?\n")
+        file_data = file_data.replace("! ", "!\n")
+        file_data = file_data.replace("” ", "”\n")
+        file_data = file_data.replace("\" ", "\"\n")
+        file_data = file_data.replace("\" ", "\"\n")
+        file_data = file_data.replace("\t", "\n")
+        data_list = file_data.split("\n")
+        return  data_list
+
+
     def show_data_labels(self):
         vowels = [label.nikud for _, label_list in self.data for label in label_list if label.nikud != ""]
         dageshs = [label.dagesh for _, label_list in self.data for label in label_list if label.dagesh != ""]
@@ -249,12 +265,15 @@ class NikudDataset(Dataset):
 
         plt.show()
 
-    def calc_max_length(self):
-        max_length = 0
-        for s, _ in self.data:
-            if len(s) > max_length:
-                max_length = len(s)
-        self.max_length = max_length +1
+    def calc_max_length(self, maximum=1000):
+        if self.max_length > maximum:
+            self.max_length = maximum
+        return self.max_length
+        # max_length = 0
+        # for s, _ in self.data:
+        #     if len(s) > max_length:
+        #         max_length = len(s)
+        # self.max_length = max_length +1
 
     def __len__(self):
         return self.data.shape[0]
