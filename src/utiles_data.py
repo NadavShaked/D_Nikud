@@ -190,9 +190,10 @@ class NikudDataset(Dataset):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
         all_data = []
         if DEBUG_MODE:
-            all_files = all_files[:1]
+            all_files = all_files[:100]
         for file in all_files:
             all_data.extend(self.read_data(file))
+        print(f"All data: " + len(all_data))
         return all_data
 
     def read_data(self, filepath: str) -> List[Tuple[str, list]]:

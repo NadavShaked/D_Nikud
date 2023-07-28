@@ -128,8 +128,8 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
         sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
         for index_data, data in enumerate(train_loader):
-            if DEBUG_MODE and index_data > 100:
-                break
+            # if DEBUG_MODE and index_data > 100:
+            #     break
             (inputs, attention_mask, labels) = data
             if max_length is None:
                 max_length = labels.shape[1]
@@ -286,7 +286,7 @@ def evaluate(model, test_data):
         report = classification_report(true_labels[i], predicted_labels_2_report[i],
                                        target_names=list(Nikud.label_2_id[name].keys()),
                                        output_dict=True)
-        reports["name"] = report
+        reports[name] = report
 
         cm = confusion_matrix(true_labels, predicted_labels)
         cm_df = pd.DataFrame(cm, index=list(Nikud.label_2_id[name].keys()), columns=list(Nikud.label_2_id[name].keys()))
@@ -344,9 +344,9 @@ def main():
 
     print('Loading tokenizer...')
     DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=8, name="train")
-    mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=8, name="dev")
-    mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=8, name="test")
+    mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=32, name="train")
+    mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=32, name="dev")
+    mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=32, name="test")
     print('Loading model...')
     model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
     all_model_params_MTB = model_DM.named_parameters()
