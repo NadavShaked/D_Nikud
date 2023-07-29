@@ -163,9 +163,9 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
 
             optimizer.step()
             if (index_data+1) % 100 == 0:
-                msg = f'epoch: {epoch} , index_data: {index_data}\n' \
-                      f'mean loss train nikud: { (train_loss["nikud"] / (sum["nikud"])) }' \
-                      f'mean loss train nikud: { (train_loss["dagesh"] / (sum["dagesh"])) }' \
+                msg = f'epoch: {epoch} , index_data: {index_data + 1}\n' \
+                      f'mean loss train nikud: { (train_loss["nikud"] / (sum["nikud"])) }, ' \
+                      f'mean loss train nikud: { (train_loss["dagesh"] / (sum["dagesh"])) }, ' \
                       f'mean loss train sin: { (train_loss["sin"] / (sum["sin"])) }'
                 logger.debug(msg)
 
@@ -173,8 +173,8 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
             train_loss[name_class] /= sum[name_class]
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
-              f'mean loss train nikud: { train_loss["nikud"] }' \
-              f'mean loss train nikud: { train_loss["dagesh"]}' \
+              f'mean loss train nikud: { train_loss["nikud"] }, ' \
+              f'mean loss train nikud: { train_loss["dagesh"]}, ' \
               f'mean loss train sin: { train_loss["sin"]}'
         logger.debug(msg)
 
@@ -240,8 +240,8 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
         #     f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
-              f'mean loss train nikud: { train_loss["nikud"] }' \
-              f'mean loss train nikud: { train_loss["dagesh"] }' \
+              f'mean loss train nikud: { train_loss["nikud"] }, ' \
+              f'mean loss train nikud: { train_loss["dagesh"] }, ' \
               f'mean loss train sin: { train_loss["sin"]}' \
               f'Dev letter Accuracy: {dev_accuracy_letter}'
         logger.debug(msg)
