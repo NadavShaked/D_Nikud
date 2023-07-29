@@ -382,6 +382,10 @@ def main():
     if not os.path.exists(log_location):
         os.makedirs(log_location)
 
+    debug_folder = args.debug_folder
+    if not os.path.exists(debug_folder):
+        os.makedirs(debug_folder)
+
     file_location = os.path.join(log_location,
                                  'Diacritization_Model_DEBUG.log')
     file_log_formatter = logging.Formatter(
@@ -398,7 +402,7 @@ def main():
     logger.debug(msg)
 
     dataset = NikudDataset(folder=args.data_folder, logger=logger)
-    dataset.show_data_labels(debug_folder=args.debug_folder)
+    dataset.show_data_labels(debug_folder=debug_folder)
     dataset.calc_max_length()
 
     msg = f'Max length of data: {dataset.max_length}'

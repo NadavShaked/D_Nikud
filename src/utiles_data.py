@@ -248,12 +248,12 @@ class NikudDataset(Dataset):
 
 
     def show_data_labels(self, debug_folder=None):
-        vowels = [label.nikud for _, label_list in self.data for label in label_list if label.nikud != ""]
-        dageshs = [label.dagesh for _, label_list in self.data for label in label_list if label.dagesh != ""]
-        sin = [label.sin for _, label_list in self.data for label in label_list if label.sin != ""]
+        vowels = [Nikud.id_2_label["nikud"][label.nikud] for _, label_list in self.data for label in label_list if label.nikud != -1]
+        dageshs = [Nikud.id_2_label["dagesh"][label.dagesh] for _, label_list in self.data for label in label_list if label.dagesh != -1]
+        sin = [Nikud.id_2_label["sin"][label.sin] for _, label_list in self.data for label in label_list if label.sin != -1]
         vowels = vowels + dageshs + sin
         unique_vowels, label_counts = np.unique(vowels, return_counts=True)
-        unique_vowels_names = [Nikud.sign_2_name[vowel] for vowel in unique_vowels]
+        unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in unique_vowels if vowel!='WITHOUT'] + ["WITHOUT"]
         fig, ax = plt.subplots(figsize=(16, 6))
 
         bar_positions = np.arange(len(unique_vowels))
@@ -270,7 +270,7 @@ class NikudDataset(Dataset):
         if debug_folder is None:
             plt.show()
         else:
-            plt.savefig(debug_folder)
+            plt.savefig(os.path.join(debug_folder, 'show_data_labels.jpg'))
 
     def calc_max_length(self, maximum=1000):
         if self.max_length > maximum:
