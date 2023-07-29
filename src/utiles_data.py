@@ -195,7 +195,7 @@ class NikudDataset(Dataset):
             print()
         all_data = []
         if DEBUG_MODE:
-            all_files = all_files[:150]
+            all_files = all_files[:1]
         for file in all_files:
             all_data.extend(self.read_data(file))
         return all_data

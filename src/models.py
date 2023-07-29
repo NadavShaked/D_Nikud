@@ -165,7 +165,7 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
             if (index_data+1) % 100 == 0:
                 msg = f'epoch: {epoch} , index_data: {index_data + 1}\n' \
                       f'mean loss train nikud: { (train_loss["nikud"] / (sum["nikud"])) }, ' \
-                      f'mean loss train nikud: { (train_loss["dagesh"] / (sum["dagesh"])) }, ' \
+                      f'mean loss train dagesh: { (train_loss["dagesh"] / (sum["dagesh"])) }, ' \
                       f'mean loss train sin: { (train_loss["sin"] / (sum["sin"])) }'
                 logger.debug(msg)
 
@@ -174,7 +174,7 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
               f'mean loss train nikud: { train_loss["nikud"] }, ' \
-              f'mean loss train nikud: { train_loss["dagesh"]}, ' \
+              f'mean loss train dagesh: { train_loss["dagesh"]}, ' \
               f'mean loss train sin: { train_loss["sin"]}'
         logger.debug(msg)
 
@@ -224,6 +224,8 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
                                                         labels_class["dagesh"][mask_all_or]),
                                       predictions["nikud"][mask_all_or] == \
                                       labels_class["nikud"][mask_all_or]))
+
+
                 sum_all += mask_all_or.sum()
 
         for name_class in dev_loss.keys():
@@ -240,9 +242,9 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
         #     f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
-              f'mean loss train nikud: { train_loss["nikud"] }, ' \
-              f'mean loss train nikud: { train_loss["dagesh"] }, ' \
-              f'mean loss train sin: { train_loss["sin"]}' \
+              f'mean loss Dev nikud: { train_loss["nikud"] }, ' \
+              f'mean loss Dev dagesh: { train_loss["dagesh"] }, ' \
+              f'mean loss Dev sin: { train_loss["sin"]}' \
               f'Dev letter Accuracy: {dev_accuracy_letter}'
         logger.debug(msg)
 
@@ -420,9 +422,9 @@ def main():
     logger.debug(msg)
 
     DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=8, name="train")
-    mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=8, name="dev")
-    mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=8, name="test")
+    mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=32, name="train")
+    mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=32, name="dev")
+    mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=32, name="test")
 
     msg = 'Loading model...'
     logger.debug(msg)
