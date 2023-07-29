@@ -162,20 +162,20 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
                 loss.backward(retain_graph=True)
 
             optimizer.step()
-            if index_data % 1000 == 0:
+            if (index_data+1) % 100 == 0:
                 msg = f'epoch: {epoch} , index_data: {index_data}\n' \
-                      f'mean loss train nikud: { (train_loss["nikud"] / (sum["nikud"])):.4f }' \
-                      f'mean loss train nikud: { (train_loss["dagesh"] / (sum["dagesh"])):.4f }' \
-                      f'mean loss train sin: { (train_loss["sin"] / (sum["sin"])):.4f }'
+                      f'mean loss train nikud: { (train_loss["nikud"] / (sum["nikud"])) }' \
+                      f'mean loss train nikud: { (train_loss["dagesh"] / (sum["dagesh"])) }' \
+                      f'mean loss train sin: { (train_loss["sin"] / (sum["sin"])) }'
                 logger.debug(msg)
 
         for name_class in train_loss.keys():
             train_loss[name_class] /= sum[name_class]
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
-              f'mean loss train nikud: { train_loss["nikud"]:.4f }' \
-              f'mean loss train nikud: { train_loss["dagesh"]:.4f }' \
-              f'mean loss train sin: { train_loss["sin"]:.4f }'
+              f'mean loss train nikud: { train_loss["nikud"] }' \
+              f'mean loss train nikud: { train_loss["dagesh"]}' \
+              f'mean loss train sin: { train_loss["sin"]}'
         logger.debug(msg)
 
         model.eval()
@@ -240,10 +240,10 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
         #     f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
-              f'mean loss train nikud: { train_loss["nikud"]:.4f }' \
-              f'mean loss train nikud: { train_loss["dagesh"]:.4f }' \
-              f'mean loss train sin: { train_loss["sin"]:.4f }' \
-              f'Dev letter Accuracy: {dev_accuracy_letter:.4f}'
+              f'mean loss train nikud: { train_loss["nikud"] }' \
+              f'mean loss train nikud: { train_loss["dagesh"] }' \
+              f'mean loss train sin: { train_loss["sin"]}' \
+              f'Dev letter Accuracy: {dev_accuracy_letter}'
         logger.debug(msg)
 
         # calc accuracy by letter
@@ -411,12 +411,12 @@ def main():
     train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True, random_state=SEED)
     train, dev = train_test_split(train, test_size=0.1, shuffle=True, random_state=SEED)
 
-    msg = f'Num rows in train data: {len(train)}\n' \
-          f'Num rows in dev data: {len(dev)}\n' \
-          f'Num rows in test data: {len(test)}\n'
+    msg = f'Num rows in train data: {len(train)}, ' \
+          f'Num rows in dev data: {len(dev)}, ' \
+          f'Num rows in test data: {len(test)}'
     logger.debug(msg)
 
-    msg = 'Loading tokenizer...'
+    msg = 'Loading tokenizer and prepare data...'
     logger.debug(msg)
 
     DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
@@ -432,7 +432,7 @@ def main():
     top_layer_params = get_parameters(all_model_params_MTB)
     optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
 
-    msg = 'Creating trainer...'
+    msg = 'training...'
     logger.debug(msg)
 
     criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
