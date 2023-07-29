@@ -2,7 +2,10 @@
 import argparse
 # DL
 import copy
+import logging
+import os
 import random
+from logging.handlers import RotatingFileHandler
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +25,7 @@ import torch.nn.functional as F
 
 from src.plot_helpers import plot_results
 from src.utiles_data import NikudDataset, prepare_data, Nikud, Letters, DEBUG_MODE
-
+from pathlib import Path
 # DL
 # HF
 
@@ -106,15 +109,16 @@ class DiacritizationModel(nn.Module):
             sin_logits = self.classifier_sin(normalized_hidden_states)
             sin_probs = self.softmax(sin_logits)
         except:
-            a=1
+            a = 1
         # Return the probabilities for each diacritical mark
         return nikud_probs, dagesh_probs, sin_probs
 
 
-def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, optimizer=None):
+def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, logger, optimizer=None):
     best_accuracy = 0.0
     best_model_weights = None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(torch.cuda.is_available())
     model = model.to(device)
 
     criterion_nikud.to(device)
@@ -158,13 +162,21 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
                 loss.backward(retain_graph=True)
 
             optimizer.step()
+            if index_data % 1000 == 0:
+                msg = f'epoch: {epoch} , index_data: {index_data}\n' \
+                      f'mean loss train nikud: { (train_loss["nikud"] / (sum["nikud"])):.4f }' \
+                      f'mean loss train nikud: { (train_loss["dagesh"] / (sum["dagesh"])):.4f }' \
+                      f'mean loss train sin: { (train_loss["sin"] / (sum["sin"])):.4f }'
+                logger.debug(msg)
 
         for name_class in train_loss.keys():
             train_loss[name_class] /= sum[name_class]
 
-        tqdm.write(
-            f"Epoch {epoch + 1}/{n_epochs}, Train train_loss_nikud: {train_loss['nikud']:.4f}, "
-            f"Train train_loss_dagesh: {train_loss['dagesh']:.4f}, Train train_loss_sin: {train_loss['sin']:.4f}")
+        msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
+              f'mean loss train nikud: { train_loss["nikud"]:.4f }' \
+              f'mean loss train nikud: { train_loss["dagesh"]:.4f }' \
+              f'mean loss train sin: { train_loss["sin"]:.4f }'
+        logger.debug(msg)
 
         model.eval()
         dev_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
@@ -220,12 +232,19 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
 
         dev_accuracy_letter = correct_preds_letter.double() / sum_all
 
-        tqdm.write(
-            f"Epoch {epoch + 1}/{n_epochs}, "
-            f"Dev Nikud Loss: {dev_loss['nikud']:.4f}, Dev Nikud Accuracy: {dev_accuracy['nikud']:.4f}"
-            f", Dev dagesh Loss: {dev_loss['dagesh']:.4f}, Dev dagesh Accuracy: {dev_accuracy['dagesh']:.4f}"
-            f", Dev sin Loss: {dev_loss['sin']:.4f}, Dev sin Accuracy: {dev_accuracy['sin']:.4f}"
-            f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
+        # tqdm.write(
+        #     f"Epoch {epoch + 1}/{n_epochs}, "
+        #     f"Dev Nikud Loss: {dev_loss['nikud']:.4f}, Dev Nikud Accuracy: {dev_accuracy['nikud']:.4f}"
+        #     f", Dev dagesh Loss: {dev_loss['dagesh']:.4f}, Dev dagesh Accuracy: {dev_accuracy['dagesh']:.4f}"
+        #     f", Dev sin Loss: {dev_loss['sin']:.4f}, Dev sin Accuracy: {dev_accuracy['sin']:.4f}"
+        #     f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
+
+        msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
+              f'mean loss train nikud: { train_loss["nikud"]:.4f }' \
+              f'mean loss train nikud: { train_loss["dagesh"]:.4f }' \
+              f'mean loss train sin: { train_loss["sin"]:.4f }' \
+              f'Dev letter Accuracy: {dev_accuracy_letter:.4f}'
+        logger.debug(msg)
 
         # calc accuracy by letter
 
@@ -233,6 +252,7 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
             best_accuracy = dev_accuracy_letter
             best_model_weights = copy.deepcopy(model.state_dict())
 
+    a=1
     # Load the weights of the best model
     # model.load_state_dict(best_model_weights) - TODO - MAKE IT WORK
 
@@ -327,6 +347,11 @@ def parse_arguments():
     parser.add_argument('--evaluation_strategy', type=str, default='steps',
                         help='How to validate (set to "no" for no validation)')
     parser.add_argument('--eval_steps', type=int, default=2000, help='Validate every N steps')
+    parser.add_argument("-l", "--log", dest="loglevel", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+                        default="DEBUG", help="Set the logging level")
+    parser.add_argument("-ld", "--log_dir", dest="log_dir", default=os.path.join(Path(__file__).parent.parent, "logging"), help="Set the logger path")
+    parser.add_argument("-df", "--debug_folder", dest="debug_folder", default=os.path.join(Path(__file__).parent.parent, "plots"), help="Set the debug folder")
+    parser.add_argument("-dataf", "--data_folder", dest="data_folder", default=os.path.join(Path(__file__).parent.parent, "data/hebrew_diacritized"), help="Set the debug folder")
     return parser.parse_args()
 
 
@@ -337,42 +362,88 @@ def main():
     args = parse_arguments()
     # training_args = TrainingArguments(**vars(args))  # vars: Namespace to dict
 
-    print('Loading data...')
-    dataset = NikudDataset()
-    # dataset.show_data_labels()
+    loglevel = args.loglevel
+
+    logger = logging.getLogger("algo")
+    logger.setLevel(getattr(logging, loglevel))
+
+    cnsl_log_formatter = logging.Formatter(
+        '%(asctime)s %(levelname)-8s Thread_%(thread)-6d ::: %(funcName)s(%(lineno)d) ::: %(message)s')
+    cnsl_handler = logging.StreamHandler()
+    cnsl_handler.setFormatter(cnsl_log_formatter)
+    cnsl_handler.setLevel(loglevel)
+    logger.addHandler(cnsl_handler)
+
+    ############################################################
+    ######################## Set Logger ########################
+    ############################################################
+
+    log_location = args.log_dir
+    if not os.path.exists(log_location):
+        os.makedirs(log_location)
+
+    file_location = os.path.join(log_location,
+                                 'Diacritization_Model_DEBUG.log')
+    file_log_formatter = logging.Formatter(
+        '%(asctime)s %(levelname)-8s Thread_%(thread)-6d ::: %(funcName)s(%(lineno)d) ::: %(message)s')
+    SINGLE_LOG_SIZE = 2 * 1024 * 1024  # in Bytes
+    MAX_LOG_FILES = 20
+    file_handler = RotatingFileHandler(file_location, mode='a', maxBytes=SINGLE_LOG_SIZE,
+                                       backupCount=MAX_LOG_FILES)
+    file_handler.setFormatter(file_log_formatter)
+    file_handler.setLevel(loglevel)
+    logger.addHandler(file_handler)
+
+    msg = 'Loading data...'
+    logger.debug(msg)
+
+    dataset = NikudDataset(folder=args.data_folder, logger=logger)
+    dataset.show_data_labels(debug_folder=args.debug_folder)
     dataset.calc_max_length()
+
+    msg = f'Max length of data: {dataset.max_length}'
+    logger.debug(msg)
+
     train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True, random_state=SEED)
     train, dev = train_test_split(train, test_size=0.1, shuffle=True, random_state=SEED)
 
-    print('Loading tokenizer...')
+    msg = f'Num rows in train data: {len(train)}\n' \
+          f'Num rows in dev data: {len(dev)}\n' \
+          f'Num rows in test data: {len(test)}\n'
+    logger.debug(msg)
+
+    msg = 'Loading tokenizer...'
+    logger.debug(msg)
+
     DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
     mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=8, name="train")
     mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=8, name="dev")
     mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=8, name="test")
-    print('Loading model...')
+
+    msg = 'Loading model...'
+    logger.debug(msg)
+
     model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
     all_model_params_MTB = model_DM.named_parameters()
     top_layer_params = get_parameters(all_model_params_MTB)
     optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
 
-    print('Creating trainer...')
+    msg = 'Creating trainer...'
+    logger.debug(msg)
+
     criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-    training(model_DM, 5, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
+    training(model_DM, 5, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,logger,
              optimizer=optimizer)
 
     report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl)
     report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl)
 
-    print(f"Diacritization Model")
-    print(f"Dev dataset")
-    print(f"Letter level accuracy: {letter_level_correct_dev}")
-    print(f"Word level accuracy: {word_level_correct_dev}")
-    print("--------------------")
-    print("Test dataset")
-    print(f"Letter level accuracy: {letter_level_correct_test}")
-    print(f"Word level accuracy: {word_level_correct_test}")
+    msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
+          f"Word level accuracy: {word_level_correct_dev}\n--------------------\nTest dataset\n" \
+          f"Letter level accuracy: {letter_level_correct_test}\nWord level accuracy: {word_level_correct_test}"
+    logger.debug(msg)
 
     plot_results(report_dev, report_filename="results_dev")
     plot_results(report_test, report_filename="results_test")

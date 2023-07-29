@@ -182,18 +182,22 @@ def text_contains_nikud(text):
 
 class NikudDataset(Dataset):
 
-    def __init__(self, folder='../data/hebrew_diacritized', split=None, val_size=0.1):
+    def __init__(self, folder='../data/hebrew_diacritized', logger=None):
         self.max_length = 0
-        self.data = self.read_data_folder(folder)
+        self.data = self.read_data_folder(folder, logger)
 
-    def read_data_folder(self, folder_path: str):
+    def read_data_folder(self, folder_path: str, logger=None):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
+        msg = f"number of files: " + str(len(all_files))
+        if logger:
+            logger.debug(msg)
+        else:
+            print()
         all_data = []
         if DEBUG_MODE:
             all_files = all_files[:100]
         for file in all_files:
             all_data.extend(self.read_data(file))
-        # print(f"All data: " + len(all_data))
         return all_data
 
     def read_data(self, filepath: str) -> List[Tuple[str, list]]:
@@ -243,7 +247,7 @@ class NikudDataset(Dataset):
         return  data_list
 
 
-    def show_data_labels(self):
+    def show_data_labels(self, debug_folder=None):
         vowels = [label.nikud for _, label_list in self.data for label in label_list if label.nikud != ""]
         dageshs = [label.dagesh for _, label_list in self.data for label in label_list if label.dagesh != ""]
         sin = [label.sin for _, label_list in self.data for label in label_list if label.sin != ""]
@@ -263,7 +267,10 @@ class NikudDataset(Dataset):
         ax.set_xticks(bar_positions)
         ax.set_xticklabels(unique_vowels_names, rotation=30, ha='right', fontsize=8)
 
-        plt.show()
+        if debug_folder is None:
+            plt.show()
+        else:
+            plt.savefig(debug_folder)
 
     def calc_max_length(self, maximum=1000):
         if self.max_length > maximum:
