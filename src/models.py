@@ -27,6 +27,7 @@ from src.plot_helpers import plot_results
 from src.utiles_data import NikudDataset, prepare_data, Nikud, Letters, DEBUG_MODE
 from pathlib import Path
 
+
 # DL
 # HF
 
@@ -35,10 +36,12 @@ def save_model(model, path):
     model_state = model.state_dict()
     torch.save(model_state, path)
 
+
 def load_model(model, path):
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint)
     return model
+
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
@@ -109,23 +112,23 @@ class DiacritizationModel(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, input_ids, attention_mask):
-        try:
-            last_hidden_state = self.model(input_ids, attention_mask=attention_mask)
-            normalized_hidden_states = self.LayerNorm(last_hidden_state)
 
-            # Classifier for Nikud
-            nikud_logits = self.classifier_nikud(normalized_hidden_states)
-            nikud_probs = self.softmax(nikud_logits)
+        last_hidden_state = self.model(input_ids, attention_mask=attention_mask)
+        normalized_hidden_states = self.LayerNorm(last_hidden_state)
 
-            # Classifier for Dagesh
-            dagesh_logits = self.classifier_dagesh(normalized_hidden_states)
-            dagesh_probs = self.softmax(dagesh_logits)
+        # Classifier for Nikud
+        nikud_logits = self.classifier_nikud(normalized_hidden_states)
+        nikud_probs = self.softmax(nikud_logits)
 
-            # Classifier for Sin
-            sin_logits = self.classifier_sin(normalized_hidden_states)
-            sin_probs = self.softmax(sin_logits)
-        except:
-            a = 1
+        # Classifier for Dagesh
+        dagesh_logits = self.classifier_dagesh(normalized_hidden_states)
+        dagesh_probs = self.softmax(dagesh_logits)
+
+        # Classifier for Sin
+        sin_logits = self.classifier_sin(normalized_hidden_states)
+        sin_probs = self.softmax(sin_logits)
+
+
         # Return the probabilities for each diacritical mark
         return nikud_probs, dagesh_probs, sin_probs
 
@@ -234,13 +237,17 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
                     labels_class[name_class] = labels[:, :, i]
 
                 mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
+
+                correct_nikud = (torch.ones(mask_all_or.shape) == 1).to(device)
+                correct_dagesh = (torch.ones(mask_all_or.shape) == 1).to(device)
+                correct_sin = (torch.ones(mask_all_or.shape) == 1).to(device)
+
+                correct_nikud[masks["nikud"]] = predictions["nikud"][masks["nikud"]] == labels_class["nikud"][masks["nikud"]]
+                correct_dagesh[masks["dagesh"]] = predictions["dagesh"][masks["dagesh"]] == labels_class["dagesh"][masks["dagesh"]]
+                correct_sin[masks["sin"]] = predictions["sin"][masks["sin"]] == labels_class["sin"][masks["sin"]]
+
                 correct_preds_letter += torch.sum(
-                    torch.logical_and(torch.logical_and(predictions["sin"][mask_all_or] == \
-                                                        labels_class["sin"][mask_all_or],
-                                                        predictions["dagesh"][mask_all_or] == \
-                                                        labels_class["dagesh"][mask_all_or]),
-                                      predictions["nikud"][mask_all_or] == \
-                                      labels_class["nikud"][mask_all_or]))
+                    torch.logical_and(torch.logical_and(correct_sin[mask_all_or],correct_dagesh[mask_all_or]),correct_nikud[mask_all_or]))
 
                 sum_all += mask_all_or.sum()
 
@@ -385,7 +392,11 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    logger = get_logger(args.loglevel, args.log_dir, args.debug_folder)
+    debug_folder = args.debug_folder
+    if not os.path.exists(debug_folder):
+        os.makedirs(debug_folder)
+
+    logger = get_logger(args.loglevel, args.log_dir)
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     msg = f'Device detected: {device}'
@@ -433,7 +444,7 @@ def main():
     criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-    training(model_DM, 5, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin, logger,
+    training(model_DM, 1, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin, logger,
              optimizer=optimizer)
 
     report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl)
@@ -451,7 +462,7 @@ def main():
     logger.info(msg)
 
 
-def get_logger(log_level, log_location, debug_folder):
+def get_logger(log_level, log_location):
     log_format = '%(asctime)s %(levelname)-8s Thread_%(thread)-6d ::: %(funcName)s(%(lineno)d) ::: %(message)s'
     logger = logging.getLogger("algo")
     logger.setLevel(getattr(logging, log_level))
@@ -463,9 +474,6 @@ def get_logger(log_level, log_location, debug_folder):
 
     if not os.path.exists(log_location):
         os.makedirs(log_location)
-
-    if not os.path.exists(debug_folder):
-        os.makedirs(debug_folder)
 
     file_location = os.path.join(log_location,
                                  'Diacritization_Model_DEBUG.log')
@@ -482,6 +490,7 @@ def get_logger(log_level, log_location, debug_folder):
     logger.addHandler(file_handler)
 
     return logger
+
 
 if __name__ == '__main__':
     main()
