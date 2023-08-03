@@ -18,13 +18,14 @@ import logging
 from src.models import DiacritizationModel
 from src.models_utils import get_model_parameters, training, evaluate
 from src.plot_helpers import plot_results
+from src.running_params import SEED
 from src.utiles_data import NikudDataset, prepare_data, Nikud
 
 OUTPUT_DIR = 'models/trained/latest'
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
 cols = ["precision", "recall", "f1-score", "support"]
-SEED = 42
+
 
 # Set the random seed for Python
 random.seed(SEED)
@@ -52,7 +53,7 @@ def parse_arguments():
     parser.add_argument('--adam_beta1', type=float, default=0.9, help='AdamW beta1 hyperparameter')
     parser.add_argument('--adam_beta2', type=float, default=0.999, help='AdamW beta2 hyperparameter')
     parser.add_argument('--weight_decay', type=float, default=0.15, help='Weight decay')
-    parser.add_argument('--n_epochs', type=int, default=5, help='number of epochs')
+    parser.add_argument('--n_epochs', type=int, default=1, help='number of epochs')
     parser.add_argument('--checkpoints_frequency', type=int, default=2, help='checkpoints saving frequency')
     parser.add_argument('--evaluation_strategy', type=str, default='steps',
                         help='How to validate (set to "no" for no validation)')

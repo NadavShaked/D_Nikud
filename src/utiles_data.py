@@ -8,12 +8,10 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from tqdm import tqdm
-from transformers import AutoTokenizer
+
+from src.running_params import DEBUG_MODE
 
 matplotlib.use('Tkagg')
-
-DEBUG_MODE = True
-
 
 class Nikud:
     """

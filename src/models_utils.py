@@ -14,6 +14,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
 
+from src.running_params import DEBUG_MODE
 from src.utiles_data import Nikud
 
 def save_model(model, path):
@@ -64,8 +65,8 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
         sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
         for index_data, data in enumerate(train_loader):
-            # if DEBUG_MODE and index_data > 100:
-            #     break
+            if DEBUG_MODE and index_data > 100:
+                break
             (inputs, attention_mask, labels) = data
             if max_length is None:
                 max_length = labels.shape[1]
