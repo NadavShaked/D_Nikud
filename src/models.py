@@ -30,10 +30,25 @@ from pathlib import Path
 # DL
 # HF
 
+# TODO: EXTRACT TO models/utils.py
+def save_model(model, path):
+    model_state = model.state_dict()
+    torch.save(model_state, path)
+
+def load_model(model, path):
+    checkpoint = torch.load(path)
+    model.load_state_dict(checkpoint)
+    return model
+
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
 cols = ["precision", "recall", "f1-score", "support"]
 SEED = 42
+SAVE_MODEL_CHECKPOINT_EVERY_EPOCHS = 2
+
+SAVED_MODEL_FOLDER = 'saved_models'
+if not os.path.exists(SAVED_MODEL_FOLDER):
+    os.makedirs(SAVED_MODEL_FOLDER)
 
 # Set the random seed for Python
 random.seed(SEED)
@@ -120,7 +135,7 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
     best_accuracy = 0.0
     best_model_weights = None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(torch.cuda.is_available())
+    logger.info(torch.cuda.is_available())
     model = model.to(device)
 
     criterion_nikud.to(device)
@@ -253,7 +268,13 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
 
         if dev_accuracy_letter > best_accuracy:
             best_accuracy = dev_accuracy_letter
-            best_model_weights = copy.deepcopy(model.state_dict())
+
+            save_model_path = os.path.join(SAVED_MODEL_FOLDER, 'best_model.pth')
+            save_model(model, save_model_path)  # TODO: use this function in model class
+
+        if epoch % SAVE_MODEL_CHECKPOINT_EVERY_EPOCHS == 0:
+            save_model_path = os.path.join(SAVED_MODEL_FOLDER, f'checkpoint_model_o_nepoch_{epoch}.pth')
+            save_model(model, save_model_path)  # TODO: use this function in model class
 
     a = 1
     # Load the weights of the best model
@@ -363,47 +384,14 @@ def parse_arguments():
 
 
 def main():
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print('Device detected:', device)
-
     args = parse_arguments()
+    logger = get_logger(args.loglevel, args.log_dir, args.debug_folder)
+
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    msg = f'Device detected: {device}'
+    logger.info(msg)
+
     # training_args = TrainingArguments(**vars(args))  # vars: Namespace to dict
-
-    loglevel = args.loglevel
-
-    logger = logging.getLogger("algo")
-    logger.setLevel(getattr(logging, loglevel))
-
-    cnsl_log_formatter = logging.Formatter(
-        '%(asctime)s %(levelname)-8s Thread_%(thread)-6d ::: %(funcName)s(%(lineno)d) ::: %(message)s')
-    cnsl_handler = logging.StreamHandler()
-    cnsl_handler.setFormatter(cnsl_log_formatter)
-    cnsl_handler.setLevel(loglevel)
-    logger.addHandler(cnsl_handler)
-
-    ############################################################
-    ######################## Set Logger ########################
-    ############################################################
-
-    log_location = args.log_dir
-    if not os.path.exists(log_location):
-        os.makedirs(log_location)
-
-    debug_folder = args.debug_folder
-    if not os.path.exists(debug_folder):
-        os.makedirs(debug_folder)
-
-    file_location = os.path.join(log_location,
-                                 'Diacritization_Model_DEBUG.log')
-    file_log_formatter = logging.Formatter(
-        '%(asctime)s %(levelname)-8s Thread_%(thread)-6d ::: %(funcName)s(%(lineno)d) ::: %(message)s')
-    SINGLE_LOG_SIZE = 2 * 1024 * 1024  # in Bytes
-    MAX_LOG_FILES = 20
-    file_handler = RotatingFileHandler(file_location, mode='a', maxBytes=SINGLE_LOG_SIZE,
-                                       backupCount=MAX_LOG_FILES)
-    file_handler.setFormatter(file_log_formatter)
-    file_handler.setLevel(loglevel)
-    logger.addHandler(file_handler)
 
     msg = 'Loading data...'
     logger.debug(msg)
@@ -459,8 +447,41 @@ def main():
     plot_results(report_dev, report_filename="results_dev")
     plot_results(report_test, report_filename="results_test")
 
-    print('Done')
+    msg = 'Done'
+    logger.info(msg)
 
+
+def get_logger(log_level, log_location, debug_folder):
+    log_format = '%(asctime)s %(levelname)-8s Thread_%(thread)-6d ::: %(funcName)s(%(lineno)d) ::: %(message)s'
+    logger = logging.getLogger("algo")
+    logger.setLevel(getattr(logging, log_level))
+    cnsl_log_formatter = logging.Formatter(log_format)
+    cnsl_handler = logging.StreamHandler()
+    cnsl_handler.setFormatter(cnsl_log_formatter)
+    cnsl_handler.setLevel(log_level)
+    logger.addHandler(cnsl_handler)
+
+    if not os.path.exists(log_location):
+        os.makedirs(log_location)
+
+    if not os.path.exists(debug_folder):
+        os.makedirs(debug_folder)
+
+    file_location = os.path.join(log_location,
+                                 'Diacritization_Model_DEBUG.log')
+    file_log_formatter = logging.Formatter(log_format)
+
+    SINGLE_LOG_SIZE = 2 * 1024 * 1024  # in Bytes
+    MAX_LOG_FILES = 20
+    file_handler = RotatingFileHandler(file_location,
+                                       mode='a',
+                                       maxBytes=SINGLE_LOG_SIZE,
+                                       backupCount=MAX_LOG_FILES)
+    file_handler.setFormatter(file_log_formatter)
+    file_handler.setLevel(log_level)
+    logger.addHandler(file_handler)
+
+    return logger
 
 if __name__ == '__main__':
     main()
