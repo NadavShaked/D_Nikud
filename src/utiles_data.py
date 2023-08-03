@@ -190,12 +190,14 @@ class NikudDataset(Dataset):
         if logger:
             logger.debug(msg)
         else:
-            print()
+            print(msg)
         all_data = []
         if DEBUG_MODE:
-            all_files = all_files[:1]
+            all_files = all_files[2:4]
+            # all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
         for file in all_files:
-            all_data.extend(self.read_data(file))
+            if "not_use" not in file:
+                all_data.extend(self.read_data(file))
         return all_data
 
     def read_data(self, filepath: str) -> List[Tuple[str, list]]:
@@ -311,25 +313,23 @@ class NikudCollator:
 def prepare_data(data, tokenizer, max_length, batch_size=8, name="train"):
     dataset = []
     for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
-        try:
-            encoded_sequence = tokenizer.encode_plus(
-                sentence,
-                add_special_tokens=True,
-                max_length=max_length,
-                padding='max_length',
-                truncation=True,
-                return_attention_mask=True,
-                return_tensors='pt'
-            )
+        encoded_sequence = tokenizer.encode_plus(
+            sentence,
+            add_special_tokens=True,
+            max_length=max_length,
+            padding='max_length',
+            truncation=True,
+            return_attention_mask=True,
+            return_tensors='pt'
+        )
 
-            label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
-            label = torch.tensor(
-                [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(max_length-1)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
-                                                                     range(max_length - len(label) - 1)])
+        label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+        label = torch.tensor(
+            [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(max_length-1)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
+                                                                 range(max_length - len(label) - 1)])
 
-            dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
-        except:
-            a=1
+        dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
+
 
     data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
     return data_loader
