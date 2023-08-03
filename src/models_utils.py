@@ -1,4 +1,3 @@
-
 # ML
 # DL
 import os
@@ -16,6 +15,7 @@ from tqdm import tqdm
 
 from src.running_params import DEBUG_MODE
 from src.utiles_data import Nikud
+
 
 def save_model(model, path):
     model_state = model.state_dict()
@@ -38,6 +38,8 @@ def get_model_parameters(params):
         else:
             param.requires_grad = False
     return top_layer_params
+
+
 def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
              output_model_path,
              optimizer=None):
@@ -123,6 +125,8 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
         sum_all = 0.0
         with torch.no_grad():
             for index_data, data in enumerate(dev_loader):
+                if DEBUG_MODE and index_data > 100:
+                    break
                 (inputs, attention_mask, labels) = data
 
                 inputs = inputs.to(device)
@@ -189,33 +193,49 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
 
         if dev_accuracy_letter > best_accuracy:
             best_accuracy = dev_accuracy_letter
+            best_model = {
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss,
+            }
 
         if epoch % training_params["checkpoints_frequency"] == 0:
-            save_model_path = os.path.join(output_checkpoints_path, f'checkpoint_model_epoch_{epoch}.pth')
-            save_model(model, save_model_path)  # TODO: use this function in model class
+            save_checkpoint_path = os.path.join(output_checkpoints_path, f'checkpoint_model_epoch_{epoch}.pth')
+            checkpoint = {
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss,
+            }
+            torch.save(checkpoint,
+                       save_checkpoint_path)  # save_model(model, save_model_path)  # TODO: use this function in model class
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
-    save_model(model, save_model_path)  # TODO: use this function in model class
+    torch.save(best_model, save_model_path)
 
 
-def evaluate(model, test_data):
+def evaluate(model, test_data, debug_folder=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
 
-    true_labels = []
-    predicted_labels = []
-    predicted_labels_2_report = []
-    masks = []
+    true_labels = {"nikud": 0, "dagesh": 0, "sin": 0}
+    predictions = {"nikud": 0, "dagesh": 0, "sin": 0}
+    predicted_labels_2_report = {"nikud": 0, "dagesh": 0, "sin": 0}
+    masks = {"nikud": 0, "dagesh": 0, "sin": 0}
     reports = {}
     correct_preds = {"nikud": 0, "dagesh": 0, "sin": 0}
     sum = {"nikud": 0, "dagesh": 0, "sin": 0}
+    labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
     word_level_correct = 0.0
     letter_level_correct = 0.0
 
     with torch.no_grad():
-        for data in test_data:
+        for index_data, data in enumerate(test_data):
+            if DEBUG_MODE and index_data > 100:
+                break
             (inputs, attention_mask, labels) = data
 
             inputs = inputs.to(device)
@@ -226,33 +246,46 @@ def evaluate(model, test_data):
 
             for i, (probs, name_class) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
-                mask = labels[:, :, i] != -1
+                labels_class[name_class] = labels[:, :, i]
+                mask = labels_class[name_class] != -1
                 num_relevant = mask.sum()
                 sum[name_class] += num_relevant
                 _, preds = torch.max(probs, 2)
-                correct_preds[name_class] += torch.sum(preds[mask] == labels[:, :, i][mask])
-                predicted_labels.append(preds)
-                masks.append(mask)
-                true_labels.extend(labels[:, :, i][mask].cpu().numpy())
-                predicted_labels_2_report.extend(preds[mask].cpu().numpy())
+                correct_preds[name_class] += torch.sum(preds[mask] == labels_class[name_class][mask])
+                predictions[name_class] = preds
+                masks[name_class] = mask
+                true_labels[name_class] = labels_class[name_class][mask].cpu().numpy()
+                predicted_labels_2_report[name_class] = preds[mask].cpu().numpy()
 
-            mask_all_or = torch.logical_or(torch.logical_or(masks[0], masks[1]), masks[2])
-            mask_correct_letter = torch.logical_and(torch.logical_and(predicted_labels[0][mask_all_or] == \
-                                                                      labels[:, :, 0][mask_all_or],
-                                                                      predicted_labels[1][mask_all_or] == \
-                                                                      labels[:, :, 1][mask_all_or]),
-                                                    predicted_labels[2][mask_all_or] == \
-                                                    labels[:, :, 2][mask_all_or])
-            letter_level_correct += torch.sum(mask_correct_letter)
+            mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
+
+            correct_nikud = (torch.ones(mask_all_or.shape) == 1).to(device)
+            correct_dagesh = (torch.ones(mask_all_or.shape) == 1).to(device)
+            correct_sin = (torch.ones(mask_all_or.shape) == 1).to(device)
+
+            correct_nikud[masks["nikud"]] = predictions["nikud"][masks["nikud"]] == labels_class["nikud"][
+                masks["nikud"]]
+            correct_dagesh[masks["dagesh"]] = predictions["dagesh"][masks["dagesh"]] == labels_class["dagesh"][
+                masks["dagesh"]]
+            correct_sin[masks["sin"]] = predictions["sin"][masks["sin"]] == labels_class["sin"][masks["sin"]]
+
+            letter_level_correct += torch.sum(
+                torch.logical_and(torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
+                                  correct_nikud[mask_all_or]))
 
     for i, name in enumerate(["nikud", "dagesh", "sin"]):
-        report = classification_report(true_labels[i], predicted_labels_2_report[i],
-                                       target_names=list(Nikud.label_2_id[name].keys()),
-                                       output_dict=True)
-        reports[name] = report
+        report = classification_report(true_labels[name], predicted_labels_2_report[name],
+                                       output_dict=True)  # target_names=list(Nikud.label_2_id[name].keys()),
 
-        cm = confusion_matrix(true_labels, predicted_labels)
-        cm_df = pd.DataFrame(cm, index=list(Nikud.label_2_id[name].keys()), columns=list(Nikud.label_2_id[name].keys()))
+        reports[name] = report
+        index_labels = np.unique(true_labels[name])
+        cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
+
+        vowel_label = [Nikud.id_2_label[name][l] for l in index_labels]
+        unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in vowel_label if vowel!='WITHOUT']
+        if "WITHOUT" in vowel_label:
+            unique_vowels_names += ["WITHOUT"]
+        cm_df = pd.DataFrame(cm, index=unique_vowels_names, columns=unique_vowels_names)
 
         # Display confusion matrix
         plt.figure(figsize=(10, 8))
@@ -260,6 +293,9 @@ def evaluate(model, test_data):
         plt.title("Confusion Matrix")
         plt.xlabel("True Label")
         plt.ylabel("Predicted Label")
-        plt.show()
+        if debug_folder is None:
+            plt.show()
+        else:
+            plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
 
     return reports, word_level_correct, letter_level_correct

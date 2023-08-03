@@ -134,8 +134,8 @@ def main():
     training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
              training_params, logger, output_dir_running, optimizer=optimizer)
 
-    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl)
-    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl)
+    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder)
+    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder)
 
     msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct_dev}\n--------------------\nTest dataset\n" \
