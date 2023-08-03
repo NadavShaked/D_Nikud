@@ -242,6 +242,7 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model, save_model_path)
+    return best_model, best_accuracy
 
 
 # TODO: Add word level acc for all kinds

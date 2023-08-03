@@ -141,9 +141,10 @@ def main():
             make_dot(y.mean(), params=dict(model_DM.named_parameters())).render("D-Nikud_model_architecture", format="png")
 
     training_params = {"n_epochs":args.n_epochs, "checkpoints_frequency":args.checkpoints_frequency}
-    training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
+    best_model, best_accuracy = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
              training_params, logger, output_dir_running, optimizer, args.only_nikud)
 
+    # todo - test on best model
     report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder)
     report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder)
 
