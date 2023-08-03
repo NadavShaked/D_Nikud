@@ -32,7 +32,7 @@ def get_model_parameters(params):
     top_layer_params = []
     for name, param in params:
         print(name)
-        if "lm_head" in name or name.startswith("LayerNorm") or name.startswith('classifier'):  # 'layer.11' in name or
+        if "lm_head" in name or name.startswith("LayerNorm") or name.startswith('classifier') or 'layer.11' in name:
             top_layer_params.append(param)
             param.requires_grad = True
         else:
@@ -56,12 +56,17 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
     train_loader = train_data
     dev_loader = dev_data
     max_length = None
-
+    early_stop = False
     output_checkpoints_path = os.path.join(output_model_path, "checkpoints")
     if not os.path.exists(output_checkpoints_path):
         os.makedirs(output_checkpoints_path)
 
+    min_val_loss = None
+
     for epoch in tqdm(range(training_params["n_epochs"]), desc="Training"):
+        if early_stop:
+            logger.info('Early stopping triggered')
+            break
         model.train()
         train_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
@@ -167,6 +172,7 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                     torch.logical_and(torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
                                       correct_nikud[mask_all_or]))
 
+
                 sum_all += mask_all_or.sum()
 
         for name_class in dev_loss.keys():
@@ -175,30 +181,43 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
 
         dev_accuracy_letter = correct_preds_letter.double() / sum_all
 
-        # tqdm.write(
-        #     f"Epoch {epoch + 1}/{n_epochs}, "
-        #     f"Dev Nikud Loss: {dev_loss['nikud']:.4f}, Dev Nikud Accuracy: {dev_accuracy['nikud']:.4f}"
-        #     f", Dev dagesh Loss: {dev_loss['dagesh']:.4f}, Dev dagesh Accuracy: {dev_accuracy['dagesh']:.4f}"
-        #     f", Dev sin Loss: {dev_loss['sin']:.4f}, Dev sin Accuracy: {dev_accuracy['sin']:.4f}"
-        #     f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
-
+        all_dev_loss = 0.7 * train_loss["nikud"] * 0.15 * train_loss["dagesh"] + 0.15 * train_loss["sin"]
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
               f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
               f'mean loss Dev dagesh: {train_loss["dagesh"]}, ' \
               f'mean loss Dev sin: {train_loss["sin"]}, ' \
+              f'all dev loss (0.7, 0.15, 0.15): {all_dev_loss}, ' \
               f'Dev letter Accuracy: {dev_accuracy_letter}'
         logger.debug(msg)
 
         # calc accuracy by letter
 
-        if dev_accuracy_letter > best_accuracy:
-            best_accuracy = dev_accuracy_letter
+        if min_val_loss is None or all_dev_loss < min_val_loss:
+            # Save the model
+            epochs_no_improve = 0
+            min_val_loss = all_dev_loss
+
             best_model = {
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss,
             }
+        else:
+            # If the validation loss is not decreasing
+            epochs_no_improve += 1
+            # If the validation loss has not decreased for the 'patience' number of epochs, stop training
+            if epochs_no_improve == training_params['patience']:
+                early_stop = True
+
+        # if dev_accuracy_letter > best_accuracy:
+        #     best_accuracy = dev_accuracy_letter
+        #     best_model = {
+        #         'epoch': epoch,
+        #         'model_state_dict': model.state_dict(),
+        #         'optimizer_state_dict': optimizer.state_dict(),
+        #         'loss': loss,
+        #     }
 
         if epoch % training_params["checkpoints_frequency"] == 0:
             save_checkpoint_path = os.path.join(output_checkpoints_path, f'checkpoint_model_epoch_{epoch}.pth')
