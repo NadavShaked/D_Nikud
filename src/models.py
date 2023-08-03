@@ -26,6 +26,7 @@ import torch.nn.functional as F
 from src.plot_helpers import plot_results
 from src.utiles_data import NikudDataset, prepare_data, Nikud, Letters, DEBUG_MODE
 from pathlib import Path
+
 # DL
 # HF
 
@@ -114,7 +115,8 @@ class DiacritizationModel(nn.Module):
         return nikud_probs, dagesh_probs, sin_probs
 
 
-def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, logger, optimizer=None):
+def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, logger,
+             optimizer=None):
     best_accuracy = 0.0
     best_model_weights = None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -162,20 +164,20 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
                 loss.backward(retain_graph=True)
 
             optimizer.step()
-            if (index_data+1) % 100 == 0:
+            if (index_data + 1) % 100 == 0:
                 msg = f'epoch: {epoch} , index_data: {index_data + 1}\n' \
-                      f'mean loss train nikud: { (train_loss["nikud"] / (sum["nikud"])) }, ' \
-                      f'mean loss train dagesh: { (train_loss["dagesh"] / (sum["dagesh"])) }, ' \
-                      f'mean loss train sin: { (train_loss["sin"] / (sum["sin"])) }'
+                      f'mean loss train nikud: {(train_loss["nikud"] / (sum["nikud"]))}, ' \
+                      f'mean loss train dagesh: {(train_loss["dagesh"] / (sum["dagesh"]))}, ' \
+                      f'mean loss train sin: {(train_loss["sin"] / (sum["sin"]))}'
                 logger.debug(msg)
 
         for name_class in train_loss.keys():
             train_loss[name_class] /= sum[name_class]
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
-              f'mean loss train nikud: { train_loss["nikud"] }, ' \
-              f'mean loss train dagesh: { train_loss["dagesh"]}, ' \
-              f'mean loss train sin: { train_loss["sin"]}'
+              f'mean loss train nikud: {train_loss["nikud"]}, ' \
+              f'mean loss train dagesh: {train_loss["dagesh"]}, ' \
+              f'mean loss train sin: {train_loss["sin"]}'
         logger.debug(msg)
 
         model.eval()
@@ -225,7 +227,6 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
                                       predictions["nikud"][mask_all_or] == \
                                       labels_class["nikud"][mask_all_or]))
 
-
                 sum_all += mask_all_or.sum()
 
         for name_class in dev_loss.keys():
@@ -242,9 +243,9 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
         #     f"Dev letter Accuracy: {dev_accuracy_letter:.4f}")
 
         msg = f"Epoch {epoch + 1}/{n_epochs}\n" \
-              f'mean loss Dev nikud: { train_loss["nikud"] }, ' \
-              f'mean loss Dev dagesh: { train_loss["dagesh"] }, ' \
-              f'mean loss Dev sin: { train_loss["sin"]}' \
+              f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
+              f'mean loss Dev dagesh: {train_loss["dagesh"]}, ' \
+              f'mean loss Dev sin: {train_loss["sin"]}, ' \
               f'Dev letter Accuracy: {dev_accuracy_letter}'
         logger.debug(msg)
 
@@ -254,7 +255,7 @@ def training(model, n_epochs, train_data, dev_data, criterion_nikud, criterion_d
             best_accuracy = dev_accuracy_letter
             best_model_weights = copy.deepcopy(model.state_dict())
 
-    a=1
+    a = 1
     # Load the weights of the best model
     # model.load_state_dict(best_model_weights) - TODO - MAKE IT WORK
 
@@ -351,9 +352,13 @@ def parse_arguments():
     parser.add_argument('--eval_steps', type=int, default=2000, help='Validate every N steps')
     parser.add_argument("-l", "--log", dest="loglevel", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         default="DEBUG", help="Set the logging level")
-    parser.add_argument("-ld", "--log_dir", dest="log_dir", default=os.path.join(Path(__file__).parent.parent, "logging"), help="Set the logger path")
-    parser.add_argument("-df", "--debug_folder", dest="debug_folder", default=os.path.join(Path(__file__).parent.parent, "plots"), help="Set the debug folder")
-    parser.add_argument("-dataf", "--data_folder", dest="data_folder", default=os.path.join(Path(__file__).parent.parent, "data/hebrew_diacritized"), help="Set the debug folder")
+    parser.add_argument("-ld", "--log_dir", dest="log_dir",
+                        default=os.path.join(Path(__file__).parent.parent, "logging"), help="Set the logger path")
+    parser.add_argument("-df", "--debug_folder", dest="debug_folder",
+                        default=os.path.join(Path(__file__).parent.parent, "plots"), help="Set the debug folder")
+    parser.add_argument("-dataf", "--data_folder", dest="data_folder",
+                        default=os.path.join(Path(__file__).parent.parent, "data/hebrew_diacritized"),
+                        help="Set the debug folder")
     return parser.parse_args()
 
 
@@ -440,7 +445,7 @@ def main():
     criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-    training(model_DM, 5, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,logger,
+    training(model_DM, 5, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin, logger,
              optimizer=optimizer)
 
     report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl)
