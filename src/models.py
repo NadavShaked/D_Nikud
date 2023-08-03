@@ -31,28 +31,32 @@ class DiacritizationModel(nn.Module):
             DEVICE)
         # self.model.resize_token_embeddings(vocab_size)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
+        self.dense_layer = nn.Linear(config.hidden_size, config.hidden_size)
         self.LayerNorm = nn.LayerNorm(config.hidden_size)
         self.classifier_nikud = nn.Linear(config.hidden_size, Nikud.LEN_NIKUD)
         self.classifier_sin = nn.Linear(config.hidden_size, Nikud.LEN_SIN)
         self.classifier_dagesh = nn.Linear(config.hidden_size, Nikud.LEN_DAGESH)
         self.softmax = nn.Softmax(dim=-1)
 
-    def forward(self, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, only_nikud=False):
         last_hidden_state = self.model(input_ids, attention_mask=attention_mask)
-        normalized_hidden_states = self.LayerNorm(last_hidden_state)
+        dense = self.dense_layer(last_hidden_state)
+        normalized_hidden_states = self.LayerNorm(dense)
 
         # Classifier for Nikud
         nikud_logits = self.classifier_nikud(normalized_hidden_states)
         nikud_probs = self.softmax(nikud_logits)
 
-        # Classifier for Dagesh
-        dagesh_logits = self.classifier_dagesh(normalized_hidden_states)
-        dagesh_probs = self.softmax(dagesh_logits)
+        if not only_nikud:
+            # Classifier for Dagesh
+            dagesh_logits = self.classifier_dagesh(normalized_hidden_states)
+            dagesh_probs = self.softmax(dagesh_logits)
 
-        # Classifier for Sin
-        sin_logits = self.classifier_sin(normalized_hidden_states)
-        sin_probs = self.softmax(sin_logits)
-
+            # Classifier for Sin
+            sin_logits = self.classifier_sin(normalized_hidden_states)
+            sin_probs = self.softmax(sin_logits)
+        else:
+            dagesh_probs, sin_probs = None, None
         # Return the probabilities for each diacritical mark
         return nikud_probs, dagesh_probs, sin_probs
 

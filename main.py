@@ -11,6 +11,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from sklearn.model_selection import train_test_split
+from torchviz import make_dot
 from transformers import AutoTokenizer
 
 # DL
@@ -25,16 +26,16 @@ OUTPUT_DIR = 'models/trained/latest'
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
 cols = ["precision", "recall", "f1-score", "support"]
-
-
-# Set the random seed for Python
-random.seed(SEED)
-
-# Set the random seed for numpy
-np.random.seed(SEED)
-
-# Set the random seed for torch to SEED
-torch.manual_seed(SEED)
+#
+#
+# # Set the random seed for Python
+# random.seed(SEED)
+#
+# # Set the random seed for numpy
+# np.random.seed(SEED)
+#
+# # Set the random seed for torch to SEED
+# torch.manual_seed(SEED)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -53,8 +54,10 @@ def parse_arguments():
     parser.add_argument('--adam_beta1', type=float, default=0.9, help='AdamW beta1 hyperparameter')
     parser.add_argument('--adam_beta2', type=float, default=0.999, help='AdamW beta2 hyperparameter')
     parser.add_argument('--weight_decay', type=float, default=0.15, help='Weight decay')
-    parser.add_argument('--n_epochs', type=int, default=1, help='number of epochs')
-    parser.add_argument('--checkpoints_frequency', type=int, default=2, help='checkpoints saving frequency')
+    parser.add_argument('--n_epochs', type=int, default=5, help='number of epochs')
+    parser.add_argument('--num_freeze_layers', type=int, default=5, help='number of freeze layers')
+    parser.add_argument('--checkpoints_frequency', type=int, default=1, help='checkpoints saving frequency')
+    parser.add_argument('--only_nikud', type=bool, default=False, help='Want to train only on nikud classification (not dagesh/sin)')
     parser.add_argument('--evaluation_strategy', type=str, default='steps',
                         help='How to validate (set to "no" for no validation)')
     parser.add_argument('--eval_steps', type=int, default=2000, help='Validate every N steps')
@@ -65,8 +68,8 @@ def parse_arguments():
     parser.add_argument("-df", "--debug_folder", dest="debug_folder",
                         default=os.path.join(Path(__file__).parent, "plots"), help="Set the debug folder")
     parser.add_argument("-dataf", "--data_folder", dest="data_folder",
-                        default=os.path.join(Path(__file__).parent, "data/hebrew_diacritized"),
-                        help="Set the debug folder")
+                        default=os.path.join(Path(__file__).parent, "data"),
+                        help="Set the debug folder") #"data/hebrew_diacritized"
     return parser.parse_args()
 
 
@@ -99,8 +102,8 @@ def main():
     msg = f'Max length of data: {dataset.max_length}'
     logger.debug(msg)
 
-    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True, random_state=SEED)
-    train, dev = train_test_split(train, test_size=0.1, shuffle=True, random_state=SEED)
+    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True) #, random_state=SEED)
+    train, dev = train_test_split(train, test_size=0.1, shuffle=True) #, random_state=SEED
 
     msg = f'Num rows in train data: {len(train)}, ' \
           f'Num rows in dev data: {len(dev)}, ' \
@@ -120,7 +123,7 @@ def main():
 
     model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
     all_model_params_MTB = model_DM.named_parameters()
-    top_layer_params = get_model_parameters(all_model_params_MTB)
+    top_layer_params = get_model_parameters(all_model_params_MTB, logger, args.num_freeze_layers)
     optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
 
     msg = 'training...'
@@ -130,10 +133,18 @@ def main():
     criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
     criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
 
-    training_params = {"n_epochs":args.n_epochs, "checkpoints_frequency":args.checkpoints_frequency}
-    training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
-             training_params, logger, output_dir_running, optimizer=optimizer)
+    #TODO: EXTRACT TO FUNCTION - PRINT MODEL
+    if 0:
+        dataloader = prepare_data([train[0]], DMtokenizer, dataset.max_length, batch_size=1, name="model_architecture")
+        for (inputs, attention_mask, labels) in dataloader:
+            y = model_DM(inputs, attention_mask).to(DEVICE)
+            make_dot(y.mean(), params=dict(model_DM.named_parameters())).render("D-Nikud_model_architecture", format="png")
 
+    training_params = {"n_epochs":args.n_epochs, "checkpoints_frequency":args.checkpoints_frequency}
+    best_model, best_accuracy = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
+             training_params, logger, output_dir_running, optimizer, args.only_nikud)
+
+    # todo - test on best model
     report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder)
     report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder)
 
@@ -178,6 +189,103 @@ def get_logger(log_level, log_location):
 
     return logger
 
+def hyperparams_checker():
+    args = parse_arguments()
+    debug_folder = args.debug_folder
+    if not os.path.exists(debug_folder):
+        os.makedirs(debug_folder)
+
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    msg = f'Device detected: {device}'
+    # logger.info(msg)
+
+    # training_args = TrainingArguments(**vars(args))  # vars: Namespace to dict
+
+    msg = 'Loading data...'
+    # logger.debug(msg)
+
+    dataset = NikudDataset(folder=args.data_folder)#, logger=logger)
+    dataset.show_data_labels(debug_folder=debug_folder)
+    dataset.calc_max_length()
+
+    msg = f'Max length of data: {dataset.max_length}'
+    # logger.debug(msg)
+
+    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True) #, random_state=SEED)
+    train, dev = train_test_split(train, test_size=0.1, shuffle=True) #, random_state=SEED
+
+    # hyperparameters search space
+    lr_values = np.logspace(-6, -1, num=6)  # learning rates between 1e-6 and 1e-1
+    num_freeze_layers = list(range(1, 10, 2)) # learning rates between 1e-6 and 1e-1
+    batch_size_values = [2 ** i for i in range(3, 7)]  # batch sizes between 32 and 512
+
+    # number of random combinations to test
+    num_combinations = 20
+
+    # best hyperparameters and their performance
+    best_accuracy = 0.0
+    best_hyperparameters = None
+
+    training_params = {"n_epochs":args.n_epochs, "checkpoints_frequency":args.checkpoints_frequency}
+    log_dir = args.log_dir
+    output_dir = args.output_dir
+    for _ in range(num_combinations):
+        torch.cuda.empty_cache()
+        lr = np.random.choice(lr_values)
+        nfl = np.random.choice(num_freeze_layers)
+        batch_size = int(np.random.choice(batch_size_values))
+
+        output_dir_running = os.path.join(output_dir, f"output_models_{datetime.now().strftime('%d_%m_%y__%H_%M')}")
+        if not os.path.exists(output_dir_running):
+            os.makedirs(output_dir_running)
+
+        output_log_dir = os.path.join(log_dir, f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}_{datetime.now().strftime('%d_%m_%y__%H_%M')}")
+        if not os.path.exists(output_log_dir):
+            os.makedirs(output_log_dir)
+
+        logger = get_logger(args.loglevel, output_log_dir)
+
+        msg_data = f'Num rows in train data: {len(train)}, ' \
+                   f'Num rows in dev data: {len(dev)}, ' \
+                   f'Num rows in test data: {len(test)}'
+        logger.debug(msg_data)
+
+        msg = 'Loading tokenizer and prepare data...'
+        logger.debug(msg)
+
+        DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
+
+        msg = 'Loading model...'
+        logger.debug(msg)
+
+        model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
+        all_model_params_MTB = model_DM.named_parameters()
+        top_layer_params = get_model_parameters(all_model_params_MTB,logger, num_freeze_layers=nfl)
+
+        # set these hyperparameters in your optimizer
+        optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
+
+        # redefine your data loaders with the new batch size
+        mtb_train_dl = prepare_data(train, DMtokenizer, dataset.max_length, batch_size=batch_size, name="train")
+        mtb_dev_dl = prepare_data(dev, DMtokenizer, dataset.max_length, batch_size=batch_size, name="dev")
+        # mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=batch_size, name="test")
+
+        criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
+        criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
+        criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
+
+        # call your training function and get the dev accuracy
+        _, dev_accuracy = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
+                                   training_params, logger, output_dir_running, optimizer, only_nikud=args.only_nikud)
+
+        # if these hyperparameters are better, store them
+        if dev_accuracy > best_accuracy:
+            best_accuracy = dev_accuracy
+            best_hyperparameters = (lr, batch_size)
+
+    # print the best hyperparameters
+    print(best_hyperparameters)
 
 if __name__ == '__main__':
-    main()
+    #main()
+    hyperparams_checker()

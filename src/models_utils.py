@@ -28,25 +28,34 @@ def load_model(model, path):
     return model
 
 
-def get_model_parameters(params):
+def get_model_parameters(params, logger, num_freeze_layers=2):
     top_layer_params = []
     for name, param in params:
-        print(name)
-        if "lm_head" in name or name.startswith("LayerNorm") or name.startswith('classifier') or 'layer.11' in name:
+        requires_grad = True
+        for i in range(num_freeze_layers):
+            if f'layer.{i}.' in name or "embeddings" in name:
+                param.requires_grad = False
+                msg = f"{name} : requires_grad = False"
+                logger.debug(msg)
+                requires_grad = False
+                break
+
+        if requires_grad:
             top_layer_params.append(param)
             param.requires_grad = True
-        else:
-            param.requires_grad = False
+            msg = f"{name} : requires_grad = True"
+            logger.debug(msg)
+
     return top_layer_params
 
 
 def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
-             output_model_path,
-             optimizer=None):
+             output_model_path, optimizer, only_nikud=False):
     best_accuracy = 0.0
     best_model_weights = None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(torch.cuda.is_available())
+    logger.info(f"strat training with training_params: {training_params}, only_nikud: {only_nikud}")
     model = model.to(device)
 
     criterion_nikud.to(device)
@@ -82,12 +91,15 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
             labels = labels.to(device)
 
             optimizer.zero_grad()
-            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask, only_nikud=only_nikud)
 
             # sep_id = 2
             # length_sentences = np.where(np.array(inputs.data) == sep_id)[1] - 1
             for i, (probs, name_class) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                if only_nikud and name_class!= "nikud":
+                    sum[name_class] = 1
+                    continue
                 reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                  probs.shape[2],
                                                                                  probs.shape[1])
@@ -125,8 +137,13 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
         predictions = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
-        correct_preds_letter = 0.0
-
+        all_nikud_types_correct_preds_letter = 0.0
+        nikud_correct_preds_letter = 0.0
+        dagesh_correct_preds_letter = 0.0
+        shin_correct_preds_letter = 0.0
+        dev_dagesh_accuracy_letter = 0.0
+        dev_shin_accuracy_letter = 0.0
+        dev_all_nikud_types_accuracy_letter = 0.0
         sum_all = 0.0
         with torch.no_grad():
             for index_data, data in enumerate(dev_loader):
@@ -142,6 +159,9 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
 
                 for i, (probs, name_class) in enumerate(
                         zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                    if only_nikud and name_class != "nikud":
+                        sum[name_class] = 1
+                        continue
                     reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
@@ -156,47 +176,59 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                     predictions[name_class] = preds
                     labels_class[name_class] = labels[:, :, i]
 
-                mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
+                if only_nikud:
+                    mask_all_or = masks["nikud"]
+                else:
+                    mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
 
-                correct_nikud = (torch.ones(mask_all_or.shape) == 1).to(device)
-                correct_dagesh = (torch.ones(mask_all_or.shape) == 1).to(device)
-                correct_sin = (torch.ones(mask_all_or.shape) == 1).to(device)
+                correct = {name_class:(torch.ones(mask_all_or.shape) == 1).to(device) for name_class in ["nikud", "dagesh", "sin"]}
 
-                correct_nikud[masks["nikud"]] = predictions["nikud"][masks["nikud"]] == labels_class["nikud"][
-                    masks["nikud"]]
-                correct_dagesh[masks["dagesh"]] = predictions["dagesh"][masks["dagesh"]] == labels_class["dagesh"][
-                    masks["dagesh"]]
-                correct_sin[masks["sin"]] = predictions["sin"][masks["sin"]] == labels_class["sin"][masks["sin"]]
+                for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
+                    if only_nikud and name_class != "nikud":
+                        continue
+                    correct[name_class][masks[name_class]] = predictions[name_class][masks[name_class]] == labels_class[name_class][
+                        masks[name_class]]
 
-                correct_preds_letter += torch.sum(
-                    torch.logical_and(torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
-                                      correct_nikud[mask_all_or]))
+                all_nikud_types_correct_preds_letter += torch.sum(
+                    torch.logical_and(torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
+                                      correct["nikud"][mask_all_or]))
+
+                nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
+                dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
+                shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
 
 
                 sum_all += mask_all_or.sum()
 
-        for name_class in dev_loss.keys():
+        for name_class in ["nikud", "dagesh", "sin"]:
+            if only_nikud and name_class != "nikud":
+                continue
             dev_loss[name_class] /= sum[name_class]
             dev_accuracy[name_class] = correct_preds[name_class].double() / sum[name_class]
 
-        dev_accuracy_letter = correct_preds_letter.double() / sum_all
 
-        all_dev_loss = 0.7 * train_loss["nikud"] * 0.15 * train_loss["dagesh"] + 0.15 * train_loss["sin"]
+        dev_nikud_accuracy_letter = nikud_correct_preds_letter.double() / sum_all
+        if not only_nikud:
+            dev_all_nikud_types_accuracy_letter = all_nikud_types_correct_preds_letter.double() / sum_all
+
+            dev_dagesh_accuracy_letter = dagesh_correct_preds_letter.double() / sum_all
+            dev_shin_accuracy_letter = shin_correct_preds_letter.double() / sum_all
+        else:
+            dev_all_nikud_types_accuracy_letter = dev_all_nikud_types_accuracy_letter
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
               f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
               f'mean loss Dev dagesh: {train_loss["dagesh"]}, ' \
               f'mean loss Dev sin: {train_loss["sin"]}, ' \
-              f'all dev loss (0.7, 0.15, 0.15): {all_dev_loss}, ' \
-              f'Dev letter Accuracy: {dev_accuracy_letter}'
+              f'Dev all nikud types letter Accuracy: {dev_all_nikud_types_accuracy_letter}' \
+              f'Dev nikud letter Accuracy: {dev_nikud_accuracy_letter}, ' \
+              f'Dev dagesh letter Accuracy: {dev_dagesh_accuracy_letter}, ' \
+              f'Dev shin letter Accuracy: {dev_shin_accuracy_letter}'
         logger.debug(msg)
 
         # calc accuracy by letter
 
-        if min_val_loss is None or all_dev_loss < min_val_loss:
-            # Save the model
-            epochs_no_improve = 0
-            min_val_loss = all_dev_loss
-
+        if dev_all_nikud_types_accuracy_letter > best_accuracy:
+            best_accuracy = dev_all_nikud_types_accuracy_letter
             best_model = {
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
@@ -227,13 +259,14 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss,
             }
-            torch.save(checkpoint,
-                       save_checkpoint_path)  # save_model(model, save_model_path)  # TODO: use this function in model class
+            torch.save(checkpoint, save_checkpoint_path)  # save_model(model, save_model_path)  # TODO: use this function in model class
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model, save_model_path)
+    return best_model, best_accuracy
 
 
+# TODO: Add word level acc for all kinds
 def evaluate(model, test_data, debug_folder=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -248,9 +281,16 @@ def evaluate(model, test_data, debug_folder=None):
     sum = {"nikud": 0, "dagesh": 0, "sin": 0}
     labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
-    word_level_correct = 0.0
-    letter_level_correct = 0.0
+    all_nikud_types_word_level_correct = 0.0
+    all_nikud_types_letter_level_correct = 0.0
+    nikud_word_level_correct = 0.0
+    nikud_letter_level_correct = 0.0
+    dagesh_word_level_correct = 0.0
+    dagesh_letter_level_correct = 0.0
+    shin_word_level_correct = 0.0
+    shin_letter_level_correct = 0.0
 
+    sum_all = 0.0
     with torch.no_grad():
         for index_data, data in enumerate(test_data):
             # if DEBUG_MODE and index_data > 100:
@@ -288,9 +328,15 @@ def evaluate(model, test_data, debug_folder=None):
                 masks["dagesh"]]
             correct_sin[masks["sin"]] = predictions["sin"][masks["sin"]] == labels_class["sin"][masks["sin"]]
 
-            letter_level_correct += torch.sum(
+            all_nikud_types_letter_level_correct += torch.sum(
                 torch.logical_and(torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
                                   correct_nikud[mask_all_or]))
+
+            sum_all += mask_all_or.sum()
+
+            nikud_letter_level_correct += torch.sum(correct_nikud[mask_all_or])
+            dagesh_letter_level_correct += torch.sum(correct_dagesh[mask_all_or])
+            shin_letter_level_correct += torch.sum(correct_sin[mask_all_or])
 
     for i, name in enumerate(["nikud", "dagesh", "sin"]):
         report = classification_report(true_labels[name], predicted_labels_2_report[name],
@@ -301,7 +347,7 @@ def evaluate(model, test_data, debug_folder=None):
         cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
 
         vowel_label = [Nikud.id_2_label[name][l] for l in index_labels]
-        unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in vowel_label if vowel!='WITHOUT']
+        unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in vowel_label if vowel != 'WITHOUT']
         if "WITHOUT" in vowel_label:
             unique_vowels_names += ["WITHOUT"]
         cm_df = pd.DataFrame(cm, index=unique_vowels_names, columns=unique_vowels_names)
@@ -317,4 +363,9 @@ def evaluate(model, test_data, debug_folder=None):
         else:
             plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
 
-    return reports, word_level_correct, letter_level_correct
+    all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / sum_all
+    nikud_letter_level_correct = nikud_letter_level_correct / sum_all
+    dagesh_letter_level_correct = dagesh_letter_level_correct / sum_all
+    shin_letter_level_correct = shin_letter_level_correct / sum_all
+
+    return reports, all_nikud_types_word_level_correct, all_nikud_types_letter_level_correct
