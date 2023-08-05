@@ -209,23 +209,24 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
             dev_loss[name_class] /= sum[name_class]
             dev_accuracy[name_class] = correct_preds[name_class].double() / sum[name_class]
 
-        dev_nikud_accuracy_letter = nikud_correct_preds_letter.double() / sum_all
+        # dev_nikud_accuracy_letter = nikud_correct_preds_letter.double() / sum_all
         if not only_nikud:
             dev_all_nikud_types_accuracy_letter = all_nikud_types_correct_preds_letter.double() / sum_all
-
-            dev_dagesh_accuracy_letter = dagesh_correct_preds_letter.double() / sum_all
-            dev_shin_accuracy_letter = shin_correct_preds_letter.double() / sum_all
         else:
-            dev_all_nikud_types_accuracy_letter = dev_nikud_accuracy_letter
+            dev_all_nikud_types_accuracy_letter = dev_accuracy["nikud"]
+        #
+        #     dev_dagesh_accuracy_letter = dagesh_correct_preds_letter.double() / sum_all
+        #     dev_shin_accuracy_letter = shin_correct_preds_letter.double() / sum_all
+
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
               f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
               f'mean loss Dev dagesh: {train_loss["dagesh"]}, ' \
               f'mean loss Dev sin: {train_loss["sin"]}, ' \
               f'Dev all nikud types letter Accuracy: {dev_all_nikud_types_accuracy_letter}, ' \
-              f'Dev nikud letter Accuracy: {dev_nikud_accuracy_letter}, ' \
-              f'Dev dagesh letter Accuracy: {dev_dagesh_accuracy_letter}, ' \
-              f'Dev shin letter Accuracy: {dev_shin_accuracy_letter}'
+              f'Dev nikud letter Accuracy: {dev_accuracy["nikud"]}, ' \
+              f'Dev dagesh letter Accuracy: {dev_accuracy["dagesh"]}, ' \
+              f'Dev shin letter Accuracy: {dev_accuracy["sin"]}'
         logger.debug(msg)
 
         # calc accuracy by letter
