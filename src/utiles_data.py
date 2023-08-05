@@ -310,7 +310,7 @@ class NikudCollator:
         # return {**X, 'labels': y}
 
 
-def prepare_data(data, tokenizer, max_length, batch_size=8, name="train"):
+def prepare_data(data, tokenizer, max_length, name="train"):
     dataset = []
     for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
         encoded_sequence = tokenizer.encode_plus(
@@ -330,9 +330,8 @@ def prepare_data(data, tokenizer, max_length, batch_size=8, name="train"):
 
         dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
 
+    return dataset
 
-    data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
-    return data_loader
 
 
 def main():

@@ -97,7 +97,7 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
             # length_sentences = np.where(np.array(inputs.data) == sep_id)[1] - 1
             for i, (probs, name_class) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
-                if only_nikud and name_class!= "nikud":
+                if only_nikud and name_class != "nikud":
                     sum[name_class] = 1
                     continue
                 reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
@@ -181,13 +181,15 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                 else:
                     mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
 
-                correct = {name_class:(torch.ones(mask_all_or.shape) == 1).to(device) for name_class in ["nikud", "dagesh", "sin"]}
+                correct = {name_class: (torch.ones(mask_all_or.shape) == 1).to(device) for name_class in
+                           ["nikud", "dagesh", "sin"]}
 
                 for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
                     if only_nikud and name_class != "nikud":
                         continue
-                    correct[name_class][masks[name_class]] = predictions[name_class][masks[name_class]] == labels_class[name_class][
-                        masks[name_class]]
+                    correct[name_class][masks[name_class]] = predictions[name_class][masks[name_class]] == \
+                                                             labels_class[name_class][
+                                                                 masks[name_class]]
 
                 all_nikud_types_correct_preds_letter += torch.sum(
                     torch.logical_and(torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
@@ -197,7 +199,6 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                 dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
                 shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
 
-
                 sum_all += mask_all_or.sum()
 
         for name_class in ["nikud", "dagesh", "sin"]:
@@ -205,7 +206,6 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                 continue
             dev_loss[name_class] /= sum[name_class]
             dev_accuracy[name_class] = correct_preds[name_class].double() / sum[name_class]
-
 
         dev_nikud_accuracy_letter = nikud_correct_preds_letter.double() / sum_all
         if not only_nikud:
@@ -235,12 +235,12 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss,
             }
-        else:
-            # If the validation loss is not decreasing
-            epochs_no_improve += 1
-            # If the validation loss has not decreased for the 'patience' number of epochs, stop training
-            if epochs_no_improve == training_params['patience']:
-                early_stop = True
+        # else:
+        #     # If the validation loss is not decreasing
+        #     epochs_no_improve += 1
+        #     # If the validation loss has not decreased for the 'patience' number of epochs, stop training
+        #     if epochs_no_improve == training_params['patience']:
+        #         early_stop = True
 
         # if dev_accuracy_letter > best_accuracy:
         #     best_accuracy = dev_accuracy_letter
@@ -259,7 +259,8 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss,
             }
-            torch.save(checkpoint, save_checkpoint_path)  # save_model(model, save_model_path)  # TODO: use this function in model class
+            torch.save(checkpoint,
+                       save_checkpoint_path)  # save_model(model, save_model_path)  # TODO: use this function in model class
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model, save_model_path)
