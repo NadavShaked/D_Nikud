@@ -208,6 +208,8 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
 
             dev_dagesh_accuracy_letter = dagesh_correct_preds_letter.double() / sum_all
             dev_shin_accuracy_letter = shin_correct_preds_letter.double() / sum_all
+        else:
+            dev_all_nikud_types_accuracy_letter = dev_nikud_accuracy_letter
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
               f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
