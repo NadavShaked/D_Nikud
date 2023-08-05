@@ -61,3 +61,48 @@ class DiacritizationModel(nn.Module):
         return nikud_probs, dagesh_probs, sin_probs
 
 
+# import torch
+# from torch import nn
+
+# class BaseModel(nn.Module):
+#     def __init__(self, units, vocab_size):
+#         super().__init__()
+#         self.embed = nn.Embedding(vocab_size, units, padding_idx=0)
+#         self.lstm1 = nn.LSTM(units, units, bidirectional=True, dropout=0.1, batch_first=True)
+#         self.lstm2 = nn.LSTM(2*units, units, bidirectional=True, dropout=0.1, batch_first=True)
+#
+#     def forward(self, x):
+#         x = self.embed(x)
+#         x, _ = self.lstm1(x)
+#         x = (x[:, :, :units] + x[:, :, units:])
+#         x, _ = self.lstm2(x)
+#         x = (x[:, :, :units] + x[:, :, units:])
+#         return x
+import torch
+from torch import nn
+
+class BaseModel(nn.Module):
+    def __init__(self, units, vocab_size, niqqud_size, dagesh_size, sin_size):
+        super().__init__()
+        self.units = units
+        self.embed = nn.Embedding(vocab_size, units, padding_idx=0)
+        self.lstm1 = nn.LSTM(units, units, bidirectional=True, dropout=0.1, batch_first=True) #num_layers=1,
+        self.lstm2 = nn.LSTM(2 * units, units, bidirectional=True, dropout=0.1, batch_first=True)
+        self.dense = nn.Linear(2*units, units)
+        self.out_n = nn.Linear(units, niqqud_size)
+        self.out_d = nn.Linear(units, dagesh_size)
+        self.out_s = nn.Linear(units, sin_size)
+
+    def forward(self, x):
+        # h0 = torch.zeros(2, x.size(0), self.units).to(DEVICE)
+        # c0 = torch.zeros(2, x.size(0), self.units).to(DEVICE)
+        embeding = self.embed(x)
+        lstm1, y1 = self.lstm1(embeding)
+        # lstm1_combine = (lstm1[:, :, :self.units] + lstm1[:, :, self.units:])
+        lstm2, y2 = self.lstm2(lstm1)
+        # lstm2_combine = (lstm2[:, :, :self.units] + lstm2[:, :, self.units:])
+        dense = self.dense(lstm2)
+        nikud = self.out_n(dense)
+        dagesh = self.out_d(dense)
+        sin = self.out_s(dense)
+        return nikud, dagesh, sin

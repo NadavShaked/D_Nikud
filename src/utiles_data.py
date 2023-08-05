@@ -13,6 +13,7 @@ from src.running_params import DEBUG_MODE
 
 matplotlib.use('Tkagg')
 
+
 class Nikud:
     """
     1456 HEBREW POINT SHEVA
@@ -44,6 +45,7 @@ class Nikud:
                   'SEGOL': 1462,
                   'PATAKH': 1463,
                   'KAMATZ': 1464,
+                  'KAMATZ_KATAN': 1479,
                   'HOLAM': 1465,
                   'HOLAM HASER VAV': 1466,
                   'KUBUTZ': 1467,
@@ -85,8 +87,10 @@ class Nikud:
 class Letters:
     hebrew = [chr(c) for c in range(0x05d0, 0x05ea + 1)]
     VALID_LETTERS = [' ', '!', '"', "'", '(', ')', ',', '-', '.', ':', ';', '?'] + hebrew
-    SPECIAL_TOKENS = ['H', 'O', '5']
+    SPECIAL_TOKENS = ['H', 'O', '5', '1']
     ENDINGS_TO_REGULAR = dict(zip('ךםןףץ', 'כמנפצ'))
+    vocab = VALID_LETTERS + SPECIAL_TOKENS
+    vocab_size = len(VALID_LETTERS + SPECIAL_TOKENS)
 
 
 class Letter:
@@ -101,12 +105,16 @@ class Letter:
         if letter in Letters.VALID_LETTERS: return letter
         if letter in Letters.ENDINGS_TO_REGULAR: return Letters.ENDINGS_TO_REGULAR[letter]
         if letter in ['\n', '\t']: return ' '
-        if letter in ['־', '‒', '–', '—', '―', '−']: return '-'
+        if letter in ['־', '‒', '–', '—', '―', '−', '+']: return '-'
         if letter == '[': return '('
         if letter == ']': return ')'
         if letter in ['´', '‘', '’']: return "'"
         if letter in ['“', '”', '״']: return '"'
-        if letter.isdigit() and int(letter) != 1: return '5'
+        if letter.isdigit():
+            if int(letter) == 1:
+                return '1'
+            else:
+                return '5'
         if letter == '…': return ','
         if letter in ['ײ', 'װ', 'ױ']: return 'H'
         return 'O'
@@ -127,8 +135,8 @@ class Letter:
                             True if self.can_nikud(self.letter) else False]
 
         labels_ids = {"nikud": Nikud.IRRELEVANT,
-                  "dagesh": Nikud.IRRELEVANT,
-                  "sin": Nikud.IRRELEVANT}
+                      "dagesh": Nikud.IRRELEVANT,
+                      "sin": Nikud.IRRELEVANT}
 
         normalized = self.normalize(self.letter)
         i = 0
@@ -193,8 +201,8 @@ class NikudDataset(Dataset):
             print(msg)
         all_data = []
         if DEBUG_MODE:
-            all_files = all_files[2:4]
-            # all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
+            # all_files = all_files[2:4]
+            all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
         for file in all_files:
             if "not_use" not in file:
                 all_data.extend(self.read_data(file))
@@ -244,16 +252,19 @@ class NikudDataset(Dataset):
         file_data = file_data.replace("\" ", "\"\n")
         file_data = file_data.replace("\t", "\n")
         data_list = file_data.split("\n")
-        return  data_list
-
+        return data_list
 
     def show_data_labels(self, debug_folder=None):
-        vowels = [Nikud.id_2_label["nikud"][label.nikud] for _, label_list in self.data for label in label_list if label.nikud != -1]
-        dageshs = [Nikud.id_2_label["dagesh"][label.dagesh] for _, label_list in self.data for label in label_list if label.dagesh != -1]
-        sin = [Nikud.id_2_label["sin"][label.sin] for _, label_list in self.data for label in label_list if label.sin != -1]
+        vowels = [Nikud.id_2_label["nikud"][label.nikud] for _, label_list in self.data for label in label_list if
+                  label.nikud != -1]
+        dageshs = [Nikud.id_2_label["dagesh"][label.dagesh] for _, label_list in self.data for label in label_list if
+                   label.dagesh != -1]
+        sin = [Nikud.id_2_label["sin"][label.sin] for _, label_list in self.data for label in label_list if
+               label.sin != -1]
         vowels = vowels + dageshs + sin
         unique_vowels, label_counts = np.unique(vowels, return_counts=True)
-        unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in unique_vowels if vowel!='WITHOUT'] + ["WITHOUT"]
+        unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in unique_vowels if vowel != 'WITHOUT'] + [
+            "WITHOUT"]
         fig, ax = plt.subplots(figsize=(16, 6))
 
         bar_positions = np.arange(len(unique_vowels))
@@ -309,28 +320,119 @@ class NikudCollator:
         #
         # return {**X, 'labels': y}
 
+def update_ids(sentence, vocab, max_length):
+    # Create an empty matrix with dimensions (len(sentence), len(vocab))
+    update_ids_matrix = np.zeros(np.min([max_length, len(sentence)]))
+    sentence_words = sentence.split(" ")
+    # For each letter in the sentence...
+    index_letter = 0
+    for i, word in enumerate(sentence_words):
+        if index_letter + len(word) > max_length:
+            break
+        for letter in word:
+            # Find the index of this letter in the vocab
 
-def prepare_data(data, tokenizer, max_length, name="train"):
+            letter_index = vocab.index(letter)
+
+            # Set the corresponding position in the one_hot_matrix to 1
+            update_ids_matrix[index_letter] = letter_index
+
+            index_letter += 1
+        index_letter += 1
+
+    return update_ids_matrix
+def one_hot_sentence(sentence, vocab):
+    # Create an empty matrix with dimensions (len(sentence), len(vocab))
+    one_hot_matrix = np.zeros((len(sentence), len(vocab)))
+
+    # For each letter in the sentence...
+    for i, letter in enumerate(sentence):
+
+        # Find the index of this letter in the vocab
+        letter_index = vocab.index(letter)
+
+        # Set the corresponding position in the one_hot_matrix to 1
+        one_hot_matrix[i, letter_index] = 1
+
+    return one_hot_matrix
+def prepare_data(data, tokenizer_tavbert, tokenizer_alephbertgimmel, max_length, name="train"):
     dataset = []
     for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
-        encoded_sequence = tokenizer.encode_plus(
-            sentence,
-            add_special_tokens=True,
-            max_length=max_length,
-            padding='max_length',
-            truncation=True,
-            return_attention_mask=True,
-            return_tensors='pt'
-        )
+        # encoded_sequence_tavbert = tokenizer_tavbert.encode_plus(
+        #     sentence,
+        #     add_special_tokens=True,
+        #     max_length=max_length,
+        #     padding='max_length',
+        #     truncation=True,
+        #     return_attention_mask=True,
+        #     return_tensors='pt'
+        # )
+        encoded_sequence = torch.zeros(max_length, dtype=torch.long)
+        try:
+            encoded_sequence[:len(sentence)] = torch.tensor(update_ids(sentence, Letters.vocab, max_length))
+        except:
+            encoded_sequence[:len(sentence)] = torch.tensor(update_ids(sentence, Letters.vocab, max_length))
 
         label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
-        label = torch.tensor(
-            [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(max_length-1)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
-                                                                 range(max_length - len(label) - 1)])
+        label = torch.tensor(label_lists[:(max_length)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in range(max_length - len(label))])
 
-        dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
+        dataset.append((encoded_sequence, label))
 
     return dataset
+
+# def prepare_data(data, tokenizer_tavbert, tokenizer_alephbertgimmel, max_length, name="train"):
+#     dataset = []
+#     for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
+#         encoded_sequence_tavbert = tokenizer_tavbert.encode_plus(
+#             sentence,
+#             add_special_tokens=True,
+#             max_length=max_length,
+#             padding='max_length',
+#             truncation=True,
+#             return_attention_mask=True,
+#             return_tensors='pt'
+#         )
+#         encoded_sequence_alephbertgimmel = tokenizer_alephbertgimmel.encode_plus(
+#             sentence,
+#             add_special_tokens=True,
+#             max_length=max_length,
+#             padding='max_length',
+#             truncation=True,
+#             return_attention_mask=True,
+#             return_tensors='pt'
+#         )
+#         index_place = 0
+#         map_label_word = {}
+#         sen_tav = encoded_sequence_tavbert['input_ids'][0]
+#         for indx_word, word in enumerate(encoded_sequence_alephbertgimmel['input_ids'][0][1:]):
+#             if word == 2:
+#                 break
+#             word_decode = tokenizer_alephbertgimmel.decode(word)
+#             tavs_encode = tokenizer_tavbert.encode_plus(word_decode)['input_ids'][1:-1]
+#             tavs_encode = np.array(tavs_encode)[np.array(tavs_encode) != 107].tolist()
+#             try:
+#                 while not int(sen_tav[index_place]) == tavs_encode[0]:
+#                     index_place += 1
+#             except:
+#                 a=1
+#
+#             map_label_word.update({(index_place + i):(indx_word+1) for i in range(len(tavs_encode))})
+#             index_place += len(tavs_encode)
+#
+#         label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+#         label = torch.tensor(
+#             [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(max_length - 1)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD]
+#                                                                                     for i in
+#                                                                                     range(max_length - len(label) - 1)])
+#
+#         dataset.append((encoded_sequence_tavbert['input_ids'][0], encoded_sequence_tavbert['attention_mask'][0],
+#                         encoded_sequence_alephbertgimmel['input_ids'][0],
+#                         encoded_sequence_alephbertgimmel['attention_mask'][0], label, map_label_word))
+#
+#     return dataset
+
+
+
 
 
 
@@ -338,6 +440,8 @@ def main():
     # folder_path = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized"  # Replace with the root path of the folder containing sub-folders with .txt files
     # all_data = read_data_folder(folder_path)
     dataset = NikudDataset()
+
+
 
 
 if __name__ == '__main__':

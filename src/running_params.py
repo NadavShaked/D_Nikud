@@ -1,2 +1,2 @@
 SEED = 42
-DEBUG_MODE = False
+DEBUG_MODE = True

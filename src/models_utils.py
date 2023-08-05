@@ -35,7 +35,7 @@ def get_model_parameters(params, logger, num_freeze_layers=2):
         for i in range(num_freeze_layers):
             if f'layer.{i}.' in name or "embeddings" in name:
                 param.requires_grad = False
-                msg = f"{name} : requires_grad = False"
+                msg = f"{name} : requires_grad = False, shape: {list(param.data.shape)}"
                 logger.debug(msg)
                 requires_grad = False
                 break
@@ -43,7 +43,7 @@ def get_model_parameters(params, logger, num_freeze_layers=2):
         if requires_grad:
             top_layer_params.append(param)
             param.requires_grad = True
-            msg = f"{name} : requires_grad = True"
+            msg = f"{name} : requires_grad = True, shape: {list(param.data.shape)}"
             logger.debug(msg)
 
     return top_layer_params
@@ -83,15 +83,16 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
         for index_data, data in enumerate(train_loader):
             # if DEBUG_MODE and index_data > 100:
             #     break
-            (inputs, attention_mask, labels) = data
+            (inputs, labels) = data
+            # (inputs, attention_mask, labels) = data
             if max_length is None:
                 max_length = labels.shape[1]
             inputs = inputs.to(device)
-            attention_mask = attention_mask.to(device)
+            # attention_mask = attention_mask.to(device)
             labels = labels.to(device)
 
             optimizer.zero_grad()
-            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask, only_nikud=only_nikud)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs)#, only_nikud=only_nikud)
 
             # sep_id = 2
             # length_sentences = np.where(np.array(inputs.data) == sep_id)[1] - 1
@@ -149,13 +150,14 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
             for index_data, data in enumerate(dev_loader):
                 # if DEBUG_MODE and index_data > 100:
                 #     break
-                (inputs, attention_mask, labels) = data
+                (inputs, labels) = data
+                # (inputs, attention_mask, labels) = data
 
                 inputs = inputs.to(device)
-                attention_mask = attention_mask.to(device)
+                # attention_mask = attention_mask.to(device)
                 labels = labels.to(device)
 
-                nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
+                nikud_probs, dagesh_probs, sin_probs = model(inputs)#, attention_mask)
 
                 for i, (probs, name_class) in enumerate(
                         zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
@@ -220,7 +222,7 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
               f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
               f'mean loss Dev dagesh: {train_loss["dagesh"]}, ' \
               f'mean loss Dev sin: {train_loss["sin"]}, ' \
-              f'Dev all nikud types letter Accuracy: {dev_all_nikud_types_accuracy_letter}' \
+              f'Dev all nikud types letter Accuracy: {dev_all_nikud_types_accuracy_letter}, ' \
               f'Dev nikud letter Accuracy: {dev_nikud_accuracy_letter}, ' \
               f'Dev dagesh letter Accuracy: {dev_dagesh_accuracy_letter}, ' \
               f'Dev shin letter Accuracy: {dev_shin_accuracy_letter}'
@@ -297,13 +299,14 @@ def evaluate(model, test_data, debug_folder=None):
         for index_data, data in enumerate(test_data):
             # if DEBUG_MODE and index_data > 100:
             #     break
-            (inputs, attention_mask, labels) = data
+            # (inputs, attention_mask, labels) = data
+            (inputs, labels) = data
 
             inputs = inputs.to(device)
-            attention_mask = attention_mask.to(device)
+            # attention_mask = attention_mask.to(device)
             labels = labels.to(device)
 
-            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs)#, attention_mask)
 
             for i, (probs, name_class) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
@@ -369,5 +372,7 @@ def evaluate(model, test_data, debug_folder=None):
     nikud_letter_level_correct = nikud_letter_level_correct / sum_all
     dagesh_letter_level_correct = dagesh_letter_level_correct / sum_all
     shin_letter_level_correct = shin_letter_level_correct / sum_all
-
+    print(f"nikud_letter_level_correct = {nikud_letter_level_correct}")
+    print(f"dagesh_letter_level_correct = {dagesh_letter_level_correct}")
+    print(f"shin_letter_level_correct = {shin_letter_level_correct}")
     return reports, all_nikud_types_word_level_correct, all_nikud_types_letter_level_correct

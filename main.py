@@ -11,33 +11,31 @@ import numpy as np
 import torch
 import torch.nn as nn
 from sklearn.model_selection import train_test_split
-from torchviz import make_dot
-from transformers import AutoTokenizer
+# from torchviz import make_dot
+from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 # DL
 import logging
-from src.models import DiacritizationModel
+from src.models import DiacritizationModel, BaseModel
 from src.models_utils import get_model_parameters, training, evaluate
 from src.plot_helpers import plot_results
 from src.running_params import SEED
-from src.utiles_data import NikudDataset, prepare_data, Nikud
+from src.utiles_data import NikudDataset, prepare_data, Nikud, Letters
 
 OUTPUT_DIR = 'models/trained/latest'
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
 cols = ["precision", "recall", "f1-score", "support"]
 
+# Set the random seed for Python
+random.seed(SEED)
 
-#
-#
-# # Set the random seed for Python
-# random.seed(SEED)
-#
-# # Set the random seed for numpy
-# np.random.seed(SEED)
-#
-# # Set the random seed for torch to SEED
-# torch.manual_seed(SEED)
+# Set the random seed for numpy
+np.random.seed(SEED)
+
+# Set the random seed for torch to SEED
+torch.manual_seed(SEED)
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -99,14 +97,14 @@ def main():
     logger.debug(msg)
 
     dataset = NikudDataset(folder=args.data_folder, logger=logger)
-    dataset.show_data_labels(debug_folder=debug_folder)
+    # dataset.show_data_labels(debug_folder=debug_folder)
     dataset.calc_max_length()
 
     msg = f'Max length of data: {dataset.max_length}'
     logger.debug(msg)
 
-    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True)  # , random_state=SEED)
-    train, dev = train_test_split(train, test_size=0.1, shuffle=True)  # , random_state=SEED
+    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True, random_state=SEED)
+    train, dev = train_test_split(train, test_size=0.1, shuffle=True, random_state=SEED)
 
     msg = f'Num rows in train data: {len(train)}, ' \
           f'Num rows in dev data: {len(dev)}, ' \
@@ -116,10 +114,12 @@ def main():
     msg = 'Loading tokenizer and prepare data...'
     logger.debug(msg)
 
-    DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    dataset_train = prepare_data(train, DMtokenizer, dataset.max_length, name="train")
-    dataset_dev = prepare_data(dev, DMtokenizer, dataset.max_length, name="dev")
-    dataset_test = prepare_data(test, DMtokenizer, dataset.max_length, name="test")
+    tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
+    tokenizer_alephbertgimmel = AutoTokenizer.from_pretrained("imvladikon/alephbertgimmel-base-512")
+
+    dataset_train = prepare_data(train, tokenizer_tavbert, tokenizer_alephbertgimmel, dataset.max_length, name="train")
+    dataset_dev = prepare_data(dev, tokenizer_tavbert, tokenizer_alephbertgimmel, dataset.max_length, name="dev")
+    dataset_test = prepare_data(test, tokenizer_tavbert, tokenizer_alephbertgimmel, dataset.max_length, name="test")
 
     mtb_train_dl = torch.utils.data.DataLoader(dataset_train, batch_size=32)
     mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev, batch_size=32)
@@ -127,9 +127,12 @@ def main():
     msg = 'Loading model...'
     logger.debug(msg)
 
-    model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
+    DiacritizationModel("tau/tavbert-he").to(DEVICE)
+    # model_DM = AutoModelForMaskedLM.from_pretrained("imvladikon/alephbertgimmel-base-512")# DiacritizationModel("tau/tavbert-he").to(DEVICE)
+    model_DM = BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                         len(Nikud.label_2_id["sin"])).to(DEVICE)
     all_model_params_MTB = model_DM.named_parameters()
-    top_layer_params = get_model_parameters(all_model_params_MTB, logger, args.num_freeze_layers)
+    top_layer_params = get_model_parameters(all_model_params_MTB, logger, 0)  # args.num_freeze_layers)
     optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
 
     msg = 'training...'
@@ -220,8 +223,8 @@ def hyperparams_checker():
     msg = f'Max length of data: {dataset.max_length}'
     # logger.debug(msg)
 
-    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True)  # , random_state=SEED)
-    train, dev = train_test_split(train, test_size=0.1, shuffle=True)  # , random_state=SEED
+    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True, random_state=SEED)
+    train, dev = train_test_split(train, test_size=0.1, shuffle=True, random_state=SEED)
 
     # hyperparameters search space
     lr_values = np.logspace(-6, -1, num=6)  # learning rates between 1e-6 and 1e-1
@@ -302,5 +305,5 @@ def hyperparams_checker():
 
 
 if __name__ == '__main__':
-    # main()
-    hyperparams_checker()
+    main()
+    # hyperparams_checker()
