@@ -204,8 +204,9 @@ class NikudDataset(Dataset):
             all_files = all_files[2:4]
             # all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
         for file in all_files:
-            if "not_use" not in file:
-                all_data.extend(self.read_data(file))
+            if "not_use" in file or "validation" in file or "test" in file or "NakdanResults" in file:
+                continue
+            all_data.extend(self.read_data(file))
         return all_data
 
     def read_data(self, filepath: str) -> List[Tuple[str, list]]:
