@@ -17,10 +17,11 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 # DL
 import logging
 from src.models import DiacritizationModel, BaseModel, CharClassifierTransformer
-from src.models_utils import get_model_parameters, training, evaluate
-from src.plot_helpers import plot_results
+from src.models_utils import get_model_parameters, training, evaluate, freeze_model_parameters
+from src.plot_helpers import plot_results, plot_steps_info
 from src.running_params import SEED
-from src.utiles_data import NikudDataset, prepare_data, Nikud, Letters
+from src.utiles_data import NikudDataset, Nikud, Letters, prepare_data_DiacritizationModel, \
+    prepare_data_base  # prepare_data
 
 OUTPUT_DIR = 'models/trained/latest'
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -48,6 +49,7 @@ def parse_arguments():
     parser.add_argument('--save_strategy', '-lr', type=str, default='no',
                         help='Whether to save on every epoch ("epoch"/"no")')
     parser.add_argument('--learning_rate', type=float, default=0.001, help='Learning rate')
+    parser.add_argument('--batch_size', type=int, default=32, help='batch_size')
     parser.add_argument('--lr_scheduler_type', type=str, default='linear',
                         help='Learning rate scheduler type ("linear"/"cosine"/"constant"/...')
     parser.add_argument('--warmup_ratio', type=float, default=0.1, help='Warmup ratio')
@@ -80,11 +82,18 @@ def main():
         os.makedirs(debug_folder)
 
     output_dir = args.output_dir
-    output_dir_running = os.path.join(output_dir, f"output_models_{datetime.now().strftime('%d_%m_%y__%H_%M')}")
+    batch_size = args.batch_size
+    date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
+    output_dir_running = os.path.join(output_dir, f"output_models_{date_time}")
     if not os.path.exists(output_dir_running):
         os.makedirs(output_dir_running)
 
-    logger = get_logger(args.loglevel, args.log_dir)
+    output_log_dir = os.path.join(args.log_dir,
+                                  f"log_model_lr_{args.learning_rate}_bs_{batch_size}_{date_time}")
+    if not os.path.exists(output_log_dir):
+        os.makedirs(output_log_dir)
+
+    logger = get_logger(args.loglevel, output_log_dir)
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     msg = f'Device detected: {device}'
@@ -114,27 +123,33 @@ def main():
     logger.debug(msg)
 
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    tokenizer_alephbertgimmel = AutoTokenizer.from_pretrained("imvladikon/alephbertgimmel-base-512")
+    # tokenizer_alephbertgimmel = AutoTokenizer.from_pretrained("imvladikon/alephbertgimmel-base-512")
 
-    dataset_train = prepare_data(train, tokenizer_tavbert, tokenizer_alephbertgimmel, dataset.max_length, name="train")
-    dataset_dev = prepare_data(dev, tokenizer_tavbert, tokenizer_alephbertgimmel, dataset.max_length, name="dev")
-    dataset_test = prepare_data(test, tokenizer_tavbert, tokenizer_alephbertgimmel, dataset.max_length, name="test")
+    # dataset_train = prepare_data(train, dataset.max_length, name="train")
+    # dataset_dev = prepare_data(dev, dataset.max_length, name="dev")
+    # dataset_test = prepare_data(test,dataset.max_length, name="test")
 
-    mtb_train_dl = torch.utils.data.DataLoader(dataset_train, batch_size=32)
-    mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev, batch_size=32)
-    mtb_test_dl = torch.utils.data.DataLoader(dataset_test, batch_size=32)
+    dataset_train = prepare_data_DiacritizationModel(train, tokenizer_tavbert, dataset.max_length, name="train")
+    dataset_dev = prepare_data_DiacritizationModel(dev, tokenizer_tavbert, dataset.max_length, name="dev")
+    dataset_test = prepare_data_DiacritizationModel(test, tokenizer_tavbert, dataset.max_length, name="test")
+
+    mtb_train_dl = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size)
+    mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev, batch_size=batch_size)
+    mtb_test_dl = torch.utils.data.DataLoader(dataset_test, batch_size=batch_size)
     msg = 'Loading model...'
     logger.debug(msg)
 
-    # DiacritizationModel("tau/tavbert-he").to(DEVICE)
-    # model_DM = AutoModelForMaskedLM.from_pretrained("imvladikon/alephbertgimmel-base-512")# DiacritizationModel("tau/tavbert-he").to(DEVICE)
     # model_DM = BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
     #                      len(Nikud.label_2_id["sin"])).to(DEVICE)
-    model_DM = CharClassifierTransformer(Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                         len(Nikud.label_2_id["sin"])).to(DEVICE)
-    all_model_params_MTB = model_DM.named_parameters()
-    top_layer_params = get_model_parameters(all_model_params_MTB, logger, 0)  # args.num_freeze_layers)
-    optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
+    # model_DM = CharClassifierTransformer(Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+    #                      len(Nikud.label_2_id["sin"])).to(DEVICE)
+    model_DM = DiacritizationModel("tau/tavbert-he", len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                                   len(Nikud.label_2_id["sin"])).to(DEVICE)
+
+    # all_model_params_MTB = model_DM.named_parameters()
+    # top_layer_params = freeze_model_parameters(all_model_params_MTB)(all_model_params_MTB)  # args.num_freeze_layers)
+    # top_layer_params = get_model_parameters(all_model_params_MTB, logger, 0)  # args.num_freeze_layers)
+    optimizer = torch.optim.Adam(model_DM.parameters(), lr=args.learning_rate)
 
     msg = 'training...'
     logger.debug(msg)
@@ -152,10 +167,11 @@ def main():
                                                                                 format="png")
 
     training_params = {"n_epochs": args.n_epochs, "checkpoints_frequency": args.checkpoints_frequency}
-    best_model, best_accuracy = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh,
+    best_model, best_accuracy, loss_train_values, loss_dev_values, accuracy_dev_values = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh,
                                          criterion_sin,
                                          training_params, logger, output_dir_running, optimizer, args.only_nikud)
 
+    plot_steps_info(loss_train_values, loss_dev_values, accuracy_dev_values)
     # todo - test on best model
     report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder)
     report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder)
@@ -202,107 +218,108 @@ def get_logger(log_level, log_location):
     return logger
 
 
-def hyperparams_checker():
-    args = parse_arguments()
-    debug_folder = args.debug_folder
-    if not os.path.exists(debug_folder):
-        os.makedirs(debug_folder)
-
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    msg = f'Device detected: {device}'
-    # logger.info(msg)
-
-    # training_args = TrainingArguments(**vars(args))  # vars: Namespace to dict
-
-    msg = 'Loading data...'
-    # logger.debug(msg)
-
-    dataset = NikudDataset(folder=args.data_folder)  # , logger=logger)
-    dataset.show_data_labels(debug_folder=debug_folder)
-    dataset.calc_max_length()
-
-    msg = f'Max length of data: {dataset.max_length}'
-    # logger.debug(msg)
-
-    train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True, random_state=SEED)
-    train, dev = train_test_split(train, test_size=0.1, shuffle=True, random_state=SEED)
-
-    # hyperparameters search space
-    lr_values = np.logspace(-6, -1, num=6)  # learning rates between 1e-6 and 1e-1
-    num_freeze_layers = list(range(1, 10, 2))  # learning rates between 1e-6 and 1e-1
-    batch_size_values = [2 ** i for i in range(3, 7)]  # batch sizes between 32 and 512
-
-    # number of random combinations to test
-    num_combinations = 20
-
-    # best hyperparameters and their performance
-    best_accuracy = 0.0
-    best_hyperparameters = None
-
-    training_params = {"n_epochs": args.n_epochs, "checkpoints_frequency": args.checkpoints_frequency}
-    log_dir = args.log_dir
-    output_dir = args.output_dir
-
-    DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
-
-    dataset_train = prepare_data(train, DMtokenizer, dataset.max_length, name="train")
-    dataset_dev = prepare_data(dev, DMtokenizer, dataset.max_length, name="dev")
-
-    for _ in range(num_combinations):
-        torch.cuda.empty_cache()
-        lr = np.random.choice(lr_values)
-        nfl = np.random.choice(num_freeze_layers)
-        batch_size = int(np.random.choice(batch_size_values))
-
-        output_dir_running = os.path.join(output_dir, f"output_models_{datetime.now().strftime('%d_%m_%y__%H_%M')}")
-        if not os.path.exists(output_dir_running):
-            os.makedirs(output_dir_running)
-
-        output_log_dir = os.path.join(log_dir,
-                                      f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}_{datetime.now().strftime('%d_%m_%y__%H_%M')}")
-        if not os.path.exists(output_log_dir):
-            os.makedirs(output_log_dir)
-
-        logger = get_logger(args.loglevel, output_log_dir)
-
-        msg_data = f'Num rows in train data: {len(train)}, ' \
-                   f'Num rows in dev data: {len(dev)}, ' \
-                   f'Num rows in test data: {len(test)}'
-        logger.debug(msg_data)
-
-        msg = 'Loading tokenizer and prepare data...'
-        logger.debug(msg)
-
-        msg = 'Loading model...'
-        logger.debug(msg)
-
-        model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
-        all_model_params_MTB = model_DM.named_parameters()
-        top_layer_params = get_model_parameters(all_model_params_MTB, logger, num_freeze_layers=nfl)
-
-        # set these hyperparameters in your optimizer
-        optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
-
-        # redefine your data loaders with the new batch size
-        mtb_train_dl = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size)
-        mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev, batch_size=batch_size)
-        # mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=batch_size, name="test")
-
-        criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-        criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-        criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
-
-        # call your training function and get the dev accuracy
-        _, dev_accuracy = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
-                                   training_params, logger, output_dir_running, optimizer, only_nikud=args.only_nikud)
-
-        # if these hyperparameters are better, store them
-        if dev_accuracy > best_accuracy:
-            best_accuracy = dev_accuracy
-            best_hyperparameters = (lr, batch_size)
-
-    # print the best hyperparameters
-    print(best_hyperparameters)
+# def hyperparams_checker():
+#     args = parse_arguments()
+#     debug_folder = args.debug_folder
+#     if not os.path.exists(debug_folder):
+#         os.makedirs(debug_folder)
+#
+#     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+#     msg = f'Device detected: {device}'
+#     # logger.info(msg)
+#
+#     # training_args = TrainingArguments(**vars(args))  # vars: Namespace to dict
+#
+#     msg = 'Loading data...'
+#     # logger.debug(msg)
+#
+#     dataset = NikudDataset(folder=args.data_folder)  # , logger=logger)
+#     dataset.show_data_labels(debug_folder=debug_folder)
+#     dataset.calc_max_length()
+#
+#     msg = f'Max length of data: {dataset.max_length}'
+#     # logger.debug(msg)
+#
+#     train, test = train_test_split(dataset.data, test_size=0.1, shuffle=True, random_state=SEED)
+#     train, dev = train_test_split(train, test_size=0.1, shuffle=True, random_state=SEED)
+#
+#     # hyperparameters search space
+#     lr_values = np.logspace(-6, -1, num=6)  # learning rates between 1e-6 and 1e-1
+#     num_freeze_layers = list(range(1, 10, 2))  # learning rates between 1e-6 and 1e-1
+#     batch_size_values = [2 ** i for i in range(3, 7)]  # batch sizes between 32 and 512
+#
+#     # number of random combinations to test
+#     num_combinations = 20
+#
+#     # best hyperparameters and their performance
+#     best_accuracy = 0.0
+#     best_hyperparameters = None
+#
+#     training_params = {"n_epochs": args.n_epochs, "checkpoints_frequency": args.checkpoints_frequency}
+#     log_dir = args.log_dir
+#     output_dir = args.output_dir
+#
+#     # DMtokenizer = AutoTokenizer.from_pretrained("tau/tavbert-he")
+#
+#     # dataset_train = prepare_data_base(train, dataset.max_length, name="train")
+#     # dataset_dev = prepare_data_base(dev, dataset.max_length, name="dev")
+#
+#     for _ in range(num_combinations):
+#         torch.cuda.empty_cache()
+#         lr = np.random.choice(lr_values)
+#         nfl = np.random.choice(num_freeze_layers)
+#         batch_size = int(np.random.choice(batch_size_values))
+#
+#         date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
+#         output_dir_running = os.path.join(output_dir, f"output_models_{date_time}")
+#         if not os.path.exists(output_dir_running):
+#             os.makedirs(output_dir_running)
+#
+#         output_log_dir = os.path.join(log_dir,
+#                                       f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}_{date_time}")
+#         if not os.path.exists(output_log_dir):
+#             os.makedirs(output_log_dir)
+#
+#         logger = get_logger(args.loglevel, output_log_dir)
+#
+#         msg_data = f'Num rows in train data: {len(train)}, ' \
+#                    f'Num rows in dev data: {len(dev)}, ' \
+#                    f'Num rows in test data: {len(test)}'
+#         logger.debug(msg_data)
+#
+#         msg = 'Loading tokenizer and prepare data...'
+#         logger.debug(msg)
+#
+#         msg = 'Loading model...'
+#         logger.debug(msg)
+#
+#         model_DM = DiacritizationModel("tau/tavbert-he").to(DEVICE)
+#         all_model_params_MTB = model_DM.named_parameters()
+#         top_layer_params = get_model_parameters(all_model_params_MTB, logger, num_freeze_layers=nfl)
+#
+#         # set these hyperparameters in your optimizer
+#         optimizer = torch.optim.Adam(top_layer_params, lr=args.learning_rate)
+#
+#         # redefine your data loaders with the new batch size
+#         mtb_train_dl = torch.utils.data.DataLoader(dataset_train, batch_size=batch_size)
+#         mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev, batch_size=batch_size)
+#         # mtb_test_dl = prepare_data(test, DMtokenizer, dataset.max_length, batch_size=batch_size, name="test")
+#
+#         criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
+#         criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
+#         criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD).to(DEVICE)
+#
+#         # call your training function and get the dev accuracy
+#         _, dev_accuracy = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
+#                                    training_params, logger, output_dir_running, optimizer, only_nikud=args.only_nikud)
+#
+#         # if these hyperparameters are better, store them
+#         if dev_accuracy > best_accuracy:
+#             best_accuracy = dev_accuracy
+#             best_hyperparameters = (lr, batch_size)
+#
+#     # print the best hyperparameters
+#     print(best_hyperparameters)
 
 
 if __name__ == '__main__':

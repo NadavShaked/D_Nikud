@@ -49,6 +49,14 @@ def get_model_parameters(params, logger, num_freeze_layers=2):
     return top_layer_params
 
 
+def freeze_model_parameters(params):
+    top_layer_params = []
+    for name, param in params:
+        param.requires_grad = False
+
+    return top_layer_params
+
+
 def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
              output_model_path, optimizer, only_nikud=False):
     best_accuracy = 0.0
@@ -64,15 +72,15 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         "sin": criterion_sin.to(device),
     }
 
-
-
     max_length = None
     early_stop = False
     output_checkpoints_path = os.path.join(output_model_path, "checkpoints")
     if not os.path.exists(output_checkpoints_path):
         os.makedirs(output_checkpoints_path)
 
-    min_val_loss = None
+    loss_train_values = {"nikud": [], "dagesh": [], "sin": []}
+    loss_dev_values = {"nikud": [], "dagesh": [], "sin": []}
+    accuracy_dev_values = {"nikud": [], "dagesh": [], "sin": []}
 
     for epoch in tqdm(range(training_params["n_epochs"]), desc="Training"):
         if early_stop:
@@ -83,21 +91,16 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
         for index_data, data in enumerate(train_loader):
-            # if DEBUG_MODE and index_data > 100:
-            #     break
-            (inputs, labels) = data
-            # (inputs, attention_mask, labels) = data
+            (inputs, attention_mask, labels) = data
             if max_length is None:
                 max_length = labels.shape[1]
             inputs = inputs.to(device)
-            # attention_mask = attention_mask.to(device)
+            attention_mask = attention_mask.to(device)
             labels = labels.to(device)
 
             optimizer.zero_grad()
-            nikud_probs, dagesh_probs, sin_probs = model(inputs)#, only_nikud=only_nikud)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
-            # sep_id = 2
-            # length_sentences = np.where(np.array(inputs.data) == sep_id)[1] - 1
             for i, (probs, name_class) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
                 if only_nikud and name_class != "nikud":
@@ -113,23 +116,25 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 sum[name_class] += num_relevant
 
                 loss.backward(retain_graph=True)
+            for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
+                loss_train_values[name_class].append(train_loss[name_class] / sum[name_class])
 
             optimizer.step()
             if (index_data + 1) % 100 == 0:
-                msg = f'epoch: {epoch} , index_data: {index_data + 1}\n' \
-                      f'mean loss train nikud: {(train_loss["nikud"] / (sum["nikud"]))}, ' \
-                      f'mean loss train dagesh: {(train_loss["dagesh"] / (sum["dagesh"]))}, ' \
-                      f'mean loss train sin: {(train_loss["sin"] / (sum["sin"]))}'
-                logger.debug(msg)
+                msg = f'epoch: {epoch} , index_data: {index_data + 1}\n'
+
+                for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
+                    msg += f'mean loss train {name_class}: {train_loss[name_class] / sum[name_class]}, '
+                    loss_train_values[name_class].append(train_loss[name_class] / sum[name_class])
+                logger.debug(msg[:-2])
 
         for name_class in train_loss.keys():
             train_loss[name_class] /= sum[name_class]
 
-        msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
-              f'mean loss train nikud: {train_loss["nikud"]}, ' \
-              f'mean loss train dagesh: {train_loss["dagesh"]}, ' \
-              f'mean loss train sin: {train_loss["sin"]}'
-        logger.debug(msg)
+        msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n"
+        for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
+            msg += f'mean loss train {name_class}: {train_loss[name_class]}, '
+        logger.debug(msg[:-2])
 
         model.eval()
         dev_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
@@ -141,23 +146,17 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
         all_nikud_types_correct_preds_letter = 0.0
-        nikud_correct_preds_letter = 0.0
-        dagesh_correct_preds_letter = 0.0
-        shin_correct_preds_letter = 0.0
 
         sum_all = 0.0
         with torch.no_grad():
             for index_data, data in enumerate(dev_loader):
-                # if DEBUG_MODE and index_data > 100:
-                #     break
-                (inputs, labels) = data
-                # (inputs, attention_mask, labels) = data
 
+                (inputs, attention_mask, labels) = data
                 inputs = inputs.to(device)
-                # attention_mask = attention_mask.to(device)
+                attention_mask = attention_mask.to(device)
                 labels = labels.to(device)
 
-                nikud_probs, dagesh_probs, sin_probs = model(inputs)#, attention_mask)
+                nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
                 for i, (probs, name_class) in enumerate(
                         zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
@@ -196,10 +195,6 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                     torch.logical_and(torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
                                       correct["nikud"][mask_all_or]))
 
-                nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
-                dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
-                shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
-
                 sum_all += mask_all_or.sum()
 
         for name_class in ["nikud", "dagesh", "sin"]:
@@ -208,15 +203,13 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
             dev_loss[name_class] /= sum[name_class]
             dev_accuracy[name_class] = correct_preds[name_class].double() / sum[name_class]
 
-        # dev_nikud_accuracy_letter = nikud_correct_preds_letter.double() / sum_all
+            loss_dev_values[name_class].append(dev_loss[name_class])
+            accuracy_dev_values[name_class].append(dev_accuracy[name_class])
+
         if not only_nikud:
             dev_all_nikud_types_accuracy_letter = all_nikud_types_correct_preds_letter.double() / sum_all
         else:
             dev_all_nikud_types_accuracy_letter = dev_accuracy["nikud"]
-        #
-        #     dev_dagesh_accuracy_letter = dagesh_correct_preds_letter.double() / sum_all
-        #     dev_shin_accuracy_letter = shin_correct_preds_letter.double() / sum_all
-
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
               f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
@@ -267,7 +260,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model, save_model_path)
-    return best_model, best_accuracy
+    return best_model, best_accuracy, loss_train_values, loss_dev_values, accuracy_dev_values
 
 
 # TODO: Add word level acc for all kinds
@@ -299,14 +292,14 @@ def evaluate(model, test_data, debug_folder=None):
         for index_data, data in enumerate(test_data):
             # if DEBUG_MODE and index_data > 100:
             #     break
-            # (inputs, attention_mask, labels) = data
-            (inputs, labels) = data
+            (inputs, attention_mask, labels) = data
+            # (inputs, labels) = data
 
             inputs = inputs.to(device)
-            # attention_mask = attention_mask.to(device)
+            attention_mask = attention_mask.to(device)
             labels = labels.to(device)
 
-            nikud_probs, dagesh_probs, sin_probs = model(inputs)#, attention_mask)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)  # , attention_mask)
 
             for i, (probs, name_class) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):

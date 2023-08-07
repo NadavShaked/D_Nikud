@@ -355,29 +355,43 @@ def one_hot_sentence(sentence, vocab):
         one_hot_matrix[i, letter_index] = 1
 
     return one_hot_matrix
-def prepare_data(data, tokenizer_tavbert, tokenizer_alephbertgimmel, max_length, name="train"):
+def prepare_data_base(data,max_length, name="train"):
     dataset = []
     for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
-        # encoded_sequence_tavbert = tokenizer_tavbert.encode_plus(
-        #     sentence,
-        #     add_special_tokens=True,
-        #     max_length=max_length,
-        #     padding='max_length',
-        #     truncation=True,
-        #     return_attention_mask=True,
-        #     return_tensors='pt'
-        # )
+
         encoded_sequence = torch.zeros(max_length, dtype=torch.long)
-        try:
-            encoded_sequence[:len(sentence)] = torch.tensor(update_ids(sentence, Letters.vocab, max_length))
-        except:
-            encoded_sequence[:len(sentence)] = torch.tensor(update_ids(sentence, Letters.vocab, max_length))
+        encoded_sequence[:len(sentence)] = torch.tensor(update_ids(sentence, Letters.vocab, max_length))
 
         label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
         label = torch.tensor(label_lists[:(max_length)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in range(max_length - len(label))])
 
         dataset.append((encoded_sequence, label))
 
+    return dataset
+
+def prepare_data_DiacritizationModel(data, tokenizer, max_length, name="train"):
+    dataset = []
+    for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
+
+        encoded_sequence = tokenizer.encode_plus(
+            sentence,
+            add_special_tokens=True,
+            max_length=max_length,
+            padding='max_length',
+            truncation=True,
+            return_attention_mask=True,
+            return_tensors='pt'
+        )
+
+        label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+        label = torch.tensor(
+            [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(max_length-1)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
+                                                                 range(max_length - len(label) - 1)])
+
+        dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
+
+
+    # data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
     return dataset
 
 # def prepare_data(data, tokenizer_tavbert, tokenizer_alephbertgimmel, max_length, name="train"):

@@ -21,3 +21,18 @@ def plot_results(reports, report_filename="results"):
         df.to_csv(f"{report_filename} : {name}")
 
         print(f"Evaluation report saved to {report_filename}")
+
+
+def plot_steps_info(loss_train_values, loss_dev_values, accuracy_dev_values):
+    pass
+    # for name in ["nikud", "dagesh", "sin"]:
+    #     df = pd.DataFrame(report).transpose()
+    #     df = df[cols]
+    #
+    #     print(tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f"))
+    #
+    #     # Save report to CSV
+    #     df.to_csv(f"{report_filename} : {name}")
+    #
+    #     print(f"Evaluation report saved to {report_filename}")
+
