@@ -398,11 +398,13 @@ def evaluate(model, test_data, debug_folder=None):
             plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
 
     all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / letter_count
+    all_nikud_types_word_level_correct = correct_words / word_count
     nikud_letter_level_correct = nikud_letter_level_correct / letter_count
     dagesh_letter_level_correct = dagesh_letter_level_correct / letter_count
     shin_letter_level_correct = shin_letter_level_correct / letter_count
     print(f"nikud_letter_level_correct = {nikud_letter_level_correct}")
     print(f"dagesh_letter_level_correct = {dagesh_letter_level_correct}")
     print(f"shin_letter_level_correct = {shin_letter_level_correct}")
-    print(f"word_level_correct = {correct_words / word_count}")
+    print(f"word_level_correct = {all_nikud_types_word_level_correct}")
+
     return reports, all_nikud_types_word_level_correct, all_nikud_types_letter_level_correct
