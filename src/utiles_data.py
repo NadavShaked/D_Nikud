@@ -283,7 +283,7 @@ class NikudDataset(Dataset):
         else:
             plt.savefig(os.path.join(debug_folder, 'show_data_labels.jpg'))
 
-    def calc_max_length(self, maximum=1000):
+    def calc_max_length(self, maximum=512):
         if self.max_length > maximum:
             self.max_length = maximum
         return self.max_length

@@ -16,7 +16,7 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 # DL
 import logging
-from src.models import DiacritizationModel, BaseModel
+from src.models import DiacritizationModel, BaseModel, CharClassifierTransformer
 from src.models_utils import get_model_parameters, training, evaluate
 from src.plot_helpers import plot_results
 from src.running_params import SEED
@@ -127,9 +127,11 @@ def main():
     msg = 'Loading model...'
     logger.debug(msg)
 
-    DiacritizationModel("tau/tavbert-he").to(DEVICE)
+    # DiacritizationModel("tau/tavbert-he").to(DEVICE)
     # model_DM = AutoModelForMaskedLM.from_pretrained("imvladikon/alephbertgimmel-base-512")# DiacritizationModel("tau/tavbert-he").to(DEVICE)
-    model_DM = BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+    # model_DM = BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+    #                      len(Nikud.label_2_id["sin"])).to(DEVICE)
+    model_DM = CharClassifierTransformer(Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
                          len(Nikud.label_2_id["sin"])).to(DEVICE)
     all_model_params_MTB = model_DM.named_parameters()
     top_layer_params = get_model_parameters(all_model_params_MTB, logger, 0)  # args.num_freeze_layers)
