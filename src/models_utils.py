@@ -57,10 +57,20 @@ def freeze_model_parameters(params):
     return top_layer_params
 
 
+def find_num_correct_words(input, letter_correct_mask):
+    input[np.where(input == 104)[0]] = 0
+    input[np.where(input == 1)[0]] = 0
+    input[np.where(input == 2)[0]] = 0
+    words_end_index = np.concatenate((np.array([-1]), np.where(input == 0)[0]))
+    is_correct_words_array = [
+        bool(letter_correct_mask[list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s
+        in range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
+    return np.array(is_correct_words_array).sum(), len(is_correct_words_array)
+
+
 def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
              output_model_path, optimizer, only_nikud=False):
     best_accuracy = 0.0
-    best_model_weights = None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(torch.cuda.is_available())
     logger.info(f"strat training with training_params: {training_params}, only_nikud: {only_nikud}")
@@ -194,20 +204,18 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                     correct[name_class][masks[name_class]] = predictions[name_class][masks[name_class]] == \
                                                              labels_class[name_class][masks[name_class]]
 
-
-                letter_correct_mask = torch.logical_and(torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
-                                  correct["nikud"][mask_all_or])
+                letter_correct_mask = torch.logical_and(
+                    torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
+                    correct["nikud"][mask_all_or])
                 all_nikud_types_correct_preds_letter += torch.sum(letter_correct_mask)
 
                 # nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
                 # dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
                 # shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
+                correct_num, total_words_num = find_num_correct_words(inputs[0].cpu(), letter_correct_mask)
 
-                words_end_index = np.concatenate((np.array([-1]), np.where(inputs[0].cpu() == 0)[0]))
-                is_correct_words_array = [bool(letter_correct_mask[list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s in range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
-
-                word_count += len(is_correct_words_array)
-                correct_words += np.array(is_correct_words_array).sum()
+                word_count += total_words_num
+                correct_words += correct_num
                 letter_count += mask_all_or.sum()
 
         for name_class in ["nikud", "dagesh", "sin"]:
@@ -355,13 +363,15 @@ def evaluate(model, test_data, debug_folder=None):
             # dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
             # shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
 
-            words_end_index = np.concatenate((np.array([-1]), np.where(inputs[0].cpu() == 0)[0]))
-            is_correct_words_array = [
-                bool(letter_correct_mask[list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s in
-                range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
+            correct_num, total_words_num = find_num_correct_words(inputs[0].cpu(), letter_correct_mask)
 
-            word_count += len(is_correct_words_array)
-            correct_words += np.array(is_correct_words_array).sum()
+            # words_end_index = np.concatenate((np.array([-1]), np.where(inputs[0].cpu() == 0)[0]))
+            # is_correct_words_array = [
+            #     bool(letter_correct_mask[list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s in
+            #     range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
+
+            word_count += total_words_num  # len(is_correct_words_array)
+            correct_words += correct_num  # np.array(is_correct_words_array).sum()
 
             letter_count += mask_all_or.sum()
 

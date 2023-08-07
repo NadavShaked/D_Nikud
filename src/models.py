@@ -7,24 +7,6 @@ from src.utiles_data import Nikud
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-# class RobertaWithoutLMHead(RobertaForMaskedLM):
-#     def __init__(self, config):
-#         super(RobertaWithoutLMHead, self).__init__(config)
-#
-#     def forward(self, input_ids, attention_mask=None, token_type_ids=None, position_ids=None, head_mask=None):
-#         # Call the forward method of the base class (RobertaForMaskedLM)
-#         outputs = super(RobertaWithoutLMHead, self).forward(input_ids, attention_mask=attention_mask,
-#                                                             token_type_ids=token_type_ids,
-#                                                             position_ids=position_ids,
-#                                                             head_mask=head_mask, output_hidden_states=True
-#                                                             )
-#
-#         # Exclude the lm_head's output from the outputs
-#         last_hidden_states = outputs.hidden_states[-1]
-#
-#         return last_hidden_states
-
-
 class DiacritizationModel(nn.Module):
     def __init__(self, base_model_name, nikud_size, dagesh_size, sin_size):
         super(DiacritizationModel, self).__init__()
@@ -32,17 +14,8 @@ class DiacritizationModel(nn.Module):
         tav_bert = RobertaForMaskedLM.from_pretrained(base_model_name).to(
             DEVICE)
         self.model = tav_bert.roberta
-        # self.model.load_state_dict(tav_bert.roberta.state_dict())
-        # self.model.lm_head = None
-        # self.model.roberta = list(tav_bert.children())[:-1][0]
         for name, param in self.model.named_parameters():
             param.requires_grad = False
-        # super(DiacritizationModel, self).__init__()
-        # config = AutoConfig.from_pretrained(base_model_name)
-        # self.model = RobertaWithoutLMHead.from_pretrained(base_model_name).to(
-        #     DEVICE)
-        # for name, param in self.model.named_parameters():
-        #     param.requires_grad = False
 
         self.lstm1 = nn.LSTM(config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1, batch_first=True)  # num_layers=1,
         self.lstm2 = nn.LSTM(2 * config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1, batch_first=True)
