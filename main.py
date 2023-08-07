@@ -57,8 +57,7 @@ def parse_arguments():
     parser.add_argument('--n_epochs', type=int, default=5, help='number of epochs')
     parser.add_argument('--num_freeze_layers', type=int, default=5, help='number of freeze layers')
     parser.add_argument('--checkpoints_frequency', type=int, default=1, help='checkpoints saving frequency')
-    parser.add_argument('--only_nikud', type=bool, default=False,
-                        help='Want to train only on nikud classification (not dagesh/sin)')
+    parser.add_argument('--only_nikud', type=bool, default=False, help='Want to train only on nikud classification (not dagesh/sin)')
     parser.add_argument('--evaluation_strategy', type=str, default='steps',
                         help='How to validate (set to "no" for no validation)')
     parser.add_argument('--eval_steps', type=int, default=2000, help='Validate every N steps')
