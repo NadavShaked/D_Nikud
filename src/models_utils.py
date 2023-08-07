@@ -49,7 +49,7 @@ def get_model_parameters(params, logger, num_freeze_layers=2):
     return top_layer_params
 
 
-def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
+def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
              output_model_path, optimizer, only_nikud=False):
     best_accuracy = 0.0
     best_model_weights = None
@@ -64,8 +64,8 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
         "sin": criterion_sin.to(device),
     }
 
-    train_loader = train_data
-    dev_loader = dev_data
+
+
     max_length = None
     early_stop = False
     output_checkpoints_path = os.path.join(output_model_path, "checkpoints")
@@ -144,9 +144,7 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
         nikud_correct_preds_letter = 0.0
         dagesh_correct_preds_letter = 0.0
         shin_correct_preds_letter = 0.0
-        dev_dagesh_accuracy_letter = 0.0
-        dev_shin_accuracy_letter = 0.0
-        dev_all_nikud_types_accuracy_letter = 0.0
+
         sum_all = 0.0
         with torch.no_grad():
             for index_data, data in enumerate(dev_loader):
@@ -169,11 +167,11 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                     reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
-                    loss = criterion_nikud(reshaped_tensor, labels[:, :, i]).to(device)
+                    loss = criterions[name_class](reshaped_tensor, labels[:, :, i]).to(device)
                     mask = labels[:, :, i] != -1
                     num_relevant = mask.sum()
                     sum[name_class] += num_relevant
-                    _, preds = torch.max(nikud_probs, 2)
+                    _, preds = torch.max(probs, 2)
                     dev_loss[name_class] += loss.item() * num_relevant
                     correct_preds[name_class] += torch.sum(preds[mask] == labels[:, :, i][mask])
                     masks[name_class] = mask
