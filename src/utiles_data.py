@@ -90,7 +90,7 @@ class Letters:
     SPECIAL_TOKENS = ['H', 'O', '5', '1']
     ENDINGS_TO_REGULAR = dict(zip('ךםןףץ', 'כמנפצ'))
     vocab = VALID_LETTERS + SPECIAL_TOKENS
-    vocab_size = len(VALID_LETTERS + SPECIAL_TOKENS)
+    vocab_size = len(vocab)
 
 
 class Letter:

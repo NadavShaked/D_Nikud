@@ -145,7 +145,10 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         dagesh_correct_preds_letter = 0.0
         shin_correct_preds_letter = 0.0
 
-        sum_all = 0.0
+        letter_count = 0.0
+
+        correct_words = 0.0
+        word_count = 0.0
         with torch.no_grad():
             for index_data, data in enumerate(dev_loader):
                 # if DEBUG_MODE and index_data > 100:
@@ -192,15 +195,21 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                     correct[name_class][masks[name_class]] = predictions[name_class][masks[name_class]] == \
                                                              labels_class[name_class][masks[name_class]]
 
-                all_nikud_types_correct_preds_letter += torch.sum(
-                    torch.logical_and(torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
-                                      correct["nikud"][mask_all_or]))
 
-                nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
-                dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
-                shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
+                letter_correct_mask = torch.logical_and(torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
+                                  correct["nikud"][mask_all_or])
+                all_nikud_types_correct_preds_letter += torch.sum(letter_correct_mask)
 
-                sum_all += mask_all_or.sum()
+                # nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
+                # dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
+                # shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
+
+                words_end_index = np.concatenate((np.array([-1]), np.where(inputs[0].cpu() == 0)[0]))
+                is_correct_words_array = [bool(letter_correct_mask[list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s in range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
+
+                word_count += len(is_correct_words_array)
+                correct_words += np.array(is_correct_words_array).sum()
+                letter_count += mask_all_or.sum()
 
         for name_class in ["nikud", "dagesh", "sin"]:
             if only_nikud and name_class != "nikud":
@@ -208,14 +217,14 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
             dev_loss[name_class] /= sum[name_class]
             dev_accuracy[name_class] = correct_preds[name_class].double() / sum[name_class]
 
-        # dev_nikud_accuracy_letter = nikud_correct_preds_letter.double() / sum_all
+        # dev_nikud_accuracy_letter = nikud_correct_preds_letter.double() / letter_count
         if not only_nikud:
-            dev_all_nikud_types_accuracy_letter = all_nikud_types_correct_preds_letter.double() / sum_all
+            dev_all_nikud_types_accuracy_letter = all_nikud_types_correct_preds_letter.double() / letter_count
         else:
             dev_all_nikud_types_accuracy_letter = dev_accuracy["nikud"]
         #
-        #     dev_dagesh_accuracy_letter = dagesh_correct_preds_letter.double() / sum_all
-        #     dev_shin_accuracy_letter = shin_correct_preds_letter.double() / sum_all
+        #     dev_dagesh_accuracy_letter = dagesh_correct_preds_letter.double() / letter_count
+        #     dev_shin_accuracy_letter = shin_correct_preds_letter.double() / letter_count
 
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
@@ -225,7 +234,8 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
               f'Dev all nikud types letter Accuracy: {dev_all_nikud_types_accuracy_letter}, ' \
               f'Dev nikud letter Accuracy: {dev_accuracy["nikud"]}, ' \
               f'Dev dagesh letter Accuracy: {dev_accuracy["dagesh"]}, ' \
-              f'Dev shin letter Accuracy: {dev_accuracy["sin"]}'
+              f'Dev shin letter Accuracy: {dev_accuracy["sin"]}, ' \
+              f'Dev word Accuracy: {correct_words / word_count}'
         logger.debug(msg)
 
         # calc accuracy by letter
@@ -294,7 +304,9 @@ def evaluate(model, test_data, debug_folder=None):
     shin_word_level_correct = 0.0
     shin_letter_level_correct = 0.0
 
-    sum_all = 0.0
+    letter_count = 0.0
+    word_count = 0.0
+    correct_words = 0.0
     with torch.no_grad():
         for index_data, data in enumerate(test_data):
             # if DEBUG_MODE and index_data > 100:
@@ -333,11 +345,28 @@ def evaluate(model, test_data, debug_folder=None):
                 masks["dagesh"]]
             correct_sin[masks["sin"]] = predictions["sin"][masks["sin"]] == labels_class["sin"][masks["sin"]]
 
-            all_nikud_types_letter_level_correct += torch.sum(
-                torch.logical_and(torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
-                                  correct_nikud[mask_all_or]))
+            # all_nikud_types_letter_level_correct += torch.sum(
+            #     torch.logical_and(torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
+            #                       correct_nikud[mask_all_or]))
 
-            sum_all += mask_all_or.sum()
+            letter_correct_mask = torch.logical_and(
+                torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
+                correct_nikud[mask_all_or])
+            all_nikud_types_letter_level_correct += torch.sum(letter_correct_mask)
+
+            # nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
+            # dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
+            # shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
+
+            words_end_index = np.concatenate((np.array([-1]), np.where(inputs[0].cpu() == 0)[0]))
+            is_correct_words_array = [
+                bool(letter_correct_mask[list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s in
+                range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
+
+            word_count += len(is_correct_words_array)
+            correct_words += np.array(is_correct_words_array).sum()
+
+            letter_count += mask_all_or.sum()
 
             nikud_letter_level_correct += torch.sum(correct_nikud[mask_all_or])
             dagesh_letter_level_correct += torch.sum(correct_dagesh[mask_all_or])
@@ -368,11 +397,12 @@ def evaluate(model, test_data, debug_folder=None):
         else:
             plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
 
-    all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / sum_all
-    nikud_letter_level_correct = nikud_letter_level_correct / sum_all
-    dagesh_letter_level_correct = dagesh_letter_level_correct / sum_all
-    shin_letter_level_correct = shin_letter_level_correct / sum_all
+    all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / letter_count
+    nikud_letter_level_correct = nikud_letter_level_correct / letter_count
+    dagesh_letter_level_correct = dagesh_letter_level_correct / letter_count
+    shin_letter_level_correct = shin_letter_level_correct / letter_count
     print(f"nikud_letter_level_correct = {nikud_letter_level_correct}")
     print(f"dagesh_letter_level_correct = {dagesh_letter_level_correct}")
     print(f"shin_letter_level_correct = {shin_letter_level_correct}")
+    print(f"word_level_correct = {correct_words / word_count}")
     return reports, all_nikud_types_word_level_correct, all_nikud_types_letter_level_correct

@@ -155,8 +155,8 @@ def main():
                                          training_params, logger, output_dir_running, optimizer, args.only_nikud)
 
     # todo - test on best model
-    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder)
-    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder)
+    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(best_model, mtb_dev_dl, debug_folder)
+    report_test, word_level_correct_test, letter_level_correct_test = evaluate(best_model, mtb_test_dl, debug_folder)
 
     msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct_dev}\n--------------------\nTest dataset\n" \
