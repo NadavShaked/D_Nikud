@@ -171,12 +171,12 @@ def main():
                                          criterion_sin,
                                          training_params, logger, output_dir_running, optimizer, args.only_nikud)
 
-    best_model = model_DM.named_parameters()#BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                        # len(Nikud.label_2_id["sin"])).to(DEVICE)
-    best_model.load_state_dict(best_model_details['model_state_dict'])
+    # best_model = model_DM.named_parameters()#BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+    #                     # len(Nikud.label_2_id["sin"])).to(DEVICE)
+    model_DM.load_state_dict(best_model_details['model_state_dict'])
 
-    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(best_model, mtb_dev_dl, debug_folder)
-    report_test, word_level_correct_test, letter_level_correct_test = evaluate(best_model, mtb_test_dl, debug_folder)
+    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder)
+    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder)
 
     msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct_dev}\n--------------------\nTest dataset\n" \
