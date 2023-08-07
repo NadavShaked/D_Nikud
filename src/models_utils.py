@@ -58,9 +58,11 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
     logger.info(f"strat training with training_params: {training_params}, only_nikud: {only_nikud}")
     model = model.to(device)
 
-    criterion_nikud.to(device)
-    criterion_dagesh.to(device)
-    criterion_sin.to(device)
+    criterions = {
+        "nikud": criterion_nikud.to(device),
+        "dagesh": criterion_dagesh.to(device),
+        "sin": criterion_sin.to(device),
+    }
 
     train_loader = train_data
     dev_loader = dev_data
@@ -104,7 +106,7 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                 reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                  probs.shape[2],
                                                                                  probs.shape[1])
-                loss = criterion_nikud(reshaped_tensor, labels[:, :, i]).to(device)
+                loss = criterions[name_class](reshaped_tensor, labels[:, :, i]).to(device)
 
                 num_relevant = (labels[:, :, i] != -1).sum()
                 train_loss[name_class] += loss.item() * num_relevant
@@ -190,8 +192,7 @@ def training(model, train_data, dev_data, criterion_nikud, criterion_dagesh, cri
                     if only_nikud and name_class != "nikud":
                         continue
                     correct[name_class][masks[name_class]] = predictions[name_class][masks[name_class]] == \
-                                                             labels_class[name_class][
-                                                                 masks[name_class]]
+                                                             labels_class[name_class][masks[name_class]]
 
                 all_nikud_types_correct_preds_letter += torch.sum(
                     torch.logical_and(torch.logical_and(correct["sin"][mask_all_or], correct["dagesh"][mask_all_or]),
