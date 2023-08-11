@@ -193,11 +193,10 @@ def text_contains_nikud(text):
 
 
 class NikudDataset(Dataset):
-    def __init__(self, tokenizer, folder='../data/hebrew_diacritized', logger=None, max_length=None):
-        self.max_length = 0
+    def __init__(self, tokenizer, folder='../data/hebrew_diacritized', logger=None, max_length=0):
+        self.max_length = max_length
         self.tokenizer = tokenizer
         self.data = self.read_data_folder(folder, logger)
-        self.max_length = max_length
         self.prepered_data = None
 
     def read_data_folder(self, folder_path: str, logger=None):
@@ -212,8 +211,8 @@ class NikudDataset(Dataset):
             all_files = all_files[2:4]
             # all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
         for file in all_files:
-            # if "not_use" in file or "validation" in file or "test" in file or "NakdanResults" in file:
-            #     continue
+            if "not_use" in file or "NakdanResults" in file:
+                continue
             all_data.extend(self.read_data(file))
         return all_data
 
@@ -315,16 +314,13 @@ class NikudDataset(Dataset):
                 return_attention_mask=True,
                 return_tensors='pt'
             )
-            if with_label:
-                label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
-                label = torch.tensor(
-                    [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(self.max_length - 1)] + [
-                        [Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
-                        range(self.max_length - len(label) - 1)])
+            label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+            label = torch.tensor(
+                [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(self.max_length - 1)] + [
+                    [Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
+                    range(self.max_length - len(label) - 1)])
 
-                dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
-            else:
-                dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0]))
+            dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
 
         self.prepered_data = dataset
 
@@ -344,107 +340,3 @@ class NikudDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.data[idx]
-
-
-# def update_ids(sentence, vocab, max_length):
-#     # Create an empty matrix with dimensions (len(sentence), len(vocab))
-#     update_ids_matrix = np.zeros(np.min([max_length, len(sentence)]))
-#     sentence_words = sentence.split(" ")
-#     # For each letter in the sentence...
-#     index_letter = 0
-#     for i, word in enumerate(sentence_words):
-#         if index_letter + len(word) > max_length:
-#             break
-#         for letter in word:
-#             # Find the index of this letter in the vocab
-#
-#             letter_index = vocab.index(letter)
-#
-#             # Set the corresponding position in the one_hot_matrix to 1
-#             update_ids_matrix[index_letter] = letter_index
-#
-#             index_letter += 1
-#         index_letter += 1
-#
-#     return update_ids_matrix
-# def one_hot_sentence(sentence, vocab):
-#     # Create an empty matrix with dimensions (len(sentence), len(vocab))
-#     one_hot_matrix = np.zeros((len(sentence), len(vocab)))
-#
-#     # For each letter in the sentence...
-#     for i, letter in enumerate(sentence):
-#
-#         # Find the index of this letter in the vocab
-#         letter_index = vocab.index(letter)
-#
-#         # Set the corresponding position in the one_hot_matrix to 1
-#         one_hot_matrix[i, letter_index] = 1
-#
-#     return one_hot_matrix
-
-
-def return_2_text(data_loader, labels):
-    for index_data, data in enumerate(data_loader):
-        (inputs, attention_mask) = data
-
-
-# def prepare_data(data, tokenizer_tavbert, tokenizer_alephbertgimmel, max_length, name="train"):
-#     dataset = []
-#     for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
-#         encoded_sequence_tavbert = tokenizer_tavbert.encode_plus(
-#             sentence,
-#             add_special_tokens=True,
-#             max_length=max_length,
-#             padding='max_length',
-#             truncation=True,
-#             return_attention_mask=True,
-#             return_tensors='pt'
-#         )
-#         encoded_sequence_alephbertgimmel = tokenizer_alephbertgimmel.encode_plus(
-#             sentence,
-#             add_special_tokens=True,
-#             max_length=max_length,
-#             padding='max_length',
-#             truncation=True,
-#             return_attention_mask=True,
-#             return_tensors='pt'
-#         )
-#         index_place = 0
-#         map_label_word = {}
-#         sen_tav = encoded_sequence_tavbert['input_ids'][0]
-#         for indx_word, word in enumerate(encoded_sequence_alephbertgimmel['input_ids'][0][1:]):
-#             if word == 2:
-#                 break
-#             word_decode = tokenizer_alephbertgimmel.decode(word)
-#             tavs_encode = tokenizer_tavbert.encode_plus(word_decode)['input_ids'][1:-1]
-#             tavs_encode = np.array(tavs_encode)[np.array(tavs_encode) != 107].tolist()
-#             try:
-#                 while not int(sen_tav[index_place]) == tavs_encode[0]:
-#                     index_place += 1
-#             except:
-#                 a=1
-#
-#             map_label_word.update({(index_place + i):(indx_word+1) for i in range(len(tavs_encode))})
-#             index_place += len(tavs_encode)
-#
-#         label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
-#         label = torch.tensor(
-#             [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(max_length - 1)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD]
-#                                                                                     for i in
-#                                                                                     range(max_length - len(label) - 1)])
-#
-#         dataset.append((encoded_sequence_tavbert['input_ids'][0], encoded_sequence_tavbert['attention_mask'][0],
-#                         encoded_sequence_alephbertgimmel['input_ids'][0],
-#                         encoded_sequence_alephbertgimmel['attention_mask'][0], label, map_label_word))
-#
-#     return dataset
-
-
-def main():
-    # folder_path = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized"  # Replace with the root path of the folder containing sub-folders with .txt files
-    # all_data = read_data_folder(folder_path)
-    dataset = NikudDataset()
-
-
-if __name__ == '__main__':
-    main()
