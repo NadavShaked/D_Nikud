@@ -18,7 +18,7 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 import logging
 from src.models import DiacritizationModel, BaseModel, CharClassifierTransformer, ModelConfig
 from src.models_utils import get_model_parameters, training, evaluate, freeze_model_parameters, predict
-from src.plot_helpers import plot_results, plot_steps_info, generate_plot_by_nikud_dagesh_sin_dict
+from src.plot_helpers import plot_results, plot_steps_info, generate_plot_by_nikud_dagesh_sin_dict, generate_word_and_letter_accuracy_plot
 from src.running_params import SEED
 from src.utiles_data import NikudDataset, Nikud, Letters
 
@@ -184,7 +184,7 @@ def main():
     generate_plot_by_nikud_dagesh_sin_dict(steps_loss_train_values, "Train steps loss", "Loss", debug_folder)
     generate_plot_by_nikud_dagesh_sin_dict(loss_dev_values, "Dev epochs loss", "Loss", debug_folder)
     generate_plot_by_nikud_dagesh_sin_dict(accuracy_dev_values, "Dev accuracy", "Accuracy", debug_folder)
-
+    generate_word_and_letter_accuracy_plot(accuracy_dev_values, debug_folder)
     # best_model = model_DM.named_parameters()#BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
     #                     # len(Nikud.label_2_id["sin"])).to(DEVICE)
     model_DM.load_state_dict(best_model_details['model_state_dict'])
