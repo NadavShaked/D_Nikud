@@ -18,7 +18,7 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 import logging
 from src.models import DiacritizationModel, BaseModel, CharClassifierTransformer, ModelConfig
 from src.models_utils import get_model_parameters, training, evaluate, freeze_model_parameters, predict
-from src.plot_helpers import plot_results, plot_steps_info
+from src.plot_helpers import plot_results, plot_steps_info, generate_plot_by_nikud_dagesh_sin_dict, generate_word_and_letter_accuracy_plot
 from src.running_params import SEED
 from src.utiles_data import NikudDataset, Nikud, Letters
 
@@ -105,9 +105,13 @@ def main():
 
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
-    dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=logger,
-                                 max_length=512)
-    # dataset_train.calc_max_length()
+    # TODO: DELETE
+    #x = NikudDataset(None)
+    #x.delete_files(r"C:\Users\nadavshaked\Documents\Nadavs_Projects\nlp-final-project\data")
+    #x.split_data(r"C:\Users\nadavshaked\Documents\Nadavs_Projects\nlp-final-project\data\hebrew_diacritized")
+
+    dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=logger)
+    dataset_train.calc_max_length()
     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=logger,
                                max_length=dataset_train.max_length)
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
@@ -147,7 +151,7 @@ def main():
     dir_model_config = os.path.join(output_model_dir, "config.yml")
     if not os.path.isfile(dir_model_config):
         our_model_config = ModelConfig(dataset_train.max_length)
-        our_model_config.save_to_file()
+        our_model_config.save_to_file(dir_model_config)
     # all_model_params_MTB = model_DM.named_parameters()
     # top_layer_params = freeze_model_parameters(all_model_params_MTB)(all_model_params_MTB)  # args.num_freeze_layers)
     # top_layer_params = get_model_parameters(all_model_params_MTB, logger, 0)  # args.num_freeze_layers)
@@ -169,7 +173,7 @@ def main():
                                                                                 format="png")
 
     training_params = {"n_epochs": args.n_epochs, "checkpoints_frequency": args.checkpoints_frequency}
-    best_model_details, best_accuracy, loss_train_values, loss_dev_values, accuracy_dev_values = training(model_DM,
+    best_model_details, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values, accuracy_dev_values = training(model_DM,
                                                                                                           mtb_train_dl,
                                                                                                           mtb_dev_dl,
                                                                                                           criterion_nikud,
@@ -181,6 +185,11 @@ def main():
                                                                                                           optimizer,
                                                                                                           args.only_nikud)
 
+    generate_plot_by_nikud_dagesh_sin_dict(epochs_loss_train_values, "Train epochs loss", "Loss", debug_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(steps_loss_train_values, "Train steps loss", "Loss", debug_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(loss_dev_values, "Dev epochs loss", "Loss", debug_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(accuracy_dev_values, "Dev accuracy", "Accuracy", debug_folder)
+    generate_word_and_letter_accuracy_plot(accuracy_dev_values, debug_folder)
     # best_model = model_DM.named_parameters()#BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
     #                     # len(Nikud.label_2_id["sin"])).to(DEVICE)
     model_DM.load_state_dict(best_model_details['model_state_dict'])
