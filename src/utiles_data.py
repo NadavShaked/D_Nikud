@@ -251,6 +251,67 @@ class NikudDataset(Dataset):
 
         return data
 
+
+
+    def split_data(self, folder_path: str, logger=None):#TODO: DELETE
+        all_data = []
+
+        for filename in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, filename)
+            if filename.lower().endswith('.txt') and os.path.isfile(file_path):
+                all_data.extend(self.read_data_split(file_path))
+            elif os.path.isdir(file_path) and filename != ".git":
+                self.split_data(file_path, logger)
+
+        import random
+        random.shuffle(all_data)
+
+        if len(all_data) > 0:
+            self.split_data_data(all_data, folder_path)
+
+        return all_data
+
+    def read_data_split(self, filepath: str) -> List[Tuple[str, list]]:#TODO: DELETE
+        data_list = []
+        with open(filepath, 'r', encoding='utf-8') as file:
+            file_data = file.read()
+        data_list = self.split_text(file_data)
+
+        return data_list
+
+    def split_data_data(self, data_list, filepath):#TODO: DELETE
+        import math
+        train_size = (int)(0.9 * len(data_list))
+        dev_size = math.ceil(0.05 * len(data_list))
+        dev_end_index = train_size + dev_size
+        train_data = data_list[: train_size]
+        dev_data = data_list[train_size : dev_end_index]
+        test_data = data_list[dev_end_index :]
+
+        x = "\\"
+        self.write_list_to_text_file(train_data, filepath + f"\\{filepath.split(x)[-1]}.txt", "train")
+        self.write_list_to_text_file(dev_data, filepath + f"\\{filepath.split(x)[-1]}.txt", "dev")
+        self.write_list_to_text_file(test_data, filepath + f"\\{filepath.split(x)[-1]}.txt", "test")
+
+    def write_list_to_text_file(self, data_list, file_path, type):#TODO: DELETE
+        file_path = file_path.replace("hebrew_diacritized", type)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            for item in data_list:
+                f.write("%s\n" % item)
+
+    def delete_files(self, folder_path): #TODO: DELETE
+        all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
+
+        for file_path in all_files:
+            if "hebrew_diacritized" in file_path:
+                continue
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+
+
+
+
     def split_text(self, file_data):
         file_data = file_data.replace(". ", ".\n")
         file_data = file_data.replace("? ", "?\n")

@@ -105,6 +105,11 @@ def main():
 
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
+    # TODO: DELETE
+    x = NikudDataset(None)
+    x.delete_files(r"C:\Users\nadavshaked\Documents\Nadavs_Projects\nlp-final-project\data")
+    x.split_data(r"C:\Users\nadavshaked\Documents\Nadavs_Projects\nlp-final-project\data\hebrew_diacritized")
+
     dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=logger)
     dataset_train.calc_max_length()
     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=logger,
