@@ -120,7 +120,8 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
     if not os.path.exists(output_checkpoints_path):
         os.makedirs(output_checkpoints_path)
 
-    loss_train_values = {"nikud": [], "dagesh": [], "sin": []}
+    steps_loss_train_values = {"nikud": [], "dagesh": [], "sin": []}
+    epochs_loss_train_values = {"nikud": [], "dagesh": [], "sin": []}
     loss_dev_values = {"nikud": [], "dagesh": [], "sin": []}
     accuracy_dev_values = {"nikud": [], "dagesh": [], "sin": []}
 
@@ -158,17 +159,20 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 sum[name_class] += num_relevant
 
                 loss.backward(retain_graph=True)
+
             for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
-                loss_train_values[name_class].append(train_loss[name_class] / sum[name_class])
+                steps_loss_train_values[name_class].append(float(train_loss[name_class] / sum[name_class]))
 
             optimizer.step()
             if (index_data + 1) % 100 == 0:
                 msg = f'epoch: {epoch} , index_data: {index_data + 1}\n'
 
                 for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
-                    msg += f'mean loss train {name_class}: {train_loss[name_class] / sum[name_class]}, '
-                    loss_train_values[name_class].append(train_loss[name_class] / sum[name_class])
+                    msg += f'mean loss train {name_class}: {float(train_loss[name_class] / sum[name_class])}, '
                 logger.debug(msg[:-2])
+
+        for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
+            epochs_loss_train_values[name_class].append(float(train_loss[name_class] / sum[name_class]))
 
         for name_class in train_loss.keys():
             train_loss[name_class] /= sum[name_class]
@@ -256,8 +260,8 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
             dev_loss[name_class] /= sum[name_class]
             dev_accuracy[name_class] = correct_preds[name_class].double() / sum[name_class]
 
-            loss_dev_values[name_class].append(dev_loss[name_class])
-            accuracy_dev_values[name_class].append(dev_accuracy[name_class])
+            loss_dev_values[name_class].append(float(dev_loss[name_class]))
+            accuracy_dev_values[name_class].append(float(dev_accuracy[name_class]))
 
         if not only_nikud:
             dev_all_nikud_types_accuracy_letter = all_nikud_types_correct_preds_letter.double() / letter_count
@@ -302,7 +306,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         #     }
 
         if epoch % training_params["checkpoints_frequency"] == 0:
-            save_checkpoint_path = os.path.join(output_checkpoints_path, f'checkpoint_model_epoch_{epoch}.pth')
+            save_checkpoint_path = os.path.join(output_checkpoints_path, f'checkpoint_model_epoch_{epoch + 1}.pth')
             checkpoint = {
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
@@ -314,7 +318,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model["model_state_dict"], save_model_path)
-    return best_model, best_accuracy, loss_train_values, loss_dev_values, accuracy_dev_values
+    return best_model, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values, accuracy_dev_values
 
 
 # TODO: Add word level acc for all kinds

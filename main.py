@@ -18,7 +18,7 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 import logging
 from src.models import DiacritizationModel, BaseModel, CharClassifierTransformer, ModelConfig
 from src.models_utils import get_model_parameters, training, evaluate, freeze_model_parameters, predict
-from src.plot_helpers import plot_results, plot_steps_info
+from src.plot_helpers import plot_results, plot_steps_info, generate_plot_by_nikud_dagesh_sin_dict
 from src.running_params import SEED
 from src.utiles_data import NikudDataset, Nikud, Letters
 
@@ -146,7 +146,7 @@ def main():
     dir_model_config = os.path.join(output_model_dir, "config.yml")
     if not os.path.isfile(dir_model_config):
         our_model_config = ModelConfig(dataset_train.max_length)
-        our_model_config.save_to_file()
+        our_model_config.save_to_file(dir_model_config)
     # all_model_params_MTB = model_DM.named_parameters()
     # top_layer_params = freeze_model_parameters(all_model_params_MTB)(all_model_params_MTB)  # args.num_freeze_layers)
     # top_layer_params = get_model_parameters(all_model_params_MTB, logger, 0)  # args.num_freeze_layers)
@@ -168,7 +168,7 @@ def main():
                                                                                 format="png")
 
     training_params = {"n_epochs": args.n_epochs, "checkpoints_frequency": args.checkpoints_frequency}
-    best_model_details, best_accuracy, loss_train_values, loss_dev_values, accuracy_dev_values = training(model_DM,
+    best_model_details, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values, accuracy_dev_values = training(model_DM,
                                                                                                           mtb_train_dl,
                                                                                                           mtb_dev_dl,
                                                                                                           criterion_nikud,
@@ -179,6 +179,11 @@ def main():
                                                                                                           output_dir_running,
                                                                                                           optimizer,
                                                                                                           args.only_nikud)
+
+    generate_plot_by_nikud_dagesh_sin_dict(epochs_loss_train_values, "Train epochs loss", "Loss", debug_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(steps_loss_train_values, "Train steps loss", "Loss", debug_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(loss_dev_values, "Dev epochs loss", "Loss", debug_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(accuracy_dev_values, "Dev accuracy", "Accuracy", debug_folder)
 
     # best_model = model_DM.named_parameters()#BaseModel(400, Letters.vocab_size, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
     #                     # len(Nikud.label_2_id["sin"])).to(DEVICE)
@@ -365,6 +370,5 @@ def predict_flow(tokenizer_tavbert=None):
 
 
 if __name__ == '__main__':
-    predict_flow()
-    # main()
+    main()
     # hyperparams_checker()
