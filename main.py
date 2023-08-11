@@ -105,8 +105,9 @@ def main():
 
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
-    dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=logger)
-    dataset_train.calc_max_length()
+    dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=logger,
+                                 max_length=512)
+    # dataset_train.calc_max_length()
     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=logger,
                                max_length=dataset_train.max_length)
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
@@ -332,7 +333,8 @@ def get_logger(log_level, log_location):
 #     # print the best hyperparameters
 #     print(best_hyperparameters)
 
-def predict_flow(tokenizer_tavbert=None):
+def predict_text(text_file, tokenizer_tavbert=None,
+                 best_model=r".\models\trained\prod\dnikud_v1.pth"):
     args = parse_arguments()
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir,
@@ -349,22 +351,25 @@ def predict_flow(tokenizer_tavbert=None):
 
     logger = get_logger(args.loglevel, output_log_dir)
     dataset = NikudDataset(tokenizer_tavbert,
-                           folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\test_modern\books",
+                           file=text_file,
                            logger=logger, max_length=config.max_length)
 
     model_DM = DiacritizationModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
                                    len(Nikud.label_2_id["sin"])).to(DEVICE)
     state_dict_model = model_DM.state_dict()
     state_dict_model.update(
-        torch.load(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\models\trained\prod\dnikud_v1.pth"))
-
+        torch.load(best_model))
+    model_DM.load_state_dict(state_dict_model)
     dataset.prepare_data(name="prediction")
     mtb_prediction_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=args.batch_size)
     all_labels = predict(model_DM, mtb_prediction_dl)
     text_data_with_labels = dataset.back_2_text(labels=all_labels)
+    for line in text_data_with_labels:
+        print(line)
 
 
 if __name__ == '__main__':
-    predict_flow()
+    predict_text(
+        r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")
     # main()
     # hyperparams_checker()

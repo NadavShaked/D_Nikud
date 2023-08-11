@@ -69,36 +69,39 @@ def find_num_correct_words(input, letter_correct_mask):
 
 
 def predict(model, data_loader):
-    pass
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # model.to(device)
-    # all_labels = None
-    # with torch.no_grad():
-    #     for index_data, data in enumerate(data_loader):
-    #         (inputs, attention_mask, labels_demo) = data
-    #         inputs = inputs.to(device)
-    #         attention_mask = attention_mask.to(device)
-    #         labels_demo = labels_demo.to(device)
-    #
-    #         mask_nikud = labels_demo[:, :, 0] != -1
-    #         mask_dagesh = labels_demo[:, :, 1] != -1
-    #         mask_sin = labels_demo[:, :, 2] != -1
-    #
-    #         nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
-    #
-    #         pred_nikud = np.array(torch.max(nikud_probs, 2).indices.cpu()).reshape(inputs.shape[0],
-    #                                                                    inputs.shape[1], 1)
-    #         pred_labels = np.concatenate(,
-    #                                       np.array(torch.max(dagesh_probs, 2).indices.cpu()).reshape(inputs.shape[0],
-    #                                                                                                  inputs.shape[1], 1),
-    #                                       np.array(torch.max(sin_probs, 2).indices.cpu()).reshape(inputs.shape[0],
-    #                                                                                               inputs.shape[1], 1)),
-    #                                      axis=2)
-    #         if all_labels is None:
-    #             all_labels = pred_labels
-    #         else:
-    #             all_labels = np.concatenate((all_labels, pred_labels), axis=0)
-    # return all_labels
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    all_labels = None
+    with torch.no_grad():
+        for index_data, data in enumerate(data_loader):
+            (inputs, attention_mask, labels_demo) = data
+            inputs = inputs.to(device)
+            attention_mask = attention_mask.to(device)
+            labels_demo = labels_demo.to(device)
+
+            mask_nikud = np.array(labels_demo.cpu())[:, :, 0] == -1
+            mask_dagesh = np.array(labels_demo.cpu())[:, :, 1] == -1
+            mask_sin = np.array(labels_demo.cpu())[:, :, 2] == -1
+
+            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
+
+            pred_nikud = np.array(torch.max(nikud_probs, 2).indices.cpu()).reshape(inputs.shape[0],
+                                                                       inputs.shape[1], 1)
+            pred_dagesh = np.array(torch.max(dagesh_probs, 2).indices.cpu()).reshape(inputs.shape[0],
+                                                                       inputs.shape[1], 1)
+            pred_sin = np.array(torch.max(sin_probs, 2).indices.cpu()).reshape(inputs.shape[0],
+                                                                    inputs.shape[1], 1)
+
+            pred_nikud[mask_nikud] = -1
+            pred_dagesh[mask_dagesh] = -1
+            pred_sin[mask_sin] = -1
+
+            pred_labels = np.concatenate((pred_nikud, pred_dagesh, pred_sin),axis=2)
+            if all_labels is None:
+                all_labels = pred_labels
+            else:
+                all_labels = np.concatenate((all_labels, pred_labels), axis=0)
+    return all_labels
 
 def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
              output_model_path, optimizer, only_nikud=False):

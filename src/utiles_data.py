@@ -84,6 +84,8 @@ class Nikud:
     LEN_SIN = len(label_2_id["sin"])
 
     def id_2_char(self, c, type):
+        if c == -1:
+            return ""
         label = self.id_2_label[type][c]
         if label != "WITHOUT":
             return chr(self.id_2_label[type][c])
@@ -192,12 +194,64 @@ def text_contains_nikud(text):
     return len(set(text) & Nikud.all_nikud_chr) > 0
 
 
+def combine_sentances(list_sentences, max_length=512):
+    all_new_sentances = []
+    new_sen = ""
+    index = 0
+    while index < len(list_sentences):
+        sen = list_sentences[index]
+        if not text_contains_nikud(sen):
+            if sen == '------------------':
+                if len(new_sen) > 0:
+                    all_new_sentances.append(new_sen)
+                    new_sen = ""
+            index += 1
+            continue
+        if len(sen) > max_length:
+            update_sen = sen.replace(". ", ".\n")
+            update_sen = update_sen.replace("? ", "?\n")
+            update_sen = update_sen.replace("! ", "!\n")
+            update_sen = update_sen.replace("” ", "”\n")
+            update_sen = update_sen.replace("\t", "\n")
+            part_sentence = update_sen.split("\n")
+            good_parts = []
+            for p in part_sentence:
+                if len(p) < max_length:
+                    good_parts.append(p)
+                else:
+                    prev = 0
+                    while prev >= len(p):
+                        part = p[prev:(prev + max_length)]
+                        last_space = 0
+                        if " " in part:
+                            last_space = part[::-1].index(" ") + 1
+                        next = prev + max_length - last_space
+                        part = p[prev:next]
+                        good_parts.append(part)
+                        prev = next
+            list_sentences = list_sentences[:index] + good_parts + list_sentences[index + 1:]
+            continue
+        if new_sen == "":
+            new_sen = sen
+        elif len(new_sen) + len(sen) < max_length:
+            new_sen += "\n" + sen
+        else:
+            all_new_sentances.append(new_sen)
+            new_sen = sen
+        # if new(new_sen)
+        index += 1
+    return all_new_sentances
+
+
 class NikudDataset(Dataset):
-    def __init__(self, tokenizer, folder='../data/hebrew_diacritized', logger=None, max_length=None):
-        self.max_length = 0
-        self.tokenizer = tokenizer
-        self.data = self.read_data_folder(folder, logger)
+    def __init__(self, tokenizer, folder=None, file=None, logger=None, max_length=0):
         self.max_length = max_length
+        self.tokenizer = tokenizer
+        if folder is not None:
+            self.data, self.origin_data = self.read_data_folder(folder, logger)
+
+        else:
+            self.data, self.origin_data = self.read_data(file)
         self.prepered_data = None
 
     def read_data_folder(self, folder_path: str, logger=None):
@@ -208,30 +262,33 @@ class NikudDataset(Dataset):
         else:
             print(msg)
         all_data = []
+        all_origin_data = []
         if DEBUG_MODE:
             all_files = all_files[2:4]
             # all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
         for file in all_files:
             # if "not_use" in file or "validation" in file or "test" in file or "NakdanResults" in file:
             #     continue
-            all_data.extend(self.read_data(file))
-        return all_data
+            data, origin_data = self.read_data(file)
+            all_data.extend(data)
+            all_origin_data.extend(origin_data)
+        return all_data, all_origin_data
 
     def read_data(self, filepath: str) -> List[Tuple[str, list]]:
         data = []
+        orig_data = []
         with open(filepath, 'r', encoding='utf-8') as file:
             file_data = file.read()
         data_list = self.split_text(file_data)
-
+        #if DEBUG_MODE:
+        #    data_list = data_list[:10]
         for sen in tqdm(data_list, desc=f"Source: {os.path.basename(filepath)}"):
-            if sen == "" or not text_contains_nikud(sen):  # todo- mabye add check for every word
+            if sen == "":  # todo- mabye add check for every word
                 continue
-            length_max = len(sen)
-            if length_max > self.max_length:
-                self.max_length = length_max
             # split_sentences = sen.split('\n')
             labels = []
             text = ""
+            text_org = ""
             index = 0
             sentance_length = len(sen)
             while index < sentance_length:
@@ -246,21 +303,18 @@ class NikudDataset(Dataset):
                     index += 1
                 l.get_label_letter(label)
                 text += l.normalized
+                text_org += l.letter
+                print(l.normalized)
+                print(l.letter)
                 labels.append(l)
 
             data.append((text, labels))
-
-        return data
+            orig_data.append(text_org)
+        return data, orig_data
 
     def split_text(self, file_data):
-        file_data = file_data.replace(". ", ".\n")
-        file_data = file_data.replace("? ", "?\n")
-        file_data = file_data.replace("! ", "!\n")
-        file_data = file_data.replace("” ", "”\n")
-        file_data = file_data.replace("\" ", "\"\n")
-        file_data = file_data.replace("\" ", "\"\n")
-        file_data = file_data.replace("\t", "\n")
         data_list = file_data.split("\n")
+        data_list = combine_sentances(data_list)
         return data_list
 
     def show_data_labels(self, debug_folder=None):
@@ -302,10 +356,9 @@ class NikudDataset(Dataset):
         #         max_length = len(s)
         # self.max_length = max_length +1
 
-    def prepare_data(self, name="train"):#, with_label=False):
+    def prepare_data(self, name="train"):  # , with_label=False):
         dataset = []
         for index, (sentence, label) in tqdm(enumerate(self.data), desc=f"prepare data {name}"):
-
             encoded_sequence = self.tokenizer.encode_plus(
                 sentence,
                 add_special_tokens=True,
@@ -315,29 +368,31 @@ class NikudDataset(Dataset):
                 return_attention_mask=True,
                 return_tensors='pt'
             )
-            if with_label:
-                label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
-                label = torch.tensor(
-                    [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(self.max_length - 1)] + [
-                        [Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
-                        range(self.max_length - len(label) - 1)])
 
-                dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
-            else:
-                dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0]))
+            label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+            label = torch.tensor(
+                [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(self.max_length - 1)] + [
+                    [Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
+                    range(self.max_length - len(label) - 1)])
+
+            dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
+
+
 
         self.prepered_data = dataset
 
     def back_2_text(self, labels):
         nikud = Nikud()
-        for indx_sentance, (input_ids, _) in enumerate(self.prepered_data):
+        all_text = []
+        for indx_sentance, (input_ids, _, label) in enumerate(self.prepered_data):
             new_line = ""
-            for indx_char, c in enumerate(input_ids):
-                decode_char = self.tokenizer.decode(c)
-                if decode_char not in self.tokenizer.all_special_tokens:
-                    new_line += (decode_char + nikud.id_2_char(labels[indx_sentance, indx_char, 0], "nikud") +
-                                 nikud.id_2_char(labels[indx_sentance, indx_char, 1], "dagesh") +
-                                 nikud.id_2_char(labels[indx_sentance, indx_char, 2], "sin"))
+            for indx_char, c in enumerate(self.origin_data[indx_sentance]):
+                # decode_char = self.origin_data[indx_sentance][indx_char]
+                new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char+1, 0], "nikud") +
+                             nikud.id_2_char(labels[indx_sentance, indx_char+1, 1], "dagesh") +
+                             nikud.id_2_char(labels[indx_sentance, indx_char+1, 2], "sin"))
+            all_text.append(new_line)
+        return all_text
 
     def __len__(self):
         return self.data.shape[0]
