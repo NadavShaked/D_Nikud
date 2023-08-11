@@ -83,6 +83,12 @@ class Nikud:
     LEN_DAGESH = len(label_2_id["dagesh"])
     LEN_SIN = len(label_2_id["sin"])
 
+    def id_2_char(self, c, type):
+        label = self.id_2_label[type][c]
+        if label != "WITHOUT":
+            return chr(self.id_2_label[type][c])
+        return ""
+
 
 class Letters:
     hebrew = [chr(c) for c in range(0x05d0, 0x05ea + 1)]
@@ -187,10 +193,12 @@ def text_contains_nikud(text):
 
 
 class NikudDataset(Dataset):
-
-    def __init__(self, folder='../data/hebrew_diacritized', logger=None):
+    def __init__(self, tokenizer, folder='../data/hebrew_diacritized', logger=None, max_length=None):
         self.max_length = 0
+        self.tokenizer = tokenizer
         self.data = self.read_data_folder(folder, logger)
+        self.max_length = max_length
+        self.prepered_data = None
 
     def read_data_folder(self, folder_path: str, logger=None):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
@@ -204,8 +212,8 @@ class NikudDataset(Dataset):
             all_files = all_files[2:4]
             # all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
         for file in all_files:
-            if "not_use" in file or "validation" in file or "test" in file or "NakdanResults" in file:
-                continue
+            # if "not_use" in file or "validation" in file or "test" in file or "NakdanResults" in file:
+            #     continue
             all_data.extend(self.read_data(file))
         return all_data
 
@@ -294,6 +302,43 @@ class NikudDataset(Dataset):
         #         max_length = len(s)
         # self.max_length = max_length +1
 
+    def prepare_data(self, name="train"):#, with_label=False):
+        dataset = []
+        for index, (sentence, label) in tqdm(enumerate(self.data), desc=f"prepare data {name}"):
+
+            encoded_sequence = self.tokenizer.encode_plus(
+                sentence,
+                add_special_tokens=True,
+                max_length=self.max_length,
+                padding='max_length',
+                truncation=True,
+                return_attention_mask=True,
+                return_tensors='pt'
+            )
+            if with_label:
+                label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+                label = torch.tensor(
+                    [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(self.max_length - 1)] + [
+                        [Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
+                        range(self.max_length - len(label) - 1)])
+
+                dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
+            else:
+                dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0]))
+
+        self.prepered_data = dataset
+
+    def back_2_text(self, labels):
+        nikud = Nikud()
+        for indx_sentance, (input_ids, _) in enumerate(self.prepered_data):
+            new_line = ""
+            for indx_char, c in enumerate(input_ids):
+                decode_char = self.tokenizer.decode(c)
+                if decode_char not in self.tokenizer.all_special_tokens:
+                    new_line += (decode_char + nikud.id_2_char(labels[indx_sentance, indx_char, 0], "nikud") +
+                                 nikud.id_2_char(labels[indx_sentance, indx_char, 1], "dagesh") +
+                                 nikud.id_2_char(labels[indx_sentance, indx_char, 2], "sin"))
+
     def __len__(self):
         return self.data.shape[0]
 
@@ -301,99 +346,47 @@ class NikudDataset(Dataset):
         row = self.data[idx]
 
 
-class NikudCollator:
-
-    def __init__(self, tokenizer):
-        self.tokenizer = tokenizer
-
-    def collate(self, batch):
-        sentances = []
-        # male_texts = [male for haser, male in batch]
-        # raw_targets = [haser_male2target(haser, male) for haser, male in batch]
-        X = self.tokenizer(sentances, padding='longest', truncation=True, return_tensors='pt')
-        LEN = len(X.input_ids[0])  # includes [CLS] & [SEP]
-
-        def pad_target(tgt):
-            N_PADDING = max(0, 1 + LEN - tgt.shape[0] - 2)
-            return np.pad(tgt, ((1, N_PADDING), (0, 0)))[:LEN]
-
-        # y = torch.tensor(np.stack([pad_target(t) for t in raw_targets])).float()
-        #
-        # return {**X, 'labels': y}
-
-def update_ids(sentence, vocab, max_length):
-    # Create an empty matrix with dimensions (len(sentence), len(vocab))
-    update_ids_matrix = np.zeros(np.min([max_length, len(sentence)]))
-    sentence_words = sentence.split(" ")
-    # For each letter in the sentence...
-    index_letter = 0
-    for i, word in enumerate(sentence_words):
-        if index_letter + len(word) > max_length:
-            break
-        for letter in word:
-            # Find the index of this letter in the vocab
-
-            letter_index = vocab.index(letter)
-
-            # Set the corresponding position in the one_hot_matrix to 1
-            update_ids_matrix[index_letter] = letter_index
-
-            index_letter += 1
-        index_letter += 1
-
-    return update_ids_matrix
-def one_hot_sentence(sentence, vocab):
-    # Create an empty matrix with dimensions (len(sentence), len(vocab))
-    one_hot_matrix = np.zeros((len(sentence), len(vocab)))
-
-    # For each letter in the sentence...
-    for i, letter in enumerate(sentence):
-
-        # Find the index of this letter in the vocab
-        letter_index = vocab.index(letter)
-
-        # Set the corresponding position in the one_hot_matrix to 1
-        one_hot_matrix[i, letter_index] = 1
-
-    return one_hot_matrix
-def prepare_data_base(data,max_length, name="train"):
-    dataset = []
-    for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
-
-        encoded_sequence = torch.zeros(max_length, dtype=torch.long)
-        encoded_sequence[:len(sentence)] = torch.tensor(update_ids(sentence, Letters.vocab, max_length))
-
-        label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
-        label = torch.tensor(label_lists[:(max_length)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in range(max_length - len(label))])
-
-        dataset.append((encoded_sequence, label))
-
-    return dataset
-
-def prepare_data_DiacritizationModel(data, tokenizer, max_length, name="train"):
-    dataset = []
-    for index, (sentence, label) in tqdm(enumerate(data), desc=f"prepare data {name}"):
-
-        encoded_sequence = tokenizer.encode_plus(
-            sentence,
-            add_special_tokens=True,
-            max_length=max_length,
-            padding='max_length',
-            truncation=True,
-            return_attention_mask=True,
-            return_tensors='pt'
-        )
-
-        label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
-        label = torch.tensor(
-            [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(max_length-1)] + [[Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
-                                                                 range(max_length - len(label) - 1)])
-
-        dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
+# def update_ids(sentence, vocab, max_length):
+#     # Create an empty matrix with dimensions (len(sentence), len(vocab))
+#     update_ids_matrix = np.zeros(np.min([max_length, len(sentence)]))
+#     sentence_words = sentence.split(" ")
+#     # For each letter in the sentence...
+#     index_letter = 0
+#     for i, word in enumerate(sentence_words):
+#         if index_letter + len(word) > max_length:
+#             break
+#         for letter in word:
+#             # Find the index of this letter in the vocab
+#
+#             letter_index = vocab.index(letter)
+#
+#             # Set the corresponding position in the one_hot_matrix to 1
+#             update_ids_matrix[index_letter] = letter_index
+#
+#             index_letter += 1
+#         index_letter += 1
+#
+#     return update_ids_matrix
+# def one_hot_sentence(sentence, vocab):
+#     # Create an empty matrix with dimensions (len(sentence), len(vocab))
+#     one_hot_matrix = np.zeros((len(sentence), len(vocab)))
+#
+#     # For each letter in the sentence...
+#     for i, letter in enumerate(sentence):
+#
+#         # Find the index of this letter in the vocab
+#         letter_index = vocab.index(letter)
+#
+#         # Set the corresponding position in the one_hot_matrix to 1
+#         one_hot_matrix[i, letter_index] = 1
+#
+#     return one_hot_matrix
 
 
-    # data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size)
-    return dataset
+def return_2_text(data_loader, labels):
+    for index_data, data in enumerate(data_loader):
+        (inputs, attention_mask) = data
+
 
 # def prepare_data(data, tokenizer_tavbert, tokenizer_alephbertgimmel, max_length, name="train"):
 #     dataset = []
@@ -447,16 +440,10 @@ def prepare_data_DiacritizationModel(data, tokenizer, max_length, name="train"):
 #     return dataset
 
 
-
-
-
-
 def main():
     # folder_path = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized"  # Replace with the root path of the folder containing sub-folders with .txt files
     # all_data = read_data_folder(folder_path)
     dataset = NikudDataset()
-
-
 
 
 if __name__ == '__main__':

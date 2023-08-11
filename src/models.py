@@ -1,6 +1,10 @@
+import json
+import subprocess
+
 import torch
 import torch.nn as nn
-from transformers import AutoConfig, RobertaForMaskedLM, RobertaModel
+import yaml
+from transformers import AutoConfig, RobertaForMaskedLM, RobertaModel, PretrainedConfig
 
 from src.utiles_data import Nikud
 
@@ -8,12 +12,16 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class DiacritizationModel(nn.Module):
-    def __init__(self, base_model_name, nikud_size, dagesh_size, sin_size):
+    def __init__(self, config, nikud_size, dagesh_size, sin_size, pretrain_model=None):
         super(DiacritizationModel, self).__init__()
-        config = AutoConfig.from_pretrained(base_model_name)
-        tav_bert = RobertaForMaskedLM.from_pretrained(base_model_name).to(
-            DEVICE)
-        self.model = tav_bert.roberta
+        # config = AutoConfig.from_pretrained(base_model_name)
+        # tav_bert = RobertaForMaskedLM.from_pretrained(base_model_name).to(
+        #     DEVICE)
+        if pretrain_model is not None:
+            model_base = RobertaForMaskedLM.from_pretrained(pretrain_model).to(DEVICE)
+        else:
+            model_base = RobertaForMaskedLM(config=config).to(DEVICE)
+        self.model = model_base.roberta
         for name, param in self.model.named_parameters():
             param.requires_grad = False
 
@@ -136,3 +144,37 @@ class CharClassifierTransformer(nn.Module):
         sin_logits = self.classifier_sin(sequence_transformer_output)
         dagesh_logits = self.classifier_dagesh(sequence_transformer_output)
         return nikud_logits, sin_logits, dagesh_logits
+
+def get_git_commit_hash():
+    try:
+        commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
+        return commit_hash
+    except subprocess.CalledProcessError:
+        # This will be raised if you're not in a Git repository
+        print("Not inside a Git repository!")
+        return None
+
+
+class ModelConfig(PretrainedConfig):
+    def __init__(self, max_length=None, dict=None):
+        super(ModelConfig, self).__init__()
+        if dict is None:
+            self.__dict__.update(AutoConfig.from_pretrained("tau/tavbert-he").__dict__)
+            self.max_length = max_length
+            self._commit_hash = get_git_commit_hash()
+        else:
+            self.__dict__.update(dict)
+
+    def print(self):
+        print(self.__dict__)
+    def save_to_file(self, file_path):
+        # with open(file_path, 'w') as file:
+        #     json.dump(self.__dict__, file)
+        with open(file_path, "w") as yaml_file:
+            yaml.dump(self.__dict__, yaml_file, default_flow_style=False)
+
+    @classmethod
+    def load_from_file(cls, file_path):
+        with open(file_path, "r") as yaml_file:
+            config_dict = yaml.safe_load(yaml_file)
+        return cls(dict=config_dict)
