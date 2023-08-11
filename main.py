@@ -323,6 +323,10 @@ def get_logger(log_level, log_location):
 #     # print the best hyperparameters
 #     print(best_hyperparameters)
 
+def predict():
+    model_DM = DiacritizationModel("tau/tavbert-he", len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                                   len(Nikud.label_2_id["sin"])).to(DEVICE)
+
 
 if __name__ == '__main__':
     main()
