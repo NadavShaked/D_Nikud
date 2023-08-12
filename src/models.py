@@ -11,9 +11,9 @@ from src.utiles_data import Nikud
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-class DiacritizationModel(nn.Module):
+class DnikudModel(nn.Module):
     def __init__(self, config, nikud_size, dagesh_size, sin_size, pretrain_model=None):
-        super(DiacritizationModel, self).__init__()
+        super(DnikudModel, self).__init__()
         # config = AutoConfig.from_pretrained(base_model_name)
         # tav_bert = RobertaForMaskedLM.from_pretrained(base_model_name).to(
         #     DEVICE)

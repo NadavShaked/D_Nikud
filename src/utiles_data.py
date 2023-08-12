@@ -1,4 +1,5 @@
 import os.path
+import random
 from typing import List, Tuple
 
 import glob2
@@ -249,8 +250,7 @@ class NikudDataset(Dataset):
         self.tokenizer = tokenizer
         if folder is not None:
             self.data, self.origin_data = self.read_data_folder(folder, logger)
-
-        else:
+        elif file is not None:
             self.data, self.origin_data = self.read_data(file)
         self.prepered_data = None
 
@@ -280,7 +280,7 @@ class NikudDataset(Dataset):
         with open(filepath, 'r', encoding='utf-8') as file:
             file_data = file.read()
         data_list = self.split_text(file_data)
-        #if DEBUG_MODE:
+        # if DEBUG_MODE:
         #    data_list = data_list[:10]
         for sen in tqdm(data_list, desc=f"Source: {os.path.basename(filepath)}"):
             if sen == "":  # todo- mabye add check for every word
@@ -304,17 +304,21 @@ class NikudDataset(Dataset):
                 l.get_label_letter(label)
                 text += l.normalized
                 text_org += l.letter
-                print(l.normalized)
-                print(l.letter)
+                # print(l.normalized)
+                # print(l.letter)
                 labels.append(l)
 
             data.append((text, labels))
             orig_data.append(text_org)
         return data, orig_data
 
-
-
-    def split_data(self, folder_path: str, logger=None):#TODO: DELETE
+    def split_data(self, folder_path: str, logger=None, main_folder_name="hebrew_diacritized"):
+        msg = f"prepare data in folder - {os.path.basename(folder_path)}"
+        logger.debug(msg)
+        for type_data in ["train", "dev", "test"]:
+            folder_type =  folder_path.replace(main_folder_name, type_data)
+            if not os.path.exists(folder_type):
+                os.mkdir(folder_type)
         all_data = []
 
         for filename in os.listdir(folder_path):
@@ -324,7 +328,6 @@ class NikudDataset(Dataset):
             elif os.path.isdir(file_path) and filename != ".git":
                 self.split_data(file_path, logger)
 
-        import random
         random.shuffle(all_data)
 
         if len(all_data) > 0:
@@ -332,7 +335,7 @@ class NikudDataset(Dataset):
 
         return all_data
 
-    def read_data_split(self, filepath: str) -> List[Tuple[str, list]]:#TODO: DELETE
+    def read_data_split(self, filepath: str) -> List[Tuple[str, list]]:  # TODO: DELETE
         data_list = []
         with open(filepath, 'r', encoding='utf-8') as file:
             file_data = file.read()
@@ -340,27 +343,27 @@ class NikudDataset(Dataset):
 
         return data_list
 
-    def split_data_data(self, data_list, filepath):#TODO: DELETE
+    def split_data_data(self, data_list, filepath):  # TODO: DELETE
         import math
         train_size = (int)(0.9 * len(data_list))
         dev_size = math.ceil(0.05 * len(data_list))
         dev_end_index = train_size + dev_size
         train_data = data_list[: train_size]
-        dev_data = data_list[train_size : dev_end_index]
-        test_data = data_list[dev_end_index :]
+        dev_data = data_list[train_size: dev_end_index]
+        test_data = data_list[dev_end_index:]
 
-        x = "\\"
-        self.write_list_to_text_file(train_data, filepath + f"\\{filepath.split(x)[-1]}.txt", "train")
-        self.write_list_to_text_file(dev_data, filepath + f"\\{filepath.split(x)[-1]}.txt", "dev")
-        self.write_list_to_text_file(test_data, filepath + f"\\{filepath.split(x)[-1]}.txt", "test")
+        name_folder = os.path.basename(filepath)
+        self.write_list_to_text_file(train_data, os.path.join(filepath , f"{name_folder}.txt"), "train")
+        self.write_list_to_text_file(dev_data, os.path.join(filepath , f"{name_folder}.txt"), "dev")
+        self.write_list_to_text_file(test_data, os.path.join(filepath , f"{name_folder}.txt"), "test")
 
-    def write_list_to_text_file(self, data_list, file_path, type):#TODO: DELETE
-        file_path = file_path.replace("hebrew_diacritized", type)
+    def write_list_to_text_file(self, data_list, file_path, type, main_folder_name="hebrew_diacritized"):  # TODO: DELETE
+        file_path = file_path.replace(main_folder_name, type)
         with open(file_path, 'w', encoding='utf-8') as f:
             for item in data_list:
-                f.write("%s\n" % item)
+                f.write(item + "\n------------------\n")
 
-    def delete_files(self, folder_path): #TODO: DELETE
+    def delete_files(self, folder_path):  # TODO: DELETE
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
 
         for file_path in all_files:
@@ -368,10 +371,6 @@ class NikudDataset(Dataset):
                 continue
             if os.path.exists(file_path):
                 os.remove(file_path)
-
-
-
-
 
     def split_text(self, file_data):
         data_list = file_data.split("\n")
@@ -446,9 +445,9 @@ class NikudDataset(Dataset):
             new_line = ""
             for indx_char, c in enumerate(self.origin_data[indx_sentance]):
                 # decode_char = self.origin_data[indx_sentance][indx_char]
-                new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char+1, 0], "nikud") +
-                             nikud.id_2_char(labels[indx_sentance, indx_char+1, 1], "dagesh") +
-                             nikud.id_2_char(labels[indx_sentance, indx_char+1, 2], "sin"))
+                new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 0], "nikud") +
+                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 1], "dagesh") +
+                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 2], "sin"))
             all_text.append(new_line)
         return all_text
 
