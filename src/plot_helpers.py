@@ -12,17 +12,20 @@ from tabulate import tabulate
 cols = ["precision", "recall", "f1-score", "support"]
 
 
-def plot_results(reports, report_filename="results"):
+def plot_results(logger, reports, report_filename="results"):
+    if reports is None:
+        return
+    logger.debug(f"plot report : {report_filename}")
     for name, report in reports.items():
         df = pd.DataFrame(report).transpose()
         df = df[cols]
 
-        print(tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f"))
-
+        msg = tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f")
+        logger.debug(msg)
         # Save report to CSV
-        df.to_csv(f"{report_filename} : {name}")
+        # df.to_csv(os.path.join(debug_folder, f"{report_filename}_{name}"))
 
-        print(f"Evaluation report saved to {report_filename}")
+        # logger.debug(f"Evaluation report saved to {report_filename}")
 
 
 def plot_steps_info(loss_train_values, loss_dev_values, accuracy_dev_values):

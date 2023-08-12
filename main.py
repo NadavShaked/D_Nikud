@@ -5,6 +5,8 @@ import random
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+import re
+import glob2
 from transformers import AutoConfig
 import numpy as np
 # visual
@@ -21,7 +23,7 @@ from src.models_utils import get_model_parameters, training, evaluate, freeze_mo
 from src.plot_helpers import plot_results, plot_steps_info, generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
 from src.running_params import SEED, BEST_MODEL_PATH
-from src.utiles_data import NikudDataset, Nikud, Letters
+from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
@@ -101,7 +103,7 @@ def train(use_pretrain=False):
     batch_size = args.batch_size
 
     output_model_dir, output_log_dir, output_dir_running, debug_folder = orgenize_folders(args,
-                                                                            name_log=f"log_model_lr_{args.learning_rate}_bs_{batch_size}")
+                                                                                          name_log=f"log_model_lr_{args.learning_rate}_bs_{batch_size}")
 
     logger = get_logger(args.loglevel, output_log_dir)
 
@@ -212,8 +214,8 @@ def train(use_pretrain=False):
           f"Letter level accuracy: {letter_level_correct_test}\nWord level accuracy: {word_level_correct_test}"
     logger.debug(msg)
 
-    plot_results(report_dev, report_filename="results_dev")
-    plot_results(report_test, report_filename="results_test")
+    plot_results(logger, report_dev, report_filename="results_dev")
+    plot_results(logger, report_test, report_filename="results_test")
 
     msg = 'Done'
     logger.info(msg)
@@ -300,7 +302,7 @@ def hyperparams_checker(use_pretrain=False):
         batch_size = int(np.random.choice(batch_size_values))
 
         output_model_dir, output_log_dir, output_dir_running, debug_folder = orgenize_folders(args,
-                                                                                name_log=f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}")
+                                                                                              name_log=f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}")
         logger = get_logger(args.loglevel, output_log_dir)
 
         msg = 'Loading model...'
@@ -318,7 +320,6 @@ def hyperparams_checker(use_pretrain=False):
                 torch.load(BEST_MODEL_PATH))
             model_DM.load_state_dict(state_dict_model)
 
-
         # set these hyperparameters in your optimizer
         optimizer = torch.optim.Adam(model_DM.parameters(), lr=args.learning_rate)
 
@@ -333,8 +334,9 @@ def hyperparams_checker(use_pretrain=False):
 
         # call your training function and get the dev accuracy
         (best_model_details, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values,
-         accuracy_dev_values) = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh, criterion_sin,
-                                   training_params, logger, output_dir_running, optimizer)
+         accuracy_dev_values) = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh,
+                                         criterion_sin,
+                                         training_params, logger, output_dir_running, optimizer)
 
         # if these hyperparameters are better, store them
         if accuracy_dev_values["all_nikud_letter"] > best_accuracy:
@@ -345,27 +347,22 @@ def hyperparams_checker(use_pretrain=False):
     print(best_hyperparameters)
 
 
-def evaluate_text(file_path, model_DM=None, tokenizer_tavbert=None, logger=None, batch_size=32):
-    file_name = os.path.basename(file_path)
+def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batch_size=32, config=None):
+    path_name = os.path.basename(path)
     args = parse_arguments()
     if logger is None:
         date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
         output_log_dir = os.path.join(args.log_dir,
-                                      f"evaluate_{file_name}_{date_time}")
+                                      f"evaluate_{path_name}_{date_time}")
         if not os.path.exists(output_log_dir):
             os.makedirs(output_log_dir)
         logger = get_logger(args.loglevel, output_log_dir)
-    msg = f"evaluate text: {file_name} on D-nikud Model"
+    msg = f"evaluate text: {path_name} on D-nikud Model"
     logger.debug(msg)
-    dir_model_config = os.path.join(args.output_model_dir, "config.yml")
-    config = ModelConfig.load_from_file(dir_model_config)
 
-    if tokenizer_tavbert is None:
-        tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    dataset = NikudDataset(tokenizer_tavbert, file=file_path, logger=logger, max_length=config.max_length)
-    dataset.prepare_data(name="evaluate")
-    mtb_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=batch_size)
     if model_DM is None:
+        dir_model_config = os.path.join(args.output_model_dir, "config.yml")
+        config = ModelConfig.load_from_file(dir_model_config)
         model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
                                len(Nikud.label_2_id["sin"])).to(DEVICE)
         state_dict_model = model_DM.state_dict()
@@ -373,43 +370,78 @@ def evaluate_text(file_path, model_DM=None, tokenizer_tavbert=None, logger=None,
             torch.load(BEST_MODEL_PATH))
         model_DM.load_state_dict(state_dict_model)
 
-    report_dev, word_level_correct, letter_level_correct_dev = evaluate(model_DM, mtb_dl)
-    msg = f"Diacritization Model\n{file_name} dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
+    if tokenizer_tavbert is None:
+        tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
+
+    if os.path.isfile(path):
+        dataset = NikudDataset(tokenizer_tavbert, file=path, logger=logger, max_length=config.max_length)
+    elif os.path.isdir(path):
+        dataset = NikudDataset(tokenizer_tavbert, folder=path, logger=logger, max_length=config.max_length)
+
+    dataset.prepare_data(name="evaluate")
+    mtb_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=batch_size)
+
+    report, word_level_correct, letter_level_correct_dev = evaluate(model_DM, mtb_dl)
+    msg = f"Dnikud Model\n{path_name} evaluate\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct}"
+    plot_results(logger, report, report_filename="results_dev")
     logger.debug(msg)
 
 
-def predict_text(text_file, tokenizer_tavbert=None):
+def extract_text_to_compare_nakdimon(text):
+    res = text.replace('|', '')
+    res = res.replace(chr(Nikud.nikud_dict["KUBUTZ"]) + 'ו' + chr(Nikud.nikud_dict["METEG"]),
+                      'ו' + chr(Nikud.nikud_dict['DAGESH OR SHURUK']))
+    res = res.replace(chr(Nikud.nikud_dict["HOLAM"]) + 'ו' + chr(Nikud.nikud_dict["METEG"]),
+                      'ו')  # + chr(Nikud.nikud_dict["HOLAM"]))
+    res = res.replace(chr(Nikud.nikud_dict["METEG"]), '')
+    res = res.replace(chr(Nikud.nikud_dict["KAMATZ_KATAN"]), chr(Nikud.nikud_dict["KAMATZ"]))
+
+    res = re.sub(chr(Nikud.nikud_dict["KUBUTZ"]) + 'ו' + '(?=[א-ת])', 'ו',
+                 res)  # + chr(Nikud.nikud_dict["HOLAM"]), res)
+    res = res.replace(chr(Nikud.nikud_dict["REDUCED_KAMATZ"]) + 'ו', 'ו')  # +chr(Nikud.nikud_dict["HOLAM"]))
+
+    res = res.replace(chr(Nikud.nikud_dict["DAGESH OR SHURUK"]) * 2, chr(Nikud.nikud_dict["DAGESH OR SHURUK"]))
+    res = res.replace('\u05be', '-')
+    res = res.replace('יְהוָֹה', 'יהוה')
+    return res
+
+
+def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=None, model_DM=None):
     args = parse_arguments()
-    date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
-    output_log_dir = os.path.join(args.log_dir,
-                                  f"log_model_predict_{date_time}")
-    if not os.path.exists(output_log_dir):
-        os.makedirs(output_log_dir)
 
     dir_model_config = os.path.join(args.output_model_dir, "config.yml")
     config = ModelConfig.load_from_file(dir_model_config)
 
     if tokenizer_tavbert is None:
         tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
-
-    logger = get_logger(args.loglevel, output_log_dir)
+    if logger is None:
+        date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
+        output_log_dir = os.path.join(args.log_dir,
+                                      f"log_model_predict_{date_time}")
+        if not os.path.exists(output_log_dir):
+            os.makedirs(output_log_dir)
+        logger = get_logger(args.loglevel, output_log_dir)
     dataset = NikudDataset(tokenizer_tavbert,
                            file=text_file,
                            logger=logger, max_length=config.max_length)
-
-    model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                           len(Nikud.label_2_id["sin"])).to(DEVICE)
-    state_dict_model = model_DM.state_dict()
-    state_dict_model.update(
-        torch.load(BEST_MODEL_PATH))
-    model_DM.load_state_dict(state_dict_model)
+    if model_DM is None:
+        model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                               len(Nikud.label_2_id["sin"])).to(DEVICE)
+        state_dict_model = model_DM.state_dict()
+        state_dict_model.update(
+            torch.load(BEST_MODEL_PATH))
+        model_DM.load_state_dict(state_dict_model)
     dataset.prepare_data(name="prediction")
     mtb_prediction_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=args.batch_size)
     all_labels = predict(model_DM, mtb_prediction_dl)
     text_data_with_labels = dataset.back_2_text(labels=all_labels)
-    for line in text_data_with_labels:
-        print(line)
+    if output_file is None:
+        for line in text_data_with_labels:
+            print(line)
+    else:
+        with open(output_file, "w", encoding='utf-8') as f:
+            f.write(extract_text_to_compare_nakdimon(text_data_with_labels))
 
 
 def orgenize_data(main_folder):
@@ -421,8 +453,100 @@ def orgenize_data(main_folder):
         os.makedirs(output_log_dir)
     logger = get_logger(args.loglevel, output_log_dir)
     x = NikudDataset(None)
-    x.delete_files(Path(main_folder).parent)
+    x.delete_files(os.path.join(Path(main_folder).parent, "train"))
+    x.delete_files(os.path.join(Path(main_folder).parent, "dev"))
+    x.delete_files(os.path.join(Path(main_folder).parent, "test"))
     x.split_data(main_folder, main_folder_name=os.path.basename(main_folder), logger=logger)
+
+
+def test_by_folders(main_folder):
+    args = parse_arguments()
+
+    dir_model_config = os.path.join(args.output_model_dir, "config.yml")
+    config = ModelConfig.load_from_file(dir_model_config)
+
+    model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                           len(Nikud.label_2_id["sin"])).to(DEVICE)
+    state_dict_model = model_DM.state_dict()
+    state_dict_model.update(
+        torch.load(BEST_MODEL_PATH))
+    model_DM.load_state_dict(state_dict_model)
+    tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
+
+    date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
+    output_log_dir = os.path.join(args.log_dir,
+                                  f"evaluate_{os.path.basename(main_folder)}_{date_time}")
+    if not os.path.exists(output_log_dir):
+        os.makedirs(output_log_dir)
+    logger = get_logger(args.loglevel, output_log_dir)
+
+    msg = f'evaluate all_data: {main_folder}'
+    logger.info(msg)
+    evaluate_text(main_folder, model_DM=model_DM, tokenizer_tavbert=tokenizer_tavbert, logger=logger,
+                  batch_size=args.batch_size,
+                  config=config)
+    msg = f'\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n'
+    logger.info(msg)
+    for sub_folder_name in os.listdir(main_folder):
+        sub_folder = os.path.join(main_folder, sub_folder_name)
+        if not os.path.isdir(sub_folder) or sub_folder == ".git":
+            continue
+        msg = f'evaluate sub folder: {sub_folder}'
+        logger.info(msg)
+        evaluate_text(sub_folder, model_DM=model_DM, tokenizer_tavbert=tokenizer_tavbert, logger=logger,
+                      batch_size=args.batch_size,
+                      config=config)
+        msg = f'\n***************************************\n'
+        logger.info(msg)
+        folders = get_sub_folders_paths(sub_folder)
+        for folder in folders:
+            msg = f'evaluate sub folder: {folder}'
+            logger.info(msg)
+            evaluate_text(folder, model_DM=model_DM, tokenizer_tavbert=tokenizer_tavbert, logger=logger,
+                          batch_size=args.batch_size,
+                          config=config)
+            msg = f'\n---------------------------------------\n'
+
+            logger.info(msg)
+
+
+def predict_folder_flow(folder, output_folder):
+    args = parse_arguments()
+    date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
+    output_log_dir = os.path.join(args.log_dir,
+                                  f"log_orgenize_data_{date_time}")
+    if not os.path.exists(output_log_dir):
+        os.makedirs(output_log_dir)
+    logger = get_logger(args.loglevel, output_log_dir)
+
+    msg = f"prepare data in folder - {os.path.basename(folder)}"
+    logger.debug(msg)
+    tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
+    dir_model_config = os.path.join(args.output_model_dir, "config.yml")
+    config = ModelConfig.load_from_file(dir_model_config)
+    model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                           len(Nikud.label_2_id["sin"])).to(DEVICE)
+    state_dict_model = model_DM.state_dict()
+    state_dict_model.update(
+        torch.load(BEST_MODEL_PATH))
+    model_DM.load_state_dict(state_dict_model)
+    predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM)
+
+
+def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
+    if not os.path.exists(output_folder):
+        os.mkdir(output_folder)
+
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if filename.lower().endswith('.txt') and os.path.isfile(file_path):
+            output_file = os.path.join(output_folder, filename)
+            predict_text(file_path, output_file=output_file, logger=logger, tokenizer_tavbert=tokenizer_tavbert,
+                         model_DM=model_DM)
+        elif os.path.isdir(file_path) and filename != ".git":
+            sub_folder = file_path
+            sub_folder_output = os.path.join(output_folder, filename)
+            predict_folder(sub_folder, sub_folder_output, logger, tokenizer_tavbert, model_DM)
 
 
 if __name__ == '__main__':
@@ -430,5 +554,13 @@ if __name__ == '__main__':
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
     # predict_text(
     #     r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")
-    train(use_pretrain=True)
+    # train(use_pretrain=True)
     # hyperparams_checker()
+    # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test_modern")
+    # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test")
+    # test_by_folders(
+    #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male")
+    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\try_find_bug",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\try_find_bug2")
+    predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\expected",
+                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\predicts\Dnikud")

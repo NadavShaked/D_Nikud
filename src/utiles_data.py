@@ -9,11 +9,11 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 from tqdm import tqdm
-
+from uuid import uuid1
 from src.running_params import DEBUG_MODE
 
-matplotlib.use('Tkagg')
-
+matplotlib.use('agg')
+unique_key = str(uuid1())
 
 class Nikud:
     """
@@ -161,7 +161,7 @@ class Letter:
 
         if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
                 Nikud.label_2_id["nikud"]["WITHOUT"]:
-            labels_ids["dagesh"] = Nikud.RAFE
+            labels_ids["dagesh"] = Nikud.label_2_id["dagesh"]["WITHOUT"]
             labels_ids["nikud"] = Nikud.DAGESH_LETTER
 
         self.normalized = normalized
@@ -209,19 +209,20 @@ def combine_sentances(list_sentences, max_length=512):
             index += 1
             continue
         if len(sen) > max_length:
-            update_sen = sen.replace(". ", ".\n")
-            update_sen = update_sen.replace("? ", "?\n")
-            update_sen = update_sen.replace("! ", "!\n")
-            update_sen = update_sen.replace("” ", "”\n")
-            update_sen = update_sen.replace("\t", "\n")
-            part_sentence = update_sen.split("\n")
+            update_sen = sen.replace(". ", f". {unique_key}")
+            update_sen = update_sen.replace("? ", f"? {unique_key}")
+            update_sen = update_sen.replace("! ", f"! {unique_key}")
+            update_sen = update_sen.replace("” ", f"” {unique_key}")
+            update_sen = update_sen.replace("\t", f"\t{unique_key}")
+            part_sentence = update_sen.split(unique_key)
+            # part_sentence = update_sen.split("\n")
             good_parts = []
             for p in part_sentence:
                 if len(p) < max_length:
                     good_parts.append(p)
                 else:
                     prev = 0
-                    while prev >= len(p):
+                    while prev <= len(p):
                         part = p[prev:(prev + max_length)]
                         last_space = 0
                         if " " in part:
@@ -235,12 +236,14 @@ def combine_sentances(list_sentences, max_length=512):
         if new_sen == "":
             new_sen = sen
         elif len(new_sen) + len(sen) < max_length:
-            new_sen += "\n" + sen
+            new_sen += sen
         else:
             all_new_sentances.append(new_sen)
             new_sen = sen
         # if new(new_sen)
         index += 1
+    if len(new_sen) > 0:
+        all_new_sentances.append(new_sen)
     return all_new_sentances
 
 
@@ -294,6 +297,7 @@ class NikudDataset(Dataset):
             while index < sentance_length:
                 label = []
                 l = Letter(sen[index])
+                assert l not in Nikud.all_nikud_chr
                 if sen[index] in Letters.hebrew:
                     index += 1
                     while index < sentance_length and ord(sen[index]) in Nikud.all_nikud_ord:
@@ -331,19 +335,18 @@ class NikudDataset(Dataset):
         random.shuffle(all_data)
 
         if len(all_data) > 0:
-            self.split_data_data(all_data, folder_path)
+            self.split_2_train_dev_test(all_data, folder_path)
 
         return all_data
 
     def read_data_split(self, filepath: str) -> List[Tuple[str, list]]:  # TODO: DELETE
-        data_list = []
         with open(filepath, 'r', encoding='utf-8') as file:
             file_data = file.read()
         data_list = self.split_text(file_data)
 
         return data_list
 
-    def split_data_data(self, data_list, filepath):  # TODO: DELETE
+    def split_2_train_dev_test(self, data_list, filepath):  # TODO: DELETE
         import math
         train_size = (int)(0.9 * len(data_list))
         dev_size = math.ceil(0.05 * len(data_list))
@@ -367,13 +370,12 @@ class NikudDataset(Dataset):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
 
         for file_path in all_files:
-            if "hebrew_diacritized" in file_path:
-                continue
             if os.path.exists(file_path):
                 os.remove(file_path)
 
     def split_text(self, file_data):
-        data_list = file_data.split("\n")
+        file_data = file_data.replace("\n", f"\n{unique_key}")
+        data_list = file_data.split(unique_key)
         data_list = combine_sentances(data_list)
         return data_list
 
@@ -440,15 +442,15 @@ class NikudDataset(Dataset):
 
     def back_2_text(self, labels):
         nikud = Nikud()
-        all_text = []
+        all_text = ""
         for indx_sentance, (input_ids, _, label) in enumerate(self.prepered_data):
             new_line = ""
             for indx_char, c in enumerate(self.origin_data[indx_sentance]):
                 # decode_char = self.origin_data[indx_sentance][indx_char]
-                new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 0], "nikud") +
-                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 1], "dagesh") +
-                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 2], "sin"))
-            all_text.append(new_line)
+                new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 1], "dagesh") +
+                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 2], "sin") +
+                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 0], "nikud"))
+            all_text+=new_line
         return all_text
 
     def __len__(self):
@@ -456,3 +458,12 @@ class NikudDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.data[idx]
+
+def get_sub_folders_paths(main_folder):
+    list_paths = []
+    for filename in os.listdir(main_folder):
+        path = os.path.join(main_folder, filename)
+        if os.path.isdir(path) and filename != ".git":
+            list_paths.append(path)
+            list_paths.extend(get_sub_folders_paths(path))
+    return list_paths
