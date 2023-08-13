@@ -291,7 +291,7 @@ class NikudDataset(Dataset):
         for file in all_files:
             if "not_use" in file or "NakdanResults" in file:
                 continue
-            data, origin_data = self.read_data(file, self.is_train)
+            data, origin_data = self.read_data(file)
             all_data.extend(data)
             all_origin_data.extend(origin_data)
         return all_data, all_origin_data
