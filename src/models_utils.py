@@ -1,5 +1,6 @@
 # ML
 # DL
+import json
 import os
 import random
 
@@ -283,6 +284,8 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
               f'Dev word Accuracy: {word_all_nikud_accuracy}'
         logger.debug(msg)
 
+        save_progress_details(accuracy_dev_values, epochs_loss_train_values, loss_dev_values, steps_loss_train_values)
+
         if dev_all_nikud_types_accuracy_letter > best_accuracy:
             best_accuracy = dev_all_nikud_types_accuracy_letter
             best_model = {
@@ -321,6 +324,23 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model["model_state_dict"], save_model_path)
     return best_model, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values, accuracy_dev_values
+
+
+def save_progress_details(accuracy_dev_values, epochs_loss_train_values, loss_dev_values, steps_loss_train_values):
+    epochs_data_path = "epochs_data"
+    if not os.path.exists(epochs_data_path):
+        os.makedirs(epochs_data_path)
+
+    save_dict_as_json(steps_loss_train_values, epochs_data_path, "steps_loss_train_values.json")
+    save_dict_as_json(epochs_loss_train_values, epochs_data_path, "epochs_loss_train_values.json")
+    save_dict_as_json(loss_dev_values, epochs_data_path, "loss_dev_values.json")
+    save_dict_as_json(accuracy_dev_values, epochs_data_path, "accuracy_dev_values.json")
+
+
+def save_dict_as_json(dict, file_path, file_name):
+    json_data = json.dumps(dict, indent=4)
+    with open(os.path.join(file_path, file_name), "w") as json_file:
+        json_file.write(json_data)
 
 
 # TODO: Add word level acc for all kinds
