@@ -148,7 +148,9 @@ class Letter:
                       "sin": Nikud.IRRELEVANT}
 
         normalized = self.normalize(self.letter)
+
         i = 0
+        count = 0
         for index, (name_class, group) in enumerate(
                 zip(["dagesh", "sin", "nikud"], [[Nikud.DAGESH_LETTER], Nikud.sin, Nikud.nikud])):
             # notice - order is important : dagesh then sin and then nikud
@@ -156,8 +158,23 @@ class Letter:
                 if i < len(labels) and labels[i] in group:
                     labels_ids[name_class] = Nikud.label_2_id[name_class][labels[i]]
                     i += 1
+                    count += 1
+                elif i < len(labels) and labels[i] ==Nikud.nikud_dict["METEG"]:
+                    count +=1
                 else:
                     labels_ids[name_class] = Nikud.label_2_id[name_class]["WITHOUT"]
+
+
+        # assert len(labels) == count
+        if np.array(dagesh_sin_nikud).all() and len(labels)==3 and labels[0] in Nikud.sin:
+            labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
+            labels_ids["sin"] = Nikud.label_2_id["sin"][labels[0]]
+            labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
+        else:
+            assert (normalized in ["ף", "ם"]) or len(labels) == count or labels[0] == labels[2]
+
+
+
 
         if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
                 Nikud.label_2_id["nikud"]["WITHOUT"]:
@@ -195,13 +212,13 @@ def text_contains_nikud(text):
     return len(set(text) & Nikud.all_nikud_chr) > 0
 
 
-def combine_sentances(list_sentences, max_length=512):
+def combine_sentances(list_sentences, max_length=512, is_train=False):
     all_new_sentances = []
     new_sen = ""
     index = 0
     while index < len(list_sentences):
         sen = list_sentences[index]
-        if not text_contains_nikud(sen):
+        if not text_contains_nikud(sen) and is_train:
             if sen == '------------------':
                 if len(new_sen) > 0:
                     all_new_sentances.append(new_sen)
@@ -248,14 +265,16 @@ def combine_sentances(list_sentences, max_length=512):
 
 
 class NikudDataset(Dataset):
-    def __init__(self, tokenizer, folder=None, file=None, logger=None, max_length=0):
+    def __init__(self, tokenizer, folder=None, file=None, logger=None, max_length=0, is_train=False):
         self.max_length = max_length
         self.tokenizer = tokenizer
+        self.is_train=is_train
         if folder is not None:
             self.data, self.origin_data = self.read_data_folder(folder, logger)
         elif file is not None:
             self.data, self.origin_data = self.read_data(file)
         self.prepered_data = None
+
 
     def read_data_folder(self, folder_path: str, logger=None):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
@@ -272,12 +291,17 @@ class NikudDataset(Dataset):
         for file in all_files:
             if "not_use" in file or "NakdanResults" in file:
                 continue
-            data, origin_data = self.read_data(file)
+            data, origin_data = self.read_data(file, self.is_train)
             all_data.extend(data)
             all_origin_data.extend(origin_data)
         return all_data, all_origin_data
 
-    def read_data(self, filepath: str) -> List[Tuple[str, list]]:
+    def read_data(self, filepath: str, logger=None) -> List[Tuple[str, list]]:
+        msg = f"read file: {filepath}"
+        if logger:
+            logger.debug(msg)
+        else:
+            print(msg)
         data = []
         orig_data = []
         with open(filepath, 'r', encoding='utf-8') as file:
@@ -297,7 +321,8 @@ class NikudDataset(Dataset):
             while index < sentance_length:
                 label = []
                 l = Letter(sen[index])
-                assert l not in Nikud.all_nikud_chr
+                # assert l.letter not in Nikud.all_nikud_chr, f'{i}, {nbrd}, {letter}, {[name_of(c) for word in nbrd for c in word]}'
+                assert l.letter not in Nikud.all_nikud_chr
                 if sen[index] in Letters.hebrew:
                     index += 1
                     while index < sentance_length and ord(sen[index]) in Nikud.all_nikud_ord:
@@ -305,6 +330,7 @@ class NikudDataset(Dataset):
                         index += 1
                 else:
                     index += 1
+
                 l.get_label_letter(label)
                 text += l.normalized
                 text_org += l.letter
@@ -376,7 +402,7 @@ class NikudDataset(Dataset):
     def split_text(self, file_data):
         file_data = file_data.replace("\n", f"\n{unique_key}")
         data_list = file_data.split(unique_key)
-        data_list = combine_sentances(data_list)
+        data_list = combine_sentances(data_list, is_train= self.is_train)
         return data_list
 
     def show_data_labels(self, debug_folder=None):

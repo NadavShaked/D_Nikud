@@ -119,11 +119,11 @@ def train(use_pretrain=False):
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
     dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=logger,
-                                 max_length=512)
+                                 max_length=512, is_train=True)
     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=logger,
-                               max_length=dataset_train.max_length)
+                               max_length=dataset_train.max_length, is_train=True)
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
-                                logger=logger, max_length=dataset_train.max_length)
+                                logger=logger, max_length=dataset_train.max_length, is_train=True)
 
     dataset_train.show_data_labels(debug_folder=debug_folder)
 
@@ -271,11 +271,11 @@ def hyperparams_checker(use_pretrain=False):
     # logger.debug(msg)
 
     dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=None,
-                                 max_length=512)
+                                 max_length=512, is_train=True)
     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=None,
-                               max_length=dataset_train.max_length)
+                               max_length=dataset_train.max_length, is_train=True)
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
-                                logger=None, max_length=dataset_train.max_length)
+                                logger=None, max_length=dataset_train.max_length, is_train=True)
 
     dataset_train.prepare_data(name="train")  # , with_label=True)
     dataset_dev.prepare_data(name="dev")  # , with_label=True)
@@ -374,9 +374,9 @@ def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batc
         tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
     if os.path.isfile(path):
-        dataset = NikudDataset(tokenizer_tavbert, file=path, logger=logger, max_length=config.max_length)
+        dataset = NikudDataset(tokenizer_tavbert, file=path, logger=logger, max_length=config.max_length, is_train=True)
     elif os.path.isdir(path):
-        dataset = NikudDataset(tokenizer_tavbert, folder=path, logger=logger, max_length=config.max_length)
+        dataset = NikudDataset(tokenizer_tavbert, folder=path, logger=logger, max_length=config.max_length, is_train=True)
 
     dataset.prepare_data(name="evaluate")
     mtb_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=batch_size)
@@ -568,6 +568,17 @@ def update_compare_folder(folder, output_folder):
             sub_folder_output = os.path.join(output_folder, filename)
             update_compare_folder(sub_folder, sub_folder_output)
 
+def check_files_excepted(folder):
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if filename.lower().endswith('.txt') and os.path.isfile(file_path):
+            try:
+                x = NikudDataset(None, file=file_path)
+            except:
+                print(f"failed in file: {filename}")
+        elif os.path.isdir(file_path) and filename != ".git":
+            check_files_excepted(file_path)
+
 if __name__ == '__main__':
     # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
@@ -579,9 +590,11 @@ if __name__ == '__main__':
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test")
     # test_by_folders(
     #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male")
-    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\try_find_bug",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\try_find_bug2")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\Dnikud")
-    update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected",
-                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected2")
+    predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
+                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
+    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected2")
+    # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")
+    check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
