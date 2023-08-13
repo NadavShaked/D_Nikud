@@ -394,6 +394,8 @@ def extract_text_to_compare_nakdimon(text):
                       'ו' + chr(Nikud.nikud_dict['DAGESH OR SHURUK']))
     res = res.replace(chr(Nikud.nikud_dict["HOLAM"]) + 'ו' + chr(Nikud.nikud_dict["METEG"]),
                       'ו')  # + chr(Nikud.nikud_dict["HOLAM"]))
+    res = res.replace("ו" + chr(Nikud.nikud_dict["HOLAM"]) +chr(Nikud.nikud_dict["KAMATZ"]),
+                      'ו'+chr(Nikud.nikud_dict["KAMATZ"]))  # + chr(Nikud.nikud_dict["HOLAM"]))
     res = res.replace(chr(Nikud.nikud_dict["METEG"]), '')
     res = res.replace(chr(Nikud.nikud_dict["KAMATZ_KATAN"]), chr(Nikud.nikud_dict["KAMATZ"]))
 
@@ -549,6 +551,23 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
             predict_folder(sub_folder, sub_folder_output, logger, tokenizer_tavbert, model_DM)
 
 
+def update_compare_folder(folder, output_folder):
+    if not os.path.exists(output_folder):
+        os.mkdir(output_folder)
+
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if filename.lower().endswith('.txt') and os.path.isfile(file_path):
+            output_file = os.path.join(output_folder, filename)
+            with open(file_path, "r", encoding='utf-8') as f:
+                text_data_with_labels = f.read()
+            with open(output_file, "w", encoding='utf-8') as f:
+                f.write(extract_text_to_compare_nakdimon(text_data_with_labels))
+        elif os.path.isdir(file_path) and filename != ".git":
+            sub_folder = file_path
+            sub_folder_output = os.path.join(output_folder, filename)
+            update_compare_folder(sub_folder, sub_folder_output)
+
 if __name__ == '__main__':
     # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
@@ -562,5 +581,7 @@ if __name__ == '__main__':
     #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\try_find_bug",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\try_find_bug2")
-    predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\expected",
-                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\predicts\Dnikud")
+    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\Dnikud")
+    update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected",
+                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected2")
