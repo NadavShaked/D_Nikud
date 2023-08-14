@@ -594,9 +594,9 @@ if __name__ == '__main__':
     #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male_not_use")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\Dnikud")
-    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
-    update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
-                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected2")
+    predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
+                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
+    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected2")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
