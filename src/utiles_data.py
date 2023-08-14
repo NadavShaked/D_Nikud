@@ -321,7 +321,7 @@ class NikudDataset(Dataset):
             index = 0
             sentance_length = len(sen)
             while index < sentance_length:
-                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or Letter(sen[index]) == '׀':
+                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or sen[index] == '׀':
                     index += 1
                     continue
 
