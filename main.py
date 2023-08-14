@@ -125,7 +125,7 @@ def train(use_pretrain=False):
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
                                 logger=logger, max_length=dataset_train.max_length, is_train=True)
 
-    dataset_train.show_data_labels(debug_folder=debug_folder)
+    # dataset_train.show_data_labels(debug_folder=debug_folder)
 
     msg = f'Max length of data: {dataset_train.max_length}'
     logger.debug(msg)
@@ -584,17 +584,17 @@ if __name__ == '__main__':
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
     # predict_text(
     #     r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")
-    # train(use_pretrain=True)
+    train(use_pretrain=False)
     # hyperparams_checker()
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test_modern")
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test")
     # test_by_folders(
-    #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male")
+    #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male_not_use")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\Dnikud")
-    predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
-                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
+    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
     # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected2")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")
-    check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
+    # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
