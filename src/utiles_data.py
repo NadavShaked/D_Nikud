@@ -114,7 +114,7 @@ class Letter:
         if letter in Letters.VALID_LETTERS: return letter
         if letter in Letters.ENDINGS_TO_REGULAR: return Letters.ENDINGS_TO_REGULAR[letter]
         if letter in ['\n', '\t']: return ' '
-        if letter in ['־', '‒', '–', '—', '―', '−', '+']: return '-'
+        if letter in ['‒', '–', '—', '―', '−', '+']: return '-'
         if letter == '[': return '('
         if letter == ']': return ')'
         if letter in ['´', '‘', '’']: return "'"

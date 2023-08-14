@@ -397,6 +397,8 @@ def extract_text_to_compare_nakdimon(text):
     res = res.replace("ו" + chr(Nikud.nikud_dict["HOLAM"]) +chr(Nikud.nikud_dict["KAMATZ"]),
                       'ו'+chr(Nikud.nikud_dict["KAMATZ"]))  # + chr(Nikud.nikud_dict["HOLAM"]))
     res = res.replace(chr(Nikud.nikud_dict["METEG"]), '')
+    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION MAQAF"]), '')
+    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION PASEQ"]), '')
     res = res.replace(chr(Nikud.nikud_dict["KAMATZ_KATAN"]), chr(Nikud.nikud_dict["KAMATZ"]))
 
     res = re.sub(chr(Nikud.nikud_dict["KUBUTZ"]) + 'ו' + '(?=[א-ת])', 'ו',
@@ -584,7 +586,7 @@ if __name__ == '__main__':
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
     # predict_text(
     #     r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")
-    train(use_pretrain=False)
+    # train(use_pretrain=False)
     # hyperparams_checker()
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test_modern")
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test")
@@ -594,7 +596,7 @@ if __name__ == '__main__':
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\Dnikud")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
-    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected2")
+    update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
+                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected2")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
