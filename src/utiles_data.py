@@ -15,6 +15,7 @@ from src.running_params import DEBUG_MODE
 matplotlib.use('agg')
 unique_key = str(uuid1())
 
+
 class Nikud:
     """
     1456 HEBREW POINT SHEVA
@@ -152,6 +153,10 @@ class Letter:
         # todo: delete count and assert
         i = 0
         count = 0
+        if Nikud.nikud_dict["PUNCTUATION MAQAF"] in labels:
+            labels.remove(Nikud.nikud_dict["PUNCTUATION MAQAF"])
+        if Nikud.nikud_dict["METEG"] in labels:
+            labels.remove(Nikud.nikud_dict["METEG"])
         for index, (name_class, group) in enumerate(
                 zip(["dagesh", "sin", "nikud"], [[Nikud.DAGESH_LETTER], Nikud.sin, Nikud.nikud])):
             # notice - order is important : dagesh then sin and then nikud
@@ -160,22 +165,19 @@ class Letter:
                     labels_ids[name_class] = Nikud.label_2_id[name_class][labels[i]]
                     i += 1
                     count += 1
-                elif i < len(labels) and labels[i] == Nikud.nikud_dict["PUNCTUATION MAQAF"]:
-                    count +=1
                 else:
                     labels_ids[name_class] = Nikud.label_2_id[name_class]["WITHOUT"]
 
-
         # assert len(labels) == count
-        if np.array(dagesh_sin_nikud).all() and len(labels)==3 and labels[0] in Nikud.sin:
+        if np.array(dagesh_sin_nikud).all() and len(labels) == 3 and labels[0] in Nikud.sin:
             labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
             labels_ids["sin"] = Nikud.label_2_id["sin"][labels[0]]
         else:
-            assert (normalized in ["ף", "ם"]) or len(labels) == count or (labels[0] == 1469) or labels[1] == 1470 or (labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (labels[0] == 1468 and labels[1] == 1460) or labels[0] == labels[2]
-
-
-
+            assert (normalized in ["ף", "ם"]) or len(labels) == count or (
+                    labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (
+                           labels[0] == Nikud.nikud_dict['DAGESH OR SHURUK'] and labels[1] == Nikud.nikud_dict[
+                       'HIRIK']) or labels[0] == labels[2]
 
         if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
                 Nikud.label_2_id["nikud"]["WITHOUT"]:
@@ -269,13 +271,12 @@ class NikudDataset(Dataset):
     def __init__(self, tokenizer, folder=None, file=None, logger=None, max_length=0, is_train=False):
         self.max_length = max_length
         self.tokenizer = tokenizer
-        self.is_train=is_train
+        self.is_train = is_train
         if folder is not None:
             self.data, self.origin_data = self.read_data_folder(folder, logger)
         elif file is not None:
             self.data, self.origin_data = self.read_data(file)
         self.prepered_data = None
-
 
     def read_data_folder(self, folder_path: str, logger=None):
         all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
@@ -351,7 +352,7 @@ class NikudDataset(Dataset):
         msg = f"prepare data in folder - {os.path.basename(folder_path)}"
         logger.debug(msg)
         for type_data in ["train", "dev", "test"]:
-            folder_type =  folder_path.replace(main_folder_name, type_data)
+            folder_type = folder_path.replace(main_folder_name, type_data)
             if not os.path.exists(folder_type):
                 os.mkdir(folder_type)
         all_data = []
@@ -387,11 +388,12 @@ class NikudDataset(Dataset):
         test_data = data_list[dev_end_index:]
 
         name_folder = os.path.basename(filepath)
-        self.write_list_to_text_file(train_data, os.path.join(filepath , f"{name_folder}.txt"), "train")
-        self.write_list_to_text_file(dev_data, os.path.join(filepath , f"{name_folder}.txt"), "dev")
-        self.write_list_to_text_file(test_data, os.path.join(filepath , f"{name_folder}.txt"), "test")
+        self.write_list_to_text_file(train_data, os.path.join(filepath, f"{name_folder}.txt"), "train")
+        self.write_list_to_text_file(dev_data, os.path.join(filepath, f"{name_folder}.txt"), "dev")
+        self.write_list_to_text_file(test_data, os.path.join(filepath, f"{name_folder}.txt"), "test")
 
-    def write_list_to_text_file(self, data_list, file_path, type, main_folder_name="hebrew_diacritized"):  # TODO: DELETE
+    def write_list_to_text_file(self, data_list, file_path, type,
+                                main_folder_name="hebrew_diacritized"):  # TODO: DELETE
         file_path = file_path.replace(main_folder_name, type)
         with open(file_path, 'w', encoding='utf-8') as f:
             for item in data_list:
@@ -407,7 +409,7 @@ class NikudDataset(Dataset):
     def split_text(self, file_data):
         file_data = file_data.replace("\n", f"\n{unique_key}")
         data_list = file_data.split(unique_key)
-        data_list = combine_sentances(data_list, is_train= self.is_train)
+        data_list = combine_sentances(data_list, is_train=self.is_train)
         return data_list
 
     def show_data_labels(self, debug_folder=None):
@@ -481,7 +483,7 @@ class NikudDataset(Dataset):
                 new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 1], "dagesh") +
                              nikud.id_2_char(labels[indx_sentance, indx_char + 1, 2], "sin") +
                              nikud.id_2_char(labels[indx_sentance, indx_char + 1, 0], "nikud"))
-            all_text+=new_line
+            all_text += new_line
         return all_text
 
     def __len__(self):
@@ -489,6 +491,7 @@ class NikudDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.data[idx]
+
 
 def get_sub_folders_paths(main_folder):
     list_paths = []
