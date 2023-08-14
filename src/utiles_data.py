@@ -149,6 +149,7 @@ class Letter:
 
         normalized = self.normalize(self.letter)
 
+        # todo: delete count and assert
         i = 0
         count = 0
         for index, (name_class, group) in enumerate(
@@ -159,7 +160,7 @@ class Letter:
                     labels_ids[name_class] = Nikud.label_2_id[name_class][labels[i]]
                     i += 1
                     count += 1
-                elif i < len(labels) and labels[i] ==Nikud.nikud_dict["METEG"]:
+                elif i < len(labels) and labels[i] == Nikud.nikud_dict["PUNCTUATION MAQAF"]:
                     count +=1
                 else:
                     labels_ids[name_class] = Nikud.label_2_id[name_class]["WITHOUT"]
@@ -167,11 +168,11 @@ class Letter:
 
         # assert len(labels) == count
         if np.array(dagesh_sin_nikud).all() and len(labels)==3 and labels[0] in Nikud.sin:
+            labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
             labels_ids["sin"] = Nikud.label_2_id["sin"][labels[0]]
-            labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
         else:
-            assert (normalized in ["ף", "ם"]) or len(labels) == count or labels[0] == labels[2]
+            assert (normalized in ["ף", "ם"]) or len(labels) == count or (labels[0] == 1469) or labels[1] == 1470 or (labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (labels[0] == 1468 and labels[1] == 1460) or labels[0] == labels[2]
 
 
 
@@ -319,6 +320,10 @@ class NikudDataset(Dataset):
             index = 0
             sentance_length = len(sen)
             while index < sentance_length:
+                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or Letter(sen[index]) == '׀':
+                    index += 1
+                    continue
+
                 label = []
                 l = Letter(sen[index])
                 # assert l.letter not in Nikud.all_nikud_chr, f'{i}, {nbrd}, {letter}, {[name_of(c) for word in nbrd for c in word]}'
