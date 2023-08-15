@@ -222,7 +222,7 @@ def combine_sentances(list_sentences, max_length=512, is_train=False):
     while index < len(list_sentences):
         sen = list_sentences[index]
         if not text_contains_nikud(sen) and is_train:
-            if sen == '------------------':
+            if '------------------' in sen or sen == '\n':
                 if len(new_sen) > 0:
                     all_new_sentances.append(new_sen)
                     new_sen = ""
@@ -288,8 +288,8 @@ class NikudDataset(Dataset):
         all_data = []
         all_origin_data = []
         if DEBUG_MODE:
-            all_files = all_files[2:4]
-            # all_files = [os.path.join(folder_path, "WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")]
+            # all_files = all_files[2:4]
+            all_files = [os.path.join(folder_path, r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\haser\WikipediaHebrewWithVocalization.txt")]
         for file in all_files:
             if "not_use" in file or "NakdanResults" in file:
                 continue
@@ -321,7 +321,7 @@ class NikudDataset(Dataset):
             index = 0
             sentance_length = len(sen)
             while index < sentance_length:
-                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or sen[index] == '׀':
+                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or sen[index] == Nikud.nikud_dict['PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
                     index += 1
                     continue
 
