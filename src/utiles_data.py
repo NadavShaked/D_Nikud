@@ -321,7 +321,7 @@ class NikudDataset(Dataset):
             index = 0
             sentance_length = len(sen)
             while index < sentance_length:
-                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or sen[index] == Nikud.nikud_dict['PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
+                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
                     index += 1
                     continue
 
