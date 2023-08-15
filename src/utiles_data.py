@@ -173,11 +173,11 @@ class Letter:
             labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
             labels_ids["sin"] = Nikud.label_2_id["sin"][labels[0]]
-        else:
-            assert (normalized in ["ף", "ם"]) or len(labels) == count or (
-                    labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (
-                           labels[0] == Nikud.nikud_dict['DAGESH OR SHURUK'] and labels[1] == Nikud.nikud_dict[
-                       'HIRIK']) or labels[0] == labels[2]
+        # else:
+            # assert (normalized in ["ף", "ם"]) or len(labels) == count or (
+            #         labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (
+            #                labels[0] == Nikud.nikud_dict['DAGESH OR SHURUK'] and labels[1] == Nikud.nikud_dict[
+            #            'HIRIK']) or labels[0] == labels[2]
 
         if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
                 Nikud.label_2_id["nikud"]["WITHOUT"]:
