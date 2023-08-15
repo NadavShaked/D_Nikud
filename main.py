@@ -151,7 +151,7 @@ def train(use_pretrain=False):
     base_model_name = "tau/tavbert-he"
     config = AutoConfig.from_pretrained(base_model_name)
     model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                           len(Nikud.label_2_id["sin"])).to(DEVICE)
+                           len(Nikud.label_2_id["sin"]), pretrain_model=base_model_name).to(DEVICE)
     if use_pretrain:
         # load last best model:
         state_dict_model = model_DM.state_dict()
