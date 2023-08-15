@@ -125,7 +125,7 @@ def train(use_pretrain=False):
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
                                 logger=logger, max_length=dataset_train.max_length, is_train=True)
 
-    # dataset_train.show_data_labels(debug_folder=debug_folder)
+    dataset_train.show_data_labels(debug_folder=debug_folder)
 
     msg = f'Max length of data: {dataset_train.max_length}'
     logger.debug(msg)

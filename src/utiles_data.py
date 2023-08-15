@@ -275,7 +275,7 @@ class NikudDataset(Dataset):
         if folder is not None:
             self.data, self.origin_data = self.read_data_folder(folder, logger)
         elif file is not None:
-            self.data, self.origin_data = self.read_data(file)
+            self.data, self.origin_data = self.read_data(file, logger)
         self.prepered_data = None
 
     def read_data_folder(self, folder_path: str, logger=None):
@@ -293,7 +293,7 @@ class NikudDataset(Dataset):
         for file in all_files:
             if "not_use" in file or "NakdanResults" in file:
                 continue
-            data, origin_data = self.read_data(file)
+            data, origin_data = self.read_data(file, logger)
             all_data.extend(data)
             all_origin_data.extend(origin_data)
         return all_data, all_origin_data
@@ -321,7 +321,7 @@ class NikudDataset(Dataset):
             index = 0
             sentance_length = len(sen)
             while index < sentance_length:
-                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or sen[index] == Nikud.nikud_dict['PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
+                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
                     index += 1
                     continue
 
