@@ -2,6 +2,8 @@
 import argparse
 import os
 import random
+import sys
+import time
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -22,7 +24,7 @@ from src.models import DnikudModel, BaseModel, CharClassifierTransformer, ModelC
 from src.models_utils import get_model_parameters, training, evaluate, freeze_model_parameters, predict
 from src.plot_helpers import plot_results, plot_steps_info, generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
-from src.running_params import SEED, BEST_MODEL_PATH
+from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE
 from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -52,13 +54,7 @@ def parse_arguments():
     parser.add_argument('--batch_size', type=int, default=32, help='batch_size')
     parser.add_argument('--lr_scheduler_type', type=str, default='linear',
                         help='Learning rate scheduler type ("linear"/"cosine"/"constant"/...')
-    parser.add_argument('--warmup_ratio', type=float, default=0.1, help='Warmup ratio')
-    parser.add_argument('--adam_beta1', type=float, default=0.9, help='AdamW beta1 hyperparameter')
-    parser.add_argument('--adam_beta2', type=float, default=0.999, help='AdamW beta2 hyperparameter')
-    parser.add_argument('--weight_decay', type=float, default=0.15, help='Weight decay')
     parser.add_argument('--n_epochs', type=int, default=5, help='number of epochs')
-    parser.add_argument('--num_freeze_layers', type=int, default=5, help='number of freeze layers')
-    parser.add_argument('--checkpoints_frequency', type=int, default=1, help='checkpoints saving frequency')
 
     parser.add_argument('--evaluation_strategy', type=str, default='steps',
                         help='How to validate (set to "no" for no validation)')
@@ -397,6 +393,8 @@ def extract_text_to_compare_nakdimon(text):
     res = res.replace("ו" + chr(Nikud.nikud_dict["HOLAM"]) +chr(Nikud.nikud_dict["KAMATZ"]),
                       'ו'+chr(Nikud.nikud_dict["KAMATZ"]))  # + chr(Nikud.nikud_dict["HOLAM"]))
     res = res.replace(chr(Nikud.nikud_dict["METEG"]), '')
+    res = res.replace(chr(Nikud.nikud_dict["KAMATZ"]) + chr(Nikud.nikud_dict["HIRIK"]), chr(Nikud.nikud_dict["KAMATZ"]) +'י' + chr(Nikud.nikud_dict["HIRIK"]))
+    res = res.replace(chr(Nikud.nikud_dict["PATAKH"]) + chr(Nikud.nikud_dict["HIRIK"]), chr(Nikud.nikud_dict["PATAKH"]) +'י' + chr(Nikud.nikud_dict["HIRIK"]))
     res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION MAQAF"]), '')
     res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION PASEQ"]), '')
     res = res.replace(chr(Nikud.nikud_dict["KAMATZ_KATAN"]), chr(Nikud.nikud_dict["KAMATZ"]))
@@ -408,13 +406,15 @@ def extract_text_to_compare_nakdimon(text):
     res = res.replace(chr(Nikud.nikud_dict["DAGESH OR SHURUK"]) * 2, chr(Nikud.nikud_dict["DAGESH OR SHURUK"]))
     res = res.replace('\u05be', '-')
     res = res.replace('יְהוָֹה', 'יהוה')
+
     return res
 
 
 def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=None, model_DM=None):
-    args = parse_arguments()
+    # args = parse_arguments()
 
-    dir_model_config = os.path.join(args.output_model_dir, "config.yml")
+    # dir_model_config = os.path.join(args.output_model_dir, "config.yml")
+    dir_model_config = "models/config.yml"
     config = ModelConfig.load_from_file(dir_model_config)
 
     if tokenizer_tavbert is None:
@@ -437,7 +437,7 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
             torch.load(BEST_MODEL_PATH))
         model_DM.load_state_dict(state_dict_model)
     dataset.prepare_data(name="prediction")
-    mtb_prediction_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=args.batch_size)
+    mtb_prediction_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=BATCH_SIZE)
     all_labels = predict(model_DM, mtb_prediction_dl)
     text_data_with_labels = dataset.back_2_text(labels=all_labels)
     if output_file is None:
@@ -525,6 +525,9 @@ def predict_folder_flow(folder, output_folder):
 
     msg = f"prepare data in folder - {os.path.basename(folder)}"
     logger.debug(msg)
+
+    start_time = time.time()
+
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
     dir_model_config = os.path.join(args.output_model_dir, "config.yml")
     config = ModelConfig.load_from_file(dir_model_config)
@@ -535,6 +538,11 @@ def predict_folder_flow(folder, output_folder):
         torch.load(BEST_MODEL_PATH))
     model_DM.load_state_dict(state_dict_model)
     predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM)
+
+    end_time = time.time()
+
+    elapsed_time = end_time - start_time
+    print(f"dnikud predict took {elapsed_time} seconds to run.")
 
 
 def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
@@ -581,22 +589,106 @@ def check_files_excepted(folder):
         elif os.path.isdir(file_path) and filename != ".git":
             check_files_excepted(file_path)
 
+
+def info_folder(folder, num_files, num_hebrew_letters):
+
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if filename.lower().endswith('.txt') and os.path.isfile(file_path):
+            num_files += 1
+            # with open(file_path, "r", encoding='utf-8') as f:
+            #     text_data_with_labels = f.read()
+            dataset = NikudDataset(None, file=file_path)
+            for line in dataset.data:
+                for c in line[0]:
+                    if c in Letters.hebrew:
+                        num_hebrew_letters+=1
+
+        elif os.path.isdir(file_path) and filename != ".git":
+            sub_folder = file_path
+            n1, n2 = info_folder(sub_folder, num_files, num_hebrew_letters)
+            num_files += n1
+            num_hebrew_letters += n2
+    return num_files, num_hebrew_letters
+
+
+def do_predict(input_path, output_path, log_level="DEBUG"):
+    dir_model_config = "models/config.yml"
+    config = ModelConfig.load_from_file(dir_model_config)
+
+    tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
+
+    date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
+    output_log_dir = os.path.join(os.path.join(Path(__file__).parent, "logging"),
+                                  f"log_model_predict_{date_time}")
+    if not os.path.exists(output_log_dir):
+        os.makedirs(output_log_dir)
+    logger = get_logger(log_level, output_log_dir)
+
+    model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                           len(Nikud.label_2_id["sin"])).to(DEVICE)
+    state_dict_model = model_DM.state_dict()
+    state_dict_model.update(
+        torch.load(BEST_MODEL_PATH))
+
+    if os.path.isdir(input_path):
+        predict_folder(input_path, output_path, logger, tokenizer_tavbert, model_DM)
+    elif os.path.isfile(input_path):
+        predict_text(input_path, output_file=output_path, logger=logger, tokenizer_tavbert=tokenizer_tavbert,
+                     model_DM=model_DM)
+    else:
+        raise Exception("Input file not exist")
+
 if __name__ == '__main__':
+
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description="""Predict D-nikud""",
+    )
+    subparsers = parser.add_subparsers(help='sub-command help', dest="command", required=True)
+
+    parser_predict = subparsers.add_parser('predict', help='diacritize a text file')
+    parser_predict.add_argument('input_path', help='input file')
+    parser_predict.add_argument('output_path', help='output file')
+    parser_predict.add_argument("-l", "--log", dest="log_level", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+                        default="DEBUG", help="Set the logging level")
+    parser_predict.set_defaults(func=do_predict)
+
+
+    args = parser.parse_args()
+
+    kwargs = vars(args).copy()
+    del kwargs['command']
+    del kwargs['func']
+    args.func(**kwargs)
+
+    sys.exit(0)
+
+    # folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\modern"
+    # data = []
+    # for sub_folder in os.listdir(folder):
+    #     sub_data = [sub_folder]
+    #     sub_folder_path = os.path.join(folder, sub_folder)
+    #     num_files, num_letters = info_folder(sub_folder_path, 0, 0)
+    #     sub_data.extend([num_files, num_letters])
+    #     data.append(sub_data)
+    # print(data)
+
     # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
     # predict_text(
     #     r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")
-    train(use_pretrain=False)
+    # train(use_pretrain=False)
     # hyperparams_checker()
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test_modern")
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test")
     # test_by_folders(
     #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male_not_use")
-    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\test_adi\Dnikud")
+    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male_nakdimon")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
-    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected2")
+    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\dnikud_test\expected",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\dnikud_test\expected2")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
