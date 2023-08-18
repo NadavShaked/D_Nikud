@@ -411,8 +411,6 @@ def extract_text_to_compare_nakdimon(text):
 
 
 def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=None, model_DM=None):
-    # args = parse_arguments()
-
     # dir_model_config = os.path.join(args.output_model_dir, "config.yml")
     dir_model_config = "models/config.yml"
     config = ModelConfig.load_from_file(dir_model_config)
@@ -420,6 +418,7 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
     if tokenizer_tavbert is None:
         tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
     if logger is None:
+        args = parse_arguments()
         date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
         output_log_dir = os.path.join(args.log_dir,
                                       f"log_model_predict_{date_time}")
@@ -640,29 +639,31 @@ def do_predict(input_path, output_path, log_level="DEBUG"):
         raise Exception("Input file not exist")
 
 if __name__ == '__main__':
+    # predict
+    # "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test\law\law.txt" "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test\law\law.txt"
+    # parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    #     description="""Predict D-nikud""",
+    # )
+    # subparsers = parser.add_subparsers(help='sub-command help', dest="command", required=True)
+    #
+    # parser_predict = subparsers.add_parser('predict', help='diacritize a text file')
+    # parser_predict.add_argument('input_path', help='input file')
+    # parser_predict.add_argument('output_path', help='output file')
+    # parser_predict.add_argument("-l", "--log", dest="log_level", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+    #                     default="DEBUG", help="Set the logging level")
+    # parser_predict.set_defaults(func=do_predict)
+    #
+    #
+    # args = parser.parse_args()
+    #
+    # kwargs = vars(args).copy()
+    # del kwargs['command']
+    # del kwargs['func']
+    # args.func(**kwargs)
+    #
+    # sys.exit(0)
 
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description="""Predict D-nikud""",
-    )
-    subparsers = parser.add_subparsers(help='sub-command help', dest="command", required=True)
 
-    parser_predict = subparsers.add_parser('predict', help='diacritize a text file')
-    parser_predict.add_argument('input_path', help='input file')
-    parser_predict.add_argument('output_path', help='output file')
-    parser_predict.add_argument("-l", "--log", dest="log_level", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-                        default="DEBUG", help="Set the logging level")
-    parser_predict.set_defaults(func=do_predict)
-
-
-    args = parser.parse_args()
-
-    kwargs = vars(args).copy()
-    del kwargs['command']
-    del kwargs['func']
-    args.func(**kwargs)
-
-    sys.exit(0)
 
     # folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\modern"
     # data = []
@@ -674,7 +675,7 @@ if __name__ == '__main__':
     #     data.append(sub_data)
     # print(data)
 
-    # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
+    orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
     # predict_text(
     #     r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")

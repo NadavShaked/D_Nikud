@@ -10,7 +10,7 @@ import torch
 from torch.utils.data import Dataset
 from tqdm import tqdm
 from uuid import uuid1
-from src.running_params import DEBUG_MODE
+from src.running_params import DEBUG_MODE, MAX_LENGTH_SEN
 
 matplotlib.use('agg')
 unique_key = str(uuid1())
@@ -174,10 +174,10 @@ class Letter:
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
             labels_ids["sin"] = Nikud.label_2_id["sin"][labels[0]]
         # else:
-            # assert (normalized in ["ף", "ם"]) or len(labels) == count or (
-            #         labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (
-            #                labels[0] == Nikud.nikud_dict['DAGESH OR SHURUK'] and labels[1] == Nikud.nikud_dict[
-            #            'HIRIK']) or labels[0] == labels[2]
+        # assert (normalized in ["ף", "ם"]) or len(labels) == count or (
+        #         labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (
+        #                labels[0] == Nikud.nikud_dict['DAGESH OR SHURUK'] and labels[1] == Nikud.nikud_dict[
+        #            'HIRIK']) or labels[0] == labels[2]
 
         if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
                 Nikud.label_2_id["nikud"]["WITHOUT"]:
@@ -321,7 +321,8 @@ class NikudDataset(Dataset):
             index = 0
             sentance_length = len(sen)
             while index < sentance_length:
-                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
+                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or ord(sen[index]) == Nikud.nikud_dict[
+                    'PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
                     index += 1
                     continue
 
@@ -441,15 +442,10 @@ class NikudDataset(Dataset):
         else:
             plt.savefig(os.path.join(debug_folder, 'show_data_labels.jpg'))
 
-    def calc_max_length(self, maximum=512):
+    def calc_max_length(self, maximum=MAX_LENGTH_SEN):
         if self.max_length > maximum:
             self.max_length = maximum
         return self.max_length
-        # max_length = 0
-        # for s, _ in self.data:
-        #     if len(s) > max_length:
-        #         max_length = len(s)
-        # self.max_length = max_length +1
 
     def prepare_data(self, name="train"):  # , with_label=False):
         dataset = []
