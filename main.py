@@ -668,6 +668,8 @@ if __name__ == '__main__':
     folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test"
     # data = []
     for sub_folder in os.listdir(folder):
+        # if sub_folder != "law":
+        #     continue
         print(sub_folder)
         sub_folder_path = os.path.join(folder, sub_folder)
         # num_files, num_letters = info_folder(sub_folder_path, 0, 0)
