@@ -55,7 +55,7 @@ def parse_arguments():
     parser.add_argument('--lr_scheduler_type', type=str, default='linear',
                         help='Learning rate scheduler type ("linear"/"cosine"/"constant"/...')
     parser.add_argument('--n_epochs', type=int, default=5, help='number of epochs')
-
+    parser.add_argument('--checkpoints_frequency', type=int, default=1, help='checkpoints frequency for save the model')
     parser.add_argument('--evaluation_strategy', type=str, default='steps',
                         help='How to validate (set to "no" for no validation)')
     parser.add_argument('--eval_steps', type=int, default=2000, help='Validate every N steps')
