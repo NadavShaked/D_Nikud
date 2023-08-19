@@ -24,7 +24,7 @@ from src.models import DnikudModel, BaseModel, CharClassifierTransformer, ModelC
 from src.models_utils import get_model_parameters, training, evaluate, freeze_model_parameters, predict
 from src.plot_helpers import plot_results, plot_steps_info, generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
-from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE
+from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE, MAX_LENGTH_SEN
 from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -96,10 +96,9 @@ def orgenize_folders(args, name_log):
 
 def train(use_pretrain=False):
     args = parse_arguments()
-    batch_size = args.batch_size
 
     output_model_dir, output_log_dir, output_dir_running, debug_folder = orgenize_folders(args,
-                                                                                          name_log=f"log_model_lr_{args.learning_rate}_bs_{batch_size}")
+                                                                                          name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
 
     logger = get_logger(args.loglevel, output_log_dir)
 
@@ -115,7 +114,7 @@ def train(use_pretrain=False):
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
     dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=logger,
-                                 max_length=512, is_train=True)
+                                 max_length=MAX_LENGTH_SEN, is_train=True)
     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=logger,
                                max_length=dataset_train.max_length, is_train=True)
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
@@ -138,9 +137,9 @@ def train(use_pretrain=False):
     dataset_dev.prepare_data(name="dev")  # , with_label=True)
     dataset_test.prepare_data(name="test")  # , with_label=True)
 
-    mtb_train_dl = torch.utils.data.DataLoader(dataset_train.prepered_data, batch_size=batch_size)
-    mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev.prepered_data, batch_size=batch_size)
-    mtb_test_dl = torch.utils.data.DataLoader(dataset_test.prepered_data, batch_size=batch_size)
+    mtb_train_dl = torch.utils.data.DataLoader(dataset_train.prepered_data, batch_size=BATCH_SIZE)
+    mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev.prepered_data, batch_size=BATCH_SIZE)
+    mtb_test_dl = torch.utils.data.DataLoader(dataset_test.prepered_data, batch_size=BATCH_SIZE)
     msg = 'Loading model...'
     logger.debug(msg)
 
@@ -267,7 +266,7 @@ def hyperparams_checker(use_pretrain=False):
     # logger.debug(msg)
 
     dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=None,
-                                 max_length=512, is_train=True)
+                                 max_length=MAX_LENGTH_SEN, is_train=True)
     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=None,
                                max_length=dataset_train.max_length, is_train=True)
     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
@@ -380,9 +379,9 @@ def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batc
     report, word_level_correct, letter_level_correct_dev = evaluate(model_DM, mtb_dl)
     msg = f"Dnikud Model\n{path_name} evaluate\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct}"
-    plot_results(logger, report, report_filename="results_dev")
+    # plot_results(logger, report, report_filename="results_dev")
     logger.debug(msg)
-
+    # print(word_level_correct, letter_level_correct_dev)
 
 def extract_text_to_compare_nakdimon(text):
     res = text.replace('|', '')
@@ -427,7 +426,7 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
         logger = get_logger(args.loglevel, output_log_dir)
     dataset = NikudDataset(tokenizer_tavbert,
                            file=text_file,
-                           logger=logger, max_length=config.max_length)
+                           logger=logger, max_length=MAX_LENGTH_SEN)
     if model_DM is None:
         model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
                                len(Nikud.label_2_id["sin"])).to(DEVICE)
@@ -639,6 +638,7 @@ def do_predict(input_path, output_path, log_level="DEBUG"):
         raise Exception("Input file not exist")
 
 if __name__ == '__main__':
+
     # predict
     # "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test\law\law.txt" "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test\law\law.txt"
     # parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -665,17 +665,18 @@ if __name__ == '__main__':
 
 
 
-    # folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\modern"
+    folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test"
     # data = []
-    # for sub_folder in os.listdir(folder):
-    #     sub_data = [sub_folder]
-    #     sub_folder_path = os.path.join(folder, sub_folder)
-    #     num_files, num_letters = info_folder(sub_folder_path, 0, 0)
-    #     sub_data.extend([num_files, num_letters])
-    #     data.append(sub_data)
+    for sub_folder in os.listdir(folder):
+        print(sub_folder)
+        sub_folder_path = os.path.join(folder, sub_folder)
+        # num_files, num_letters = info_folder(sub_folder_path, 0, 0)
+        evaluate_text(sub_folder_path)
+        # data.append(sub_data)
     # print(data)
 
-    orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
+    # predict "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected" "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_v4"
+    # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
     # predict_text(
     #     r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")
@@ -687,8 +688,8 @@ if __name__ == '__main__':
     #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male_not_use")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male_nakdimon")
-    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\Dnikud")
+    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female\expected",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female\Dnikud_v6")
     # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\dnikud_test\expected",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\dnikud_test\expected2")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")

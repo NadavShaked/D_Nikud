@@ -215,7 +215,7 @@ def text_contains_nikud(text):
     return len(set(text) & Nikud.all_nikud_chr) > 0
 
 
-def combine_sentances(list_sentences, max_length=512, is_train=False):
+def combine_sentances(list_sentences, max_length=0, is_train=False):
     all_new_sentances = []
     new_sen = ""
     index = 0
@@ -410,7 +410,7 @@ class NikudDataset(Dataset):
     def split_text(self, file_data):
         file_data = file_data.replace("\n", f"\n{unique_key}")
         data_list = file_data.split(unique_key)
-        data_list = combine_sentances(data_list, is_train=self.is_train)
+        data_list = combine_sentances(data_list, is_train=self.is_train, max_length=MAX_LENGTH_SEN)
         return data_list
 
     def show_data_labels(self, debug_folder=None):
