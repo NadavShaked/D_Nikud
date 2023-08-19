@@ -68,10 +68,10 @@ def generate_plot_by_nikud_dagesh_sin_dict(nikud_dagesh_sin_dict, title, y_axis,
         plt.savefig(os.path.join(plot_folder, f'{title.replace(" ", "_")}_plot.jpg'))
 
 
-def generate_word_and_letter_accuracy_plot(word_and_letter_accuracy_dict, plot_folder):
+def generate_word_and_letter_accuracy_plot(word_and_letter_accuracy_dict, title, plot_folder):
     # Create a figure and axis
     plt.figure(figsize=(8, 6))
-    plt.title("Word and letter accuracy")
+    plt.title(title)
 
     ax = plt.gca()
     indexes = list(range(1, len(word_and_letter_accuracy_dict["all_nikud_word"]) + 1))
