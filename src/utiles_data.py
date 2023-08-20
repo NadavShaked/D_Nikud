@@ -349,8 +349,8 @@ class NikudDataset(Dataset):
         logger.debug(msg)
         for type_data in ["train", "dev", "test"]:
             folder_type = folder_path.replace(main_folder_name, type_data)
-            if not os.path.exists(folder_type):
-                os.mkdir(folder_type)
+            create_folder_if_not_exist(folder_type)
+
         all_data = []
 
         for filename in os.listdir(folder_path):
@@ -492,3 +492,8 @@ def get_sub_folders_paths(main_folder):
             list_paths.append(path)
             list_paths.extend(get_sub_folders_paths(path))
     return list_paths
+
+
+def create_folder_if_not_exist(folder_path):
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)

@@ -15,7 +15,7 @@ from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
 
 from src.running_params import DEBUG_MODE
-from src.utiles_data import Nikud
+from src.utiles_data import Nikud, create_folder_if_not_exist
 
 
 # TODO: not used - Delete?
@@ -100,12 +100,9 @@ def predict(model, data_loader, device='cpu'):
 
             nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
-            pred_nikud = np.array(torch.max(nikud_probs, 2).indices.cpu()).reshape(inputs.shape[0],
-                                                                                   inputs.shape[1], 1)
-            pred_dagesh = np.array(torch.max(dagesh_probs, 2).indices.cpu()).reshape(inputs.shape[0],
-                                                                                     inputs.shape[1], 1)
-            pred_sin = np.array(torch.max(sin_probs, 2).indices.cpu()).reshape(inputs.shape[0],
-                                                                               inputs.shape[1], 1)
+            pred_nikud = np.array(torch.max(nikud_probs, 2).indices.cpu()).reshape(inputs.shape[0], inputs.shape[1], 1)
+            pred_dagesh = np.array(torch.max(dagesh_probs, 2).indices.cpu()).reshape(inputs.shape[0], inputs.shape[1], 1)
+            pred_sin = np.array(torch.max(sin_probs, 2).indices.cpu()).reshape(inputs.shape[0], inputs.shape[1], 1)
 
             pred_nikud[mask_nikud] = -1
             pred_dagesh[mask_dagesh] = -1
@@ -123,9 +120,10 @@ def predict(model, data_loader, device='cpu'):
 
 def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
              output_model_path, optimizer, device='cpu'):
+    max_length = None
     best_accuracy = 0.0
-    logger.info(torch.cuda.is_available())
-    logger.info(f"strat training with training_params: {training_params}")
+
+    logger.info(f"start training with training_params: {training_params}")
     model = model.to(device)
 
     criteria = {
@@ -134,15 +132,13 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         "sin": criterion_sin.to(device),
     }
 
-    max_length = None
     output_checkpoints_path = os.path.join(output_model_path, "checkpoints")
-    if not os.path.exists(output_checkpoints_path):
-        os.makedirs(output_checkpoints_path)
+    create_folder_if_not_exist(output_checkpoints_path)
 
-    steps_loss_train_values = {"nikud": [], "dagesh": [], "sin": []}
-    epochs_loss_train_values = {"nikud": [], "dagesh": [], "sin": []}
-    loss_dev_values = {"nikud": [], "dagesh": [], "sin": []}
-    accuracy_dev_values = {"nikud": [], "dagesh": [], "sin": [], "all_nikud_letter": [], "all_nikud_word": []}
+    train_steps_loss_values = {"nikud": [], "dagesh": [], "sin": []}
+    train_epochs_loss_values = {"nikud": [], "dagesh": [], "sin": []}
+    dev_loss_values = {"nikud": [], "dagesh": [], "sin": []}
+    dev_accuracy_values = {"nikud": [], "dagesh": [], "sin": [], "all_nikud_letter": [], "all_nikud_word": []}
 
     for epoch in tqdm(range(training_params["n_epochs"]), desc="Training"):
         model.train()
@@ -174,7 +170,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 loss.backward(retain_graph=True)
 
             for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
-                steps_loss_train_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
+                train_steps_loss_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
 
             optimizer.step()
             if (index_data + 1) % 100 == 0:
@@ -185,7 +181,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 logger.debug(msg[:-2])
 
         for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
-            epochs_loss_train_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
+            train_epochs_loss_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
 
         for class_name in train_loss.keys():
             train_loss[class_name] /= sum[class_name]
@@ -259,15 +255,15 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
             dev_loss[class_name] /= sum[class_name]
             dev_accuracy[class_name] = float(correct_preds[class_name].double() / sum[class_name])
 
-            loss_dev_values[class_name].append(float(dev_loss[class_name]))
-            accuracy_dev_values[class_name].append(float(dev_accuracy[class_name]))
+            dev_loss_values[class_name].append(float(dev_loss[class_name]))
+            dev_accuracy_values[class_name].append(float(dev_accuracy[class_name]))
 
         dev_all_nikud_types_accuracy_letter = float(all_nikud_types_correct_preds_letter / letter_count)
 
-        accuracy_dev_values["all_nikud_letter"].append(dev_all_nikud_types_accuracy_letter)
+        dev_accuracy_values["all_nikud_letter"].append(dev_all_nikud_types_accuracy_letter)
 
         word_all_nikud_accuracy = correct_words_count / word_count
-        accuracy_dev_values["all_nikud_word"].append(word_all_nikud_accuracy)
+        dev_accuracy_values["all_nikud_word"].append(word_all_nikud_accuracy)
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
               f'mean loss Dev nikud: {train_loss["nikud"]}, ' \
@@ -280,7 +276,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
               f'Dev word Accuracy: {word_all_nikud_accuracy}'
         logger.debug(msg)
 
-        save_progress_details(accuracy_dev_values, epochs_loss_train_values, loss_dev_values, steps_loss_train_values)
+        save_progress_details(dev_accuracy_values, train_epochs_loss_values, dev_loss_values, train_steps_loss_values)
 
         if dev_all_nikud_types_accuracy_letter > best_accuracy:
             best_accuracy = dev_all_nikud_types_accuracy_letter
@@ -303,13 +299,12 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model["model_state_dict"], save_model_path)
-    return best_model, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values, accuracy_dev_values
+    return best_model, best_accuracy, train_epochs_loss_values, train_steps_loss_values, dev_loss_values, dev_accuracy_values
 
 
 def save_progress_details(accuracy_dev_values, epochs_loss_train_values, loss_dev_values, steps_loss_train_values):
     epochs_data_path = "epochs_data"
-    if not os.path.exists(epochs_data_path):
-        os.makedirs(epochs_data_path)
+    create_folder_if_not_exist(epochs_data_path)
 
     save_dict_as_json(steps_loss_train_values, epochs_data_path, "steps_loss_train_values.json")
     save_dict_as_json(epochs_loss_train_values, epochs_data_path, "epochs_loss_train_values.json")

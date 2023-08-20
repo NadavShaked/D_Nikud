@@ -20,7 +20,7 @@ from src.models import DNikudModel, ModelConfig
 from src.models_utils import training, evaluate, predict
 from src.plot_helpers import plot_results, generate_plot_by_nikud_dagesh_sin_dict, generate_word_and_letter_accuracy_plot
 from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE, MAX_LENGTH_SEN
-from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths
+from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths, create_folder_if_not_exist
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
@@ -66,25 +66,21 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def organize_folders(args, name_log):
+def generate_folders(args, name_log):
     output_model_dir = args.output_model_dir
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
 
-    if not os.path.exists(args.debug_folder):
-        os.makedirs(args.debug_folder)
+    create_folder_if_not_exist(args.debug_folder)
 
     debug_folder = os.path.join(args.debug_folder, f"debug_plots_{date_time}")
-    if not os.path.exists(debug_folder):
-        os.makedirs(debug_folder)
+    create_folder_if_not_exist(debug_folder)
 
     output_dir_running = os.path.join(output_model_dir, "trained", "latest", f"output_models_{date_time}")
-    if not os.path.exists(output_dir_running):
-        os.makedirs(output_dir_running)
+    create_folder_if_not_exist(output_dir_running)
 
     output_log_dir = os.path.join(args.log_dir, f"{name_log}_{date_time}")
-    if not os.path.exists(output_log_dir):
-        os.makedirs(output_log_dir)
+    create_folder_if_not_exist(output_log_dir)
 
     return output_model_dir, output_log_dir, output_dir_running, debug_folder
 
@@ -92,7 +88,7 @@ def organize_folders(args, name_log):
 def train(use_pretrain=False):
     args = parse_arguments()
 
-    output_model_dir, output_log_dir, output_dir_running, debug_folder = organize_folders(args, name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
+    output_model_dir, output_log_dir, output_dir_running, debug_folder = generate_folders(args, name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
 
     logger = get_logger(args.loglevel, output_log_dir)
 
@@ -226,8 +222,7 @@ def get_logger(log_level, log_location):
     cnsl_handler.setLevel(log_level)
     logger.addHandler(cnsl_handler)
 
-    if not os.path.exists(log_location):
-        os.makedirs(log_location)
+    create_folder_if_not_exist(log_location)
 
     file_location = os.path.join(log_location, 'Diacritization_Model_DEBUG.log')
     file_log_formatter = logging.Formatter(log_format)
@@ -248,8 +243,7 @@ def get_logger(log_level, log_location):
 def hyperparams_checker(use_pretrain=False):
     args = parse_arguments()
     debug_folder = args.debug_folder
-    if not os.path.exists(debug_folder):
-        os.makedirs(debug_folder)
+    create_folder_if_not_exist(debug_folder)
 
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
@@ -284,7 +278,7 @@ def hyperparams_checker(use_pretrain=False):
         nfl = np.random.choice(num_freeze_layers)
         batch_size = int(np.random.choice(batch_size_values))
 
-        output_model_dir, output_log_dir, output_dir_running, debug_folder = organize_folders(args,
+        output_model_dir, output_log_dir, output_dir_running, debug_folder = generate_folders(args,
                                                                                               name_log=f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}")
         logger = get_logger(args.loglevel, output_log_dir)
 
@@ -352,9 +346,10 @@ def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batc
         date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
         output_log_dir = os.path.join(args.log_dir,
                                       f"evaluate_{path_name}_{date_time}")
-        if not os.path.exists(output_log_dir):
-            os.makedirs(output_log_dir)
+
+        create_folder_if_not_exist(output_log_dir)
         logger = get_logger(args.loglevel, output_log_dir)
+
     msg = f"evaluate text: {path_name} on D-nikud Model"
     logger.debug(msg)
 
@@ -430,9 +425,7 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
         date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
         output_log_dir = os.path.join(args.log_dir, f"log_model_predict_{date_time}")
 
-        if not os.path.exists(output_log_dir):
-            os.makedirs(output_log_dir)
-
+        create_folder_if_not_exist(output_log_dir)
         logger = get_logger(args.loglevel, output_log_dir)
 
     dataset = NikudDataset(tokenizer_tavbert,
@@ -465,14 +458,12 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
 
 
 # TODO DELETE
-def orgenize_data(main_folder):
+def organize_data(main_folder):
     args = parse_arguments()
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir, f"log_orgenize_data_{date_time}")
 
-    if not os.path.exists(output_log_dir):
-        os.makedirs(output_log_dir)
-
+    create_folder_if_not_exist(output_log_dir)
     logger = get_logger(args.loglevel, output_log_dir)
 
     x = NikudDataset(None)
@@ -502,10 +493,7 @@ def test_by_folders(main_folder):
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir, f"evaluate_{os.path.basename(main_folder)}_{date_time}")
-
-    if not os.path.exists(output_log_dir):
-        os.makedirs(output_log_dir)
-
+    create_folder_if_not_exist(output_log_dir)
     logger = get_logger(args.loglevel, output_log_dir)
 
     msg = f'evaluate all_data: {main_folder}'
@@ -561,9 +549,7 @@ def predict_folder_flow(folder, output_folder):
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir, f"log_orgenize_data_{date_time}")
-
-    if not os.path.exists(output_log_dir):
-        os.makedirs(output_log_dir)
+    create_folder_if_not_exist(output_log_dir)
     logger = get_logger(args.loglevel, output_log_dir)
 
     msg = f"prepare data in folder - {os.path.basename(folder)}"
@@ -596,8 +582,7 @@ def predict_folder_flow(folder, output_folder):
 
 
 def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
-    if not os.path.exists(output_folder):
-        os.mkdir(output_folder)
+    create_folder_if_not_exist(output_folder)
 
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -615,8 +600,7 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
 
 
 def update_compare_folder(folder, output_folder):
-    if not os.path.exists(output_folder):
-        os.mkdir(output_folder)
+    create_folder_if_not_exist(output_folder)
 
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -670,10 +654,8 @@ def do_predict(input_path, output_path, log_level="DEBUG"):
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
-    output_log_dir = os.path.join(os.path.join(Path(__file__).parent, "logging"),
-                                  f"log_model_predict_{date_time}")
-    if not os.path.exists(output_log_dir):
-        os.makedirs(output_log_dir)
+    output_log_dir = os.path.join(os.path.join(Path(__file__).parent, "logging"), f"log_model_predict_{date_time}")
+    create_folder_if_not_exist(output_log_dir)
     logger = get_logger(log_level, output_log_dir)
 
     model_DM = DNikudModel(config,
