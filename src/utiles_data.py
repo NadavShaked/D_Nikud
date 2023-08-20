@@ -83,19 +83,20 @@ class Nikud:
 
     DAGESH_LETTER = nikud_dict['DAGESH OR SHURUK']
     RAFE = nikud_dict['RAFE']
-    PAD = -1
-    IRRELEVANT = PAD
+    PAD_OR_IRRELEVANT = -1
 
     LEN_NIKUD = len(label_2_id["nikud"])
     LEN_DAGESH = len(label_2_id["dagesh"])
     LEN_SIN = len(label_2_id["sin"])
 
-    def id_2_char(self, c, type):
+    def id_2_char(self, c, class_type):
         if c == -1:
             return ""
-        label = self.id_2_label[type][c]
+
+        label = self.id_2_label[class_type][c]
         if label != "WITHOUT":
-            return chr(self.id_2_label[type][c])
+            return chr(self.id_2_label[class_type][c])
+
         return ""
 
 
@@ -144,45 +145,36 @@ class Letter:
         return letter in ('אבגדהוזחטיכלמנסעפצקרשת' + 'ךן')
 
     def get_label_letter(self, labels):
-        # todo - consider reorgenize func
         dagesh_sin_nikud = [True if self.can_dagesh(self.letter) else False,
                             True if self.can_sin(self.letter) else False,
                             True if self.can_nikud(self.letter) else False]
 
-        labels_ids = {"nikud": Nikud.IRRELEVANT,
-                      "dagesh": Nikud.IRRELEVANT,
-                      "sin": Nikud.IRRELEVANT}
+        labels_ids = {"nikud": Nikud.PAD_OR_IRRELEVANT,
+                      "dagesh": Nikud.PAD_OR_IRRELEVANT,
+                      "sin": Nikud.PAD_OR_IRRELEVANT}
 
         normalized = self.normalize(self.letter)
 
         # todo: delete count and assert
         i = 0
-        count = 0
         if Nikud.nikud_dict["PUNCTUATION MAQAF"] in labels:
             labels.remove(Nikud.nikud_dict["PUNCTUATION MAQAF"])
         if Nikud.nikud_dict["METEG"] in labels:
             labels.remove(Nikud.nikud_dict["METEG"])
         for index, (class_name, group) in enumerate(
                 zip(["dagesh", "sin", "nikud"], [[Nikud.DAGESH_LETTER], Nikud.sin, Nikud.nikud])):
-            # notice - order is important : dagesh then sin and then nikud
+            # notice - order is important: dagesh then sin and then nikud
             if dagesh_sin_nikud[index]:
                 if i < len(labels) and labels[i] in group:
                     labels_ids[class_name] = Nikud.label_2_id[class_name][labels[i]]
                     i += 1
-                    count += 1
                 else:
                     labels_ids[class_name] = Nikud.label_2_id[class_name]["WITHOUT"]
 
-        # assert len(labels) == count
         if np.array(dagesh_sin_nikud).all() and len(labels) == 3 and labels[0] in Nikud.sin:
             labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
             labels_ids["sin"] = Nikud.label_2_id["sin"][labels[0]]
-        # else:
-        # assert (normalized in ["ף", "ם"]) or len(labels) == count or (
-        #         labels[0] == labels[1] and labels[0] == 1468) or (labels[0] == 1465 and labels[1] == 1464) or (
-        #                labels[0] == Nikud.nikud_dict['DAGESH OR SHURUK'] and labels[1] == Nikud.nikud_dict[
-        #            'HIRIK']) or labels[0] == labels[2]
 
         if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
                 Nikud.label_2_id["nikud"]["WITHOUT"]:
@@ -220,8 +212,8 @@ def text_contains_nikud(text):
     return len(set(text) & Nikud.all_nikud_chr) > 0
 
 
-def combine_sentances(list_sentences, max_length=0, is_train=False):
-    all_new_sentances = []
+def combine_sentences(list_sentences, max_length=0, is_train=False):
+    all_new_sentences = []
     new_sen = ""
     index = 0
     while index < len(list_sentences):
@@ -229,7 +221,7 @@ def combine_sentances(list_sentences, max_length=0, is_train=False):
         if not text_contains_nikud(sen) and is_train:
             if '------------------' in sen or sen == '\n':
                 if len(new_sen) > 0:
-                    all_new_sentances.append(new_sen)
+                    all_new_sentences.append(new_sen)
                     new_sen = ""
             index += 1
             continue
@@ -240,7 +232,7 @@ def combine_sentances(list_sentences, max_length=0, is_train=False):
             update_sen = update_sen.replace("” ", f"” {unique_key}")
             update_sen = update_sen.replace("\t", f"\t{unique_key}")
             part_sentence = update_sen.split(unique_key)
-            # part_sentence = update_sen.split("\n")
+
             good_parts = []
             for p in part_sentence:
                 if len(p) < max_length:
@@ -263,13 +255,13 @@ def combine_sentances(list_sentences, max_length=0, is_train=False):
         elif len(new_sen) + len(sen) < max_length:
             new_sen += sen
         else:
-            all_new_sentances.append(new_sen)
+            all_new_sentences.append(new_sen)
             new_sen = sen
         # if new(new_sen)
         index += 1
     if len(new_sen) > 0:
-        all_new_sentances.append(new_sen)
-    return all_new_sentances
+        all_new_sentences.append(new_sen)
+    return all_new_sentences
 
 
 class NikudDataset(Dataset):
@@ -314,12 +306,11 @@ class NikudDataset(Dataset):
         with open(filepath, 'r', encoding='utf-8') as file:
             file_data = file.read()
         data_list = self.split_text(file_data)
-        # if DEBUG_MODE:
-        #    data_list = data_list[:10]
+
         for sen in tqdm(data_list, desc=f"Source: {os.path.basename(filepath)}"):
             if sen == "":  # todo- mabye add check for every word
                 continue
-            # split_sentences = sen.split('\n')
+
             labels = []
             text = ""
             text_org = ""
@@ -333,7 +324,7 @@ class NikudDataset(Dataset):
 
                 label = []
                 l = Letter(sen[index])
-                # assert l.letter not in Nikud.all_nikud_chr, f'{i}, {nbrd}, {letter}, {[name_of(c) for word in nbrd for c in word]}'
+
                 assert l.letter not in Nikud.all_nikud_chr
                 if sen[index] in Letters.hebrew:
                     index += 1
@@ -346,12 +337,11 @@ class NikudDataset(Dataset):
                 l.get_label_letter(label)
                 text += l.normalized
                 text_org += l.letter
-                # print(l.normalized)
-                # print(l.letter)
                 labels.append(l)
 
             data.append((text, labels))
             orig_data.append(text_org)
+
         return data, orig_data
 
     def split_data(self, folder_path: str, logger=None, main_folder_name="hebrew_diacritized"):
@@ -415,7 +405,7 @@ class NikudDataset(Dataset):
     def split_text(self, file_data):
         file_data = file_data.replace("\n", f"\n{unique_key}")
         data_list = file_data.split(unique_key)
-        data_list = combine_sentances(data_list, is_train=self.is_train, max_length=MAX_LENGTH_SEN)
+        data_list = combine_sentences(data_list, is_train=self.is_train, max_length=MAX_LENGTH_SEN)
         return data_list
 
     def show_data_labels(self, debug_folder=None):
@@ -452,7 +442,7 @@ class NikudDataset(Dataset):
             self.max_length = maximum
         return self.max_length
 
-    def prepare_data(self, name="train"):  # , with_label=False):
+    def prepare_data(self, name="train"):
         dataset = []
         for index, (sentence, label) in tqdm(enumerate(self.data), desc=f"prepare data {name}"):
             encoded_sequence = self.tokenizer.encode_plus(
@@ -466,8 +456,9 @@ class NikudDataset(Dataset):
             )
             label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
             label = torch.tensor(
-                [[Nikud.PAD, Nikud.PAD, Nikud.PAD]] + label_lists[:(self.max_length - 1)] + [
-                    [Nikud.PAD, Nikud.PAD, Nikud.PAD] for i in
+                [[Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT]] + label_lists[:(
+                        self.max_length - 1)] + [
+                    [Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT] for i in
                     range(self.max_length - len(label) - 1)])
 
             dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
@@ -480,7 +471,6 @@ class NikudDataset(Dataset):
         for indx_sentance, (input_ids, _, label) in enumerate(self.prepered_data):
             new_line = ""
             for indx_char, c in enumerate(self.origin_data[indx_sentance]):
-                # decode_char = self.origin_data[indx_sentance][indx_char]
                 new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 1], "dagesh") +
                              nikud.id_2_char(labels[indx_sentance, indx_char + 1, 2], "sin") +
                              nikud.id_2_char(labels[indx_sentance, indx_char + 1, 0], "nikud"))
