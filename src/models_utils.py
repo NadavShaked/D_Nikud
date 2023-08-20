@@ -427,30 +427,28 @@ def evaluate(model, test_data, debug_folder=None):
             shin_letter_level_correct += torch.sum(correct_sin[mask_all_or])
 
     for i, name in enumerate(["nikud", "dagesh", "sin"]):
-        # report = classification_report(true_labels[name], predicted_labels_2_report[name],
-        #                                output_dict=True)  # target_names=list(Nikud.label_2_id[name].keys()),
+        report = classification_report(true_labels[name], predicted_labels_2_report[name], output_dict=True)
 
-        reports[name] = None  # report
-        # reports = None
+        reports[name] = report
         index_labels = np.unique(true_labels[name])
-        # cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
+        cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
 
         vowel_label = [Nikud.id_2_label[name][l] for l in index_labels]
         unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in vowel_label if vowel != 'WITHOUT']
         if "WITHOUT" in vowel_label:
             unique_vowels_names += ["WITHOUT"]
-        # cm_df = pd.DataFrame(cm, index=unique_vowels_names, columns=unique_vowels_names)
+        cm_df = pd.DataFrame(cm, index=unique_vowels_names, columns=unique_vowels_names)
 
-        # # Display confusion matrix
-        # plt.figure(figsize=(10, 8))
-        # sns.heatmap(cm_df, annot=True, cmap="Blues", fmt="d")
-        # plt.title("Confusion Matrix")
-        # plt.xlabel("True Label")
-        # plt.ylabel("Predicted Label")
-        # if debug_folder is None:
-        #     plt.show()
-        # else:
-        #     plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
+        # Display confusion matrix
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(cm_df, annot=True, cmap="Blues", fmt="d")
+        plt.title("Confusion Matrix")
+        plt.xlabel("True Label")
+        plt.ylabel("Predicted Label")
+        if debug_folder is None:
+            plt.show()
+        else:
+            plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
 
     all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / letter_count
     all_nikud_types_word_level_correct = correct_words / word_count

@@ -15,12 +15,13 @@ cols = ["precision", "recall", "f1-score", "support"]
 def plot_results(logger, reports, report_filename="results"):
     if reports is None:
         return
+
     logger.debug(f"plot report : {report_filename}")
     for name, report in reports.items():
         df = pd.DataFrame(report).transpose()
         df = df[cols]
 
-        msg = tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f")
+        msg = "\n" + tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f")
         logger.debug(msg)
         # Save report to CSV
         # df.to_csv(os.path.join(debug_folder, f"{report_filename}_{name}"))
@@ -42,7 +43,7 @@ def plot_steps_info(loss_train_values, loss_dev_values, accuracy_dev_values):
     #     print(f"Evaluation report saved to {report_filename}")
 
 
-def generate_plot_by_nikud_dagesh_sin_dict(nikud_dagesh_sin_dict, title, y_axis, plot_folder):
+def generate_plot_by_nikud_dagesh_sin_dict(nikud_dagesh_sin_dict, title, y_axis, plot_folder=None):
     # Create a figure and axis
     plt.figure(figsize=(8, 6))
     plt.title(title)
@@ -68,7 +69,7 @@ def generate_plot_by_nikud_dagesh_sin_dict(nikud_dagesh_sin_dict, title, y_axis,
         plt.savefig(os.path.join(plot_folder, f'{title.replace(" ", "_")}_plot.jpg'))
 
 
-def generate_word_and_letter_accuracy_plot(word_and_letter_accuracy_dict, title, plot_folder):
+def generate_word_and_letter_accuracy_plot(word_and_letter_accuracy_dict, title, plot_folder=None):
     # Create a figure and axis
     plt.figure(figsize=(8, 6))
     plt.title(title)
