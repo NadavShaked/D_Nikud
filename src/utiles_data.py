@@ -1,15 +1,20 @@
+# general
 import os.path
 import random
 from typing import List, Tuple
-
 import glob2
+
+# ML
+import numpy as np
+from torch.utils.data import Dataset
+
+# visual
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 import torch
-from torch.utils.data import Dataset
 from tqdm import tqdm
 from uuid import uuid1
+
 from src.running_params import DEBUG_MODE, MAX_LENGTH_SEN
 
 matplotlib.use('agg')
