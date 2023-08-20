@@ -18,13 +18,16 @@ from transformers import AutoConfig, AutoTokenizer
 # DL
 from src.models import DNikudModel, ModelConfig
 from src.models_utils import training, evaluate, predict
-from src.plot_helpers import plot_results, generate_plot_by_nikud_dagesh_sin_dict, generate_word_and_letter_accuracy_plot
+from src.plot_helpers import plot_results, generate_plot_by_nikud_dagesh_sin_dict, \
+    generate_word_and_letter_accuracy_plot
 from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE, MAX_LENGTH_SEN
 from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths, create_folder_if_not_exist
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
 cols = ["precision", "recall", "f1-score", "support"]
+
+# TODO: DELETE SEEDS
 
 # Set the random seed for Python
 random.seed(SEED)
@@ -88,7 +91,8 @@ def generate_folders(args, name_log):
 def train(use_pretrain=False):
     args = parse_arguments()
 
-    output_model_dir, output_log_dir, output_dir_running, debug_folder = generate_folders(args, name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
+    output_model_dir, output_log_dir, output_dir_running, debug_folder = generate_folders(args,
+                                                                                          name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
 
     logger = get_logger(args.loglevel, output_log_dir)
 
@@ -197,8 +201,10 @@ def train(use_pretrain=False):
 
     model_DM.load_state_dict(best_model_details['model_state_dict'])
 
-    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder, device=DEVICE)
-    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder, device=DEVICE)
+    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder,
+                                                                            device=DEVICE)
+    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder,
+                                                                               device=DEVICE)
 
     msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct_dev}\n--------------------\nTest dataset\n" \
