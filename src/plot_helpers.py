@@ -1,13 +1,12 @@
 # general
-
 import os
-import matplotlib.pyplot as plt
+
 # ML
 import pandas as pd
+
 # visual
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
 from tabulate import tabulate
+import matplotlib.pyplot as plt
 
 cols = ["precision", "recall", "f1-score", "support"]
 
@@ -23,24 +22,6 @@ def plot_results(logger, reports, report_filename="results"):
 
         msg = "\n" + tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f")
         logger.debug(msg)
-        # Save report to CSV
-        # df.to_csv(os.path.join(debug_folder, f"{report_filename}_{name}"))
-
-        # logger.debug(f"Evaluation report saved to {report_filename}")
-
-
-def plot_steps_info(loss_train_values, loss_dev_values, accuracy_dev_values):
-    pass
-    # for name in ["nikud", "dagesh", "sin"]:
-    #     df = pd.DataFrame(report).transpose()
-    #     df = df[cols]
-    #
-    #     print(tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f"))
-    #
-    #     # Save report to CSV
-    #     df.to_csv(f"{report_filename} : {name}")
-    #
-    #     print(f"Evaluation report saved to {report_filename}")
 
 
 def generate_plot_by_nikud_dagesh_sin_dict(nikud_dagesh_sin_dict, title, y_axis, plot_folder=None):

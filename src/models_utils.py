@@ -242,10 +242,6 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                     correct["nikud"])
                 all_nikud_types_correct_preds_letter += torch.sum(letter_correct_mask[mask_all_or])
 
-                # nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
-                # dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
-                # shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
-
                 letter_correct_mask[~mask_all_or] = True
                 correct_num, total_words_num = find_num_correct_words(inputs.cpu(), letter_correct_mask)
 
@@ -274,7 +270,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
               f'Dev all nikud types letter Accuracy: {dev_all_nikud_types_accuracy_letter}, ' \
               f'Dev nikud letter Accuracy: {dev_accuracy["nikud"]}, ' \
               f'Dev dagesh letter Accuracy: {dev_accuracy["dagesh"]}, ' \
-              f'Dev shin letter Accuracy: {dev_accuracy["sin"]}, ' \
+              f'Dev sin letter Accuracy: {dev_accuracy["sin"]}, ' \
               f'Dev word Accuracy: {word_all_nikud_accuracy}'
         logger.debug(msg)
 
@@ -355,7 +351,7 @@ def evaluate(model, test_data, debug_folder=None):
     all_nikud_types_letter_level_correct = 0.0
     nikud_letter_level_correct = 0.0
     dagesh_letter_level_correct = 0.0
-    shin_letter_level_correct = 0.0
+    sin_letter_level_correct = 0.0
 
     letter_count = 0.0
     word_count = 0.0
@@ -406,30 +402,23 @@ def evaluate(model, test_data, debug_folder=None):
                 correct_nikud)
             all_nikud_types_letter_level_correct += torch.sum(letter_correct_mask[mask_all_or])
 
-            # nikud_correct_preds_letter += torch.sum(correct["nikud"][mask_all_or])
-            # dagesh_correct_preds_letter += torch.sum(correct["dagesh"][mask_all_or])
-            # shin_correct_preds_letter += torch.sum(correct["sin"][mask_all_or])
             letter_correct_mask[~mask_all_or] = True
             correct_num, total_words_num = find_num_correct_words(inputs.cpu(), letter_correct_mask)
 
-            # words_end_index = np.concatenate((np.array([-1]), np.where(inputs[0].cpu() == 0)[0]))
-            # is_correct_words_array = [
-            #     bool(letter_correct_mask[list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s in
-            #     range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
-
-            word_count += total_words_num  # len(is_correct_words_array)
-            correct_words += correct_num  # np.array(is_correct_words_array).sum()
+            word_count += total_words_num
+            correct_words += correct_num
 
             letter_count += mask_all_or.sum()
 
             nikud_letter_level_correct += torch.sum(correct_nikud[mask_all_or])
             dagesh_letter_level_correct += torch.sum(correct_dagesh[mask_all_or])
-            shin_letter_level_correct += torch.sum(correct_sin[mask_all_or])
+            sin_letter_level_correct += torch.sum(correct_sin[mask_all_or])
 
     for i, name in enumerate(["nikud", "dagesh", "sin"]):
         report = classification_report(true_labels[name], predicted_labels_2_report[name], output_dict=True)
 
         reports[name] = report
+        # reports = None
         index_labels = np.unique(true_labels[name])
         cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
 
@@ -454,10 +443,10 @@ def evaluate(model, test_data, debug_folder=None):
     all_nikud_types_word_level_correct = correct_words / word_count
     nikud_letter_level_correct = nikud_letter_level_correct / letter_count
     dagesh_letter_level_correct = dagesh_letter_level_correct / letter_count
-    shin_letter_level_correct = shin_letter_level_correct / letter_count
+    sin_letter_level_correct = sin_letter_level_correct / letter_count
     print(f"nikud_letter_level_correct = {nikud_letter_level_correct}")
     print(f"dagesh_letter_level_correct = {dagesh_letter_level_correct}")
-    print(f"shin_letter_level_correct = {shin_letter_level_correct}")
+    print(f"sin_letter_level_correct = {sin_letter_level_correct}")
     print(f"word_level_correct = {all_nikud_types_word_level_correct}")
 
     return reports, all_nikud_types_word_level_correct, all_nikud_types_letter_level_correct
