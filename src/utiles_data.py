@@ -314,8 +314,8 @@ class NikudDataset(Dataset):
             text = ""
             text_org = ""
             index = 0
-            sentance_length = len(sen)
-            while index < sentance_length:
+            sentence_length = len(sen)
+            while index < sentence_length:
                 if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or ord(sen[index]) == Nikud.nikud_dict[
                     'PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
                     index += 1
@@ -327,7 +327,7 @@ class NikudDataset(Dataset):
                 assert l.letter not in Nikud.all_nikud_chr
                 if sen[index] in Letters.hebrew:
                     index += 1
-                    while index < sentance_length and ord(sen[index]) in Nikud.all_nikud_ord:
+                    while index < sentence_length and ord(sen[index]) in Nikud.all_nikud_ord:
                         label.append(ord(sen[index]))
                         index += 1
                 else:
@@ -408,13 +408,14 @@ class NikudDataset(Dataset):
         return data_list
 
     def show_data_labels(self, debug_folder=None):
-        vowels = [Nikud.id_2_label["nikud"][label.nikud] for _, label_list in self.data for label in label_list if
+        nikud = [Nikud.id_2_label["nikud"][label.nikud] for _, label_list in self.data for label in label_list if
                   label.nikud != -1]
-        dageshs = [Nikud.id_2_label["dagesh"][label.dagesh] for _, label_list in self.data for label in label_list if
+        dagesh = [Nikud.id_2_label["dagesh"][label.dagesh] for _, label_list in self.data for label in label_list if
                    label.dagesh != -1]
         sin = [Nikud.id_2_label["sin"][label.sin] for _, label_list in self.data for label in label_list if
                label.sin != -1]
-        vowels = vowels + dageshs + sin
+
+        vowels = nikud + dagesh + sin
         unique_vowels, label_counts = np.unique(vowels, return_counts=True)
         unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in unique_vowels if vowel != 'WITHOUT'] + [
             "WITHOUT"]
