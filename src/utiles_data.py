@@ -155,7 +155,6 @@ class Letter:
 
         normalized = self.normalize(self.letter)
 
-        # todo: delete count and assert
         i = 0
         if Nikud.nikud_dict["PUNCTUATION MAQAF"] in labels:
             labels.remove(Nikud.nikud_dict["PUNCTUATION MAQAF"])

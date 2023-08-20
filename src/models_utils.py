@@ -196,7 +196,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         dev_accuracy = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         relevant_count = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         correct_preds = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
-        un_masks = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        masks = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         predictions = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
@@ -220,24 +220,24 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
                     loss = criteria[class_name](reshaped_tensor, labels[:, :, i]).to(device)
-                    un_masks = labels[:, :, i] != -1
-                    num_relevant = un_masks.sum()
+                    un_masked = labels[:, :, i] != -1
+                    num_relevant = un_masked.sum()
                     relevant_count[class_name] += num_relevant
                     _, preds = torch.max(probs, 2)
                     dev_loss[class_name] += loss.item() * num_relevant
-                    correct_preds[class_name] += torch.sum(preds[un_masks] == labels[:, :, i][un_masks])
-                    un_masks[class_name] = un_masks
+                    correct_preds[class_name] += torch.sum(preds[un_masked] == labels[:, :, i][un_masked])
+                    masks[class_name] = un_masked
                     predictions[class_name] = preds
                     labels_class[class_name] = labels[:, :, i]
 
-                mask_all_or = torch.logical_or(torch.logical_or(un_masks["nikud"], un_masks["dagesh"]), un_masks["sin"])
+                mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
 
                 correct = {class_name: (torch.ones(mask_all_or.shape) == 1).to(device) for class_name in
                            ["nikud", "dagesh", "sin"]}
 
                 for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
-                    correct[class_name][un_masks[class_name]] = predictions[class_name][un_masks[class_name]] == \
-                                                             labels_class[class_name][un_masks[class_name]]
+                    correct[class_name][masks[class_name]] = predictions[class_name][masks[class_name]] == \
+                                                             labels_class[class_name][masks[class_name]]
 
                 letter_correct_mask = torch.logical_and(
                     torch.logical_and(correct["sin"], correct["dagesh"]),
