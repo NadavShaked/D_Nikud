@@ -143,7 +143,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
     for epoch in tqdm(range(training_params["n_epochs"]), desc="Training"):
         model.train()
         train_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
-        sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        relevant_count = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
         for index_data, data in enumerate(train_loader):
             (inputs, attention_mask, labels) = data
@@ -165,26 +165,26 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
                 num_relevant = (labels[:, :, i] != -1).sum()
                 train_loss[class_name] += loss.item() * num_relevant
-                sum[class_name] += num_relevant
+                relevant_count[class_name] += num_relevant
 
                 loss.backward(retain_graph=True)
 
             for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
-                train_steps_loss_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
+                train_steps_loss_values[class_name].append(float(train_loss[class_name] / relevant_count[class_name]))
 
             optimizer.step()
             if (index_data + 1) % 100 == 0:
                 msg = f'epoch: {epoch} , index_data: {index_data + 1}\n'
-
                 for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
-                    msg += f'mean loss train {class_name}: {float(train_loss[class_name] / sum[class_name])}, '
+                    msg += f'mean loss train {class_name}: {float(train_loss[class_name] / relevant_count[class_name])}, '
+
                 logger.debug(msg[:-2])
 
         for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
-            train_epochs_loss_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
+            train_epochs_loss_values[class_name].append(float(train_loss[class_name] / relevant_count[class_name]))
 
         for class_name in train_loss.keys():
-            train_loss[class_name] /= sum[class_name]
+            train_loss[class_name] /= relevant_count[class_name]
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n"
         for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
@@ -194,9 +194,9 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         model.eval()
         dev_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         dev_accuracy = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
-        sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        relevant_count = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         correct_preds = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
-        masks = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
+        un_masks = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         predictions = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
@@ -220,24 +220,24 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
                     loss = criteria[class_name](reshaped_tensor, labels[:, :, i]).to(device)
-                    un_masked = labels[:, :, i] != -1
-                    num_relevant = un_masked.sum()
-                    sum[class_name] += num_relevant
+                    un_masks = labels[:, :, i] != -1
+                    num_relevant = un_masks.sum()
+                    relevant_count[class_name] += num_relevant
                     _, preds = torch.max(probs, 2)
                     dev_loss[class_name] += loss.item() * num_relevant
-                    correct_preds[class_name] += torch.sum(preds[un_masked] == labels[:, :, i][un_masked])
-                    masks[class_name] = un_masked
+                    correct_preds[class_name] += torch.sum(preds[un_masks] == labels[:, :, i][un_masks])
+                    un_masks[class_name] = un_masks
                     predictions[class_name] = preds
                     labels_class[class_name] = labels[:, :, i]
 
-                mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
+                mask_all_or = torch.logical_or(torch.logical_or(un_masks["nikud"], un_masks["dagesh"]), un_masks["sin"])
 
                 correct = {class_name: (torch.ones(mask_all_or.shape) == 1).to(device) for class_name in
                            ["nikud", "dagesh", "sin"]}
 
                 for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
-                    correct[class_name][masks[class_name]] = predictions[class_name][masks[class_name]] == \
-                                                             labels_class[class_name][masks[class_name]]
+                    correct[class_name][un_masks[class_name]] = predictions[class_name][un_masks[class_name]] == \
+                                                             labels_class[class_name][un_masks[class_name]]
 
                 letter_correct_mask = torch.logical_and(
                     torch.logical_and(correct["sin"], correct["dagesh"]),
@@ -252,8 +252,8 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 letter_count += mask_all_or.sum()
 
         for class_name in ["nikud", "dagesh", "sin"]:
-            dev_loss[class_name] /= sum[class_name]
-            dev_accuracy[class_name] = float(correct_preds[class_name].double() / sum[class_name])
+            dev_loss[class_name] /= relevant_count[class_name]
+            dev_accuracy[class_name] = float(correct_preds[class_name].double() / relevant_count[class_name])
 
             dev_loss_values[class_name].append(float(dev_loss[class_name]))
             dev_accuracy_values[class_name].append(float(dev_accuracy[class_name]))
