@@ -7,17 +7,17 @@ import torch.nn as nn
 from transformers import AutoConfig, RobertaForMaskedLM, PretrainedConfig
 
 
-class DnikudModel(nn.Module):
+class DNikudModel(nn.Module):
     def __init__(self, config, nikud_size, dagesh_size, sin_size, pretrain_model=None, device='cpu'):
-        super(DnikudModel, self).__init__()
+        super(DNikudModel, self).__init__()
 
         if pretrain_model is not None:
             model_base = RobertaForMaskedLM.from_pretrained(pretrain_model).to(device)
         else:
             model_base = RobertaForMaskedLM(config=config).to(device)
 
-        self.model = model_base.roberta
-        for name, param in self.model.named_parameters():
+        self.bert_model = model_base.roberta
+        for name, param in self.bert_model.named_parameters():
             param.requires_grad = False
 
         self.lstm1 = nn.LSTM(config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1, batch_first=True)
@@ -28,7 +28,7 @@ class DnikudModel(nn.Module):
         self.out_sin = nn.Linear(config.hidden_size, sin_size)
 
     def forward(self, input_ids, attention_mask):
-        last_hidden_state = self.model(input_ids, attention_mask=attention_mask).last_hidden_state
+        last_hidden_state = self.bert_model(input_ids, attention_mask=attention_mask).last_hidden_state
         lstm1, _ = self.lstm1(last_hidden_state)
         lstm2, _ = self.lstm2(lstm1)
         dense = self.dense(lstm2)

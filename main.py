@@ -16,7 +16,7 @@ import torch.nn as nn
 from transformers import AutoConfig, AutoTokenizer
 
 # DL
-from src.models import DnikudModel, ModelConfig
+from src.models import DNikudModel, ModelConfig
 from src.models_utils import training, evaluate, predict
 from src.plot_helpers import plot_results, generate_plot_by_nikud_dagesh_sin_dict, generate_word_and_letter_accuracy_plot
 from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE, MAX_LENGTH_SEN
@@ -147,7 +147,7 @@ def train(use_pretrain=False):
 
     base_model_name = "tau/tavbert-he"
     config = AutoConfig.from_pretrained(base_model_name)
-    model_DM = DnikudModel(config,
+    model_DM = DNikudModel(config,
                            len(Nikud.label_2_id["nikud"]),
                            len(Nikud.label_2_id["dagesh"]),
                            len(Nikud.label_2_id["sin"]),
@@ -189,7 +189,8 @@ def train(use_pretrain=False):
         training_params,
         logger,
         output_dir_running,
-        optimizer
+        optimizer,
+        device=DEVICE
     )
 
     generate_plot_by_nikud_dagesh_sin_dict(epochs_loss_train_values, "Train epochs loss", "Loss", debug_folder)
@@ -293,7 +294,7 @@ def hyperparams_checker(use_pretrain=False):
         base_model_name = "tau/tavbert-he"
         config = AutoConfig.from_pretrained(base_model_name)
 
-        model_DM = DnikudModel(config,
+        model_DM = DNikudModel(config,
                                len(Nikud.label_2_id["nikud"]),
                                len(Nikud.label_2_id["dagesh"]),
                                len(Nikud.label_2_id["sin"]),
@@ -323,9 +324,17 @@ def hyperparams_checker(use_pretrain=False):
          epochs_loss_train_values,
          steps_loss_train_values,
          loss_dev_values,
-         accuracy_dev_values) = training(model_DM, mtb_train_dl, mtb_dev_dl, criterion_nikud, criterion_dagesh,
+         accuracy_dev_values) = training(model_DM,
+                                         mtb_train_dl,
+                                         mtb_dev_dl,
+                                         criterion_nikud,
+                                         criterion_dagesh,
                                          criterion_sin,
-                                         training_params, logger, output_dir_running, optimizer)
+                                         training_params,
+                                         logger,
+                                         output_dir_running,
+                                         optimizer,
+                                         device=DEVICE)
 
         # if these hyperparameters are better, store them
         if accuracy_dev_values["all_nikud_letter"] > best_accuracy:
@@ -352,7 +361,7 @@ def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batc
     if model_DM is None:
         dir_model_config = os.path.join(args.output_model_dir, "config.yml")
         config = ModelConfig.load_from_file(dir_model_config)
-        model_DM = DnikudModel(config,
+        model_DM = DNikudModel(config,
                                len(Nikud.label_2_id["nikud"]),
                                len(Nikud.label_2_id["dagesh"]),
                                len(Nikud.label_2_id["sin"]),
@@ -431,7 +440,7 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
                            logger=logger, max_length=MAX_LENGTH_SEN)
 
     if model_DM is None:
-        model_DM = DnikudModel(config,
+        model_DM = DNikudModel(config,
                                len(Nikud.label_2_id["nikud"]),
                                len(Nikud.label_2_id["dagesh"]),
                                len(Nikud.label_2_id["sin"]),
@@ -444,7 +453,7 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
 
     dataset.prepare_data(name="prediction")
     mtb_prediction_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=BATCH_SIZE)
-    all_labels = predict(model_DM, mtb_prediction_dl)
+    all_labels = predict(model_DM, mtb_prediction_dl, DEVICE)
     text_data_with_labels = dataset.back_2_text(labels=all_labels)
 
     if output_file is None:
@@ -479,7 +488,7 @@ def test_by_folders(main_folder):
     dir_model_config = os.path.join(args.output_model_dir, "config.yml")
     config = ModelConfig.load_from_file(dir_model_config)
 
-    model_DM = DnikudModel(config,
+    model_DM = DNikudModel(config,
                            len(Nikud.label_2_id["nikud"]),
                            len(Nikud.label_2_id["dagesh"]),
                            len(Nikud.label_2_id["sin"]),
@@ -565,7 +574,7 @@ def predict_folder_flow(folder, output_folder):
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
     dir_model_config = os.path.join(args.output_model_dir, "config.yml")
     config = ModelConfig.load_from_file(dir_model_config)
-    model_DM = DnikudModel(config,
+    model_DM = DNikudModel(config,
                            len(Nikud.label_2_id["nikud"]),
                            len(Nikud.label_2_id["dagesh"]),
                            len(Nikud.label_2_id["sin"]),
@@ -667,7 +676,7 @@ def do_predict(input_path, output_path, log_level="DEBUG"):
         os.makedirs(output_log_dir)
     logger = get_logger(log_level, output_log_dir)
 
-    model_DM = DnikudModel(config,
+    model_DM = DNikudModel(config,
                            len(Nikud.label_2_id["nikud"]),
                            len(Nikud.label_2_id["dagesh"]),
                            len(Nikud.label_2_id["sin"]),

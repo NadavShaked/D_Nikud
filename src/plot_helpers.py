@@ -66,7 +66,7 @@ def generate_word_and_letter_accuracy_plot(word_and_letter_accuracy_dict, title,
     ax.legend()
 
     # Set labels and title
-    ax.set_xlabel('Epoch')
+    ax.set_xlabel("Epoch")
     ax.set_ylabel("Accuracy")
 
     if plot_folder is None:

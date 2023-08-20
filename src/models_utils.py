@@ -18,17 +18,20 @@ from src.running_params import DEBUG_MODE
 from src.utiles_data import Nikud
 
 
+# TODO: not used - Delete?
 def save_model(model, path):
     model_state = model.state_dict()
     torch.save(model_state, path)
 
 
+# TODO: not used - Delete?
 def load_model(model, path):
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint)
     return model
 
 
+# TODO: not used - Delete?
 def get_model_parameters(params, logger, num_freeze_layers=2):
     top_layer_params = []
     for name, param in params:
@@ -50,6 +53,7 @@ def get_model_parameters(params, logger, num_freeze_layers=2):
     return top_layer_params
 
 
+# TODO: not used - Delete?
 def freeze_model_parameters(params):
     top_layer_params = []
     for name, param in params:
@@ -58,25 +62,30 @@ def freeze_model_parameters(params):
     return top_layer_params
 
 
-def find_num_correct_words(input, letter_correct_mask):
-    correct_words = 0
-    all_words = 0
+def calc_num_correct_words(input, letter_correct_mask):
+    SPACE_TOKEN = 104
+    START_SENTENCE_TOKEN = 1
+    END_SENTENCE_TOKEN = 2
+
+    correct_words_count = 0
+    words_count = 0
     for index in range(input.shape[0]):
-        input[index][np.where(input[index] == 104)[0]] = 0
-        input[index][np.where(input[index] == 1)[0]] = 0
-        input[index][np.where(input[index] == 2)[0]] = 0
+        input[index][np.where(input[index] == SPACE_TOKEN)[0]] = 0
+        input[index][np.where(input[index] == START_SENTENCE_TOKEN)[0]] = 0
+        input[index][np.where(input[index] == END_SENTENCE_TOKEN)[0]] = 0
         words_end_index = np.concatenate((np.array([-1]), np.where(input[index] == 0)[0]))
         is_correct_words_array = [
             bool(letter_correct_mask[index][list(range((words_end_index[s] + 1), words_end_index[s + 1]))].all()) for s
             in range(len(words_end_index) - 1) if words_end_index[s + 1] - (words_end_index[s] + 1) > 1]
-        correct_words += np.array(is_correct_words_array).sum()
-        all_words += len(is_correct_words_array)
-    return correct_words, all_words
+        correct_words_count += np.array(is_correct_words_array).sum()
+        words_count += len(is_correct_words_array)
+
+    return correct_words_count, words_count
 
 
-def predict(model, data_loader):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def predict(model, data_loader, device='cpu'):
     model.to(device)
+
     all_labels = None
     with torch.no_grad():
         for index_data, data in enumerate(data_loader):
@@ -113,21 +122,19 @@ def predict(model, data_loader):
 
 
 def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh, criterion_sin, training_params, logger,
-             output_model_path, optimizer):
+             output_model_path, optimizer, device='cpu'):
     best_accuracy = 0.0
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(torch.cuda.is_available())
     logger.info(f"strat training with training_params: {training_params}")
     model = model.to(device)
 
-    criterions = {
+    criteria = {
         "nikud": criterion_nikud.to(device),
         "dagesh": criterion_dagesh.to(device),
         "sin": criterion_sin.to(device),
     }
 
     max_length = None
-    early_stop = False
     output_checkpoints_path = os.path.join(output_model_path, "checkpoints")
     if not os.path.exists(output_checkpoints_path):
         os.makedirs(output_checkpoints_path)
@@ -138,9 +145,6 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
     accuracy_dev_values = {"nikud": [], "dagesh": [], "sin": [], "all_nikud_letter": [], "all_nikud_word": []}
 
     for epoch in tqdm(range(training_params["n_epochs"]), desc="Training"):
-        if early_stop:
-            logger.info('Early stopping triggered')
-            break
         model.train()
         train_loss = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
         sum = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
@@ -161,7 +165,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                  probs.shape[2],
                                                                                  probs.shape[1])
-                loss = criterions[class_name](reshaped_tensor, labels[:, :, i]).to(device)
+                loss = criteria[class_name](reshaped_tensor, labels[:, :, i]).to(device)
 
                 num_relevant = (labels[:, :, i] != -1).sum()
                 train_loss[class_name] += loss.item() * num_relevant
@@ -219,7 +223,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                     reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
-                    loss = criterions[class_name](reshaped_tensor, labels[:, :, i]).to(device)
+                    loss = criteria[class_name](reshaped_tensor, labels[:, :, i]).to(device)
                     un_masked = labels[:, :, i] != -1
                     num_relevant = un_masked.sum()
                     sum[class_name] += num_relevant
@@ -245,7 +249,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 all_nikud_types_correct_preds_letter += torch.sum(letter_correct_mask[mask_all_or])
 
                 letter_correct_mask[~mask_all_or] = True
-                correct_num, total_words_num = find_num_correct_words(inputs.cpu(), letter_correct_mask)
+                correct_num, total_words_num = calc_num_correct_words(inputs.cpu(), letter_correct_mask)
 
                 word_count += total_words_num
                 correct_words_count += correct_num
@@ -384,7 +388,7 @@ def evaluate(model, test_data, debug_folder=None):
             all_nikud_types_letter_level_correct += torch.sum(letter_correct_mask[mask_all_or])
 
             letter_correct_mask[~mask_all_or] = True
-            correct_num, total_words_num = find_num_correct_words(inputs.cpu(), letter_correct_mask)
+            correct_num, total_words_num = calc_num_correct_words(inputs.cpu(), letter_correct_mask)
 
             words_count += total_words_num
             correct_words_count += correct_num
