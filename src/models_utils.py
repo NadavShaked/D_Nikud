@@ -17,6 +17,8 @@ from tqdm import tqdm
 from src.running_params import DEBUG_MODE
 from src.utiles_data import Nikud, create_folder_if_not_exist
 
+CLASSES_LIST = ["nikud", "dagesh", "sin"]
+
 
 # TODO: not used - Delete?
 def save_model(model, path):
@@ -147,8 +149,10 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
         for index_data, data in enumerate(train_loader):
             (inputs, attention_mask, labels) = data
+
             if max_length is None:
                 max_length = labels.shape[1]
+
             inputs = inputs.to(device)
             attention_mask = attention_mask.to(device)
             labels = labels.to(device)
@@ -157,7 +161,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
             nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
             for i, (probs, class_name) in enumerate(
-                    zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                    zip([nikud_probs, dagesh_probs, sin_probs], CLASSES_LIST)):
                 reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                  probs.shape[2],
                                                                                  probs.shape[1])
@@ -169,25 +173,25 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
                 loss.backward(retain_graph=True)
 
-            for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+            for i, class_name in enumerate(CLASSES_LIST):
                 train_steps_loss_values[class_name].append(float(train_loss[class_name] / relevant_count[class_name]))
 
             optimizer.step()
             if (index_data + 1) % 100 == 0:
                 msg = f'epoch: {epoch} , index_data: {index_data + 1}\n'
-                for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+                for i, class_name in enumerate(CLASSES_LIST):
                     msg += f'mean loss train {class_name}: {float(train_loss[class_name] / relevant_count[class_name])}, '
 
                 logger.debug(msg[:-2])
 
-        for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+        for i, class_name in enumerate(CLASSES_LIST):
             train_epochs_loss_values[class_name].append(float(train_loss[class_name] / relevant_count[class_name]))
 
         for class_name in train_loss.keys():
             train_loss[class_name] /= relevant_count[class_name]
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n"
-        for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+        for i, class_name in enumerate(CLASSES_LIST):
             msg += f'mean loss train {class_name}: {train_loss[class_name]}, '
         logger.debug(msg[:-2])
 
@@ -215,7 +219,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
                 for i, (probs, class_name) in enumerate(
-                        zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                        zip([nikud_probs, dagesh_probs, sin_probs], CLASSES_LIST)):
                     reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
@@ -232,10 +236,9 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
                 mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
 
-                correct = {class_name: (torch.ones(mask_all_or.shape) == 1).to(device) for class_name in
-                           ["nikud", "dagesh", "sin"]}
+                correct = {class_name: (torch.ones(mask_all_or.shape) == 1).to(device) for class_name in CLASSES_LIST}
 
-                for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+                for i, class_name in enumerate(CLASSES_LIST):
                     correct[class_name][masks[class_name]] = predictions[class_name][masks[class_name]] == \
                                                              labels_class[class_name][masks[class_name]]
 
@@ -251,7 +254,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 correct_words_count += correct_num
                 letter_count += mask_all_or.sum()
 
-        for class_name in ["nikud", "dagesh", "sin"]:
+        for class_name in CLASSES_LIST:
             dev_loss[class_name] /= relevant_count[class_name]
             dev_accuracy[class_name] = float(correct_preds[class_name].double() / relevant_count[class_name])
 
@@ -353,7 +356,7 @@ def evaluate(model, test_data, debug_folder=None):
             nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
             for i, (probs, class_name) in enumerate(
-                    zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
+                    zip([nikud_probs, dagesh_probs, sin_probs], CLASSES_LIST)):
                 labels_class[class_name] = labels[:, :, i]
                 mask = labels_class[class_name] != -1
                 num_relevant = mask.sum()
@@ -394,7 +397,7 @@ def evaluate(model, test_data, debug_folder=None):
             dagesh_letter_level_correct += torch.sum(correct_dagesh[mask_all_or])
             sin_letter_level_correct += torch.sum(correct_sin[mask_all_or])
 
-    for i, name in enumerate(["nikud", "dagesh", "sin"]):
+    for i, name in enumerate(CLASSES_LIST):
         report = classification_report(true_labels[name], predicted_labels_2_report[name], output_dict=True)
 
         reports[name] = report
