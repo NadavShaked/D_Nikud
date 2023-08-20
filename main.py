@@ -197,8 +197,8 @@ def train(use_pretrain=False):
 
     model_DM.load_state_dict(best_model_details['model_state_dict'])
 
-    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder)
-    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder)
+    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder, device=DEVICE)
+    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder, device=DEVICE)
 
     msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct_dev}\n--------------------\nTest dataset\n" \
@@ -379,7 +379,7 @@ def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batc
     dataset.prepare_data(name="evaluate")
     mtb_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=batch_size)
 
-    report, word_level_correct, letter_level_correct_dev = evaluate(model_DM, mtb_dl)
+    report, word_level_correct, letter_level_correct_dev = evaluate(model_DM, mtb_dl, device=DEVICE)
 
     msg = f"Dnikud Model\n{path_name} evaluate\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct}"

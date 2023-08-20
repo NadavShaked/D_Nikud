@@ -321,18 +321,17 @@ def save_dict_as_json(dict, file_path, file_name):
         json_file.write(json_data)
 
 
-def evaluate(model, test_data, debug_folder=None):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def evaluate(model, test_data, debug_folder=None, device='cpu'):
     model.to(device)
     model.eval()
 
     true_labels = {"nikud": 0, "dagesh": 0, "sin": 0}
     predictions = {"nikud": 0, "dagesh": 0, "sin": 0}
     predicted_labels_2_report = {"nikud": 0, "dagesh": 0, "sin": 0}
-    masks = {"nikud": 0, "dagesh": 0, "sin": 0}
+    un_masks = {"nikud": 0, "dagesh": 0, "sin": 0}
     reports = {}
     correct_preds = {"nikud": 0, "dagesh": 0, "sin": 0}
-    sum = {"nikud": 0, "dagesh": 0, "sin": 0}
+    relevant_count = {"nikud": 0, "dagesh": 0, "sin": 0}
     labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
 
     all_nikud_types_letter_level_correct = 0.0
@@ -347,6 +346,7 @@ def evaluate(model, test_data, debug_folder=None):
         for index_data, data in enumerate(test_data):
             if DEBUG_MODE and index_data > 100:
                 break
+
             (inputs, attention_mask, labels) = data
 
             inputs = inputs.to(device)
@@ -358,44 +358,42 @@ def evaluate(model, test_data, debug_folder=None):
             for i, (probs, class_name) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], CLASSES_LIST)):
                 labels_class[class_name] = labels[:, :, i]
-                mask = labels_class[class_name] != -1
-                num_relevant = mask.sum()
-                sum[class_name] += num_relevant
+                un_mask = labels_class[class_name] != -1
+                num_relevant = un_mask.sum()
+                relevant_count[class_name] += num_relevant
                 _, preds = torch.max(probs, 2)
-                correct_preds[class_name] += torch.sum(preds[mask] == labels_class[class_name][mask])
+                correct_preds[class_name] += torch.sum(preds[un_mask] == labels_class[class_name][un_mask])
                 predictions[class_name] = preds
-                masks[class_name] = mask
-                true_labels[class_name] = labels_class[class_name][mask].cpu().numpy()
-                predicted_labels_2_report[class_name] = preds[mask].cpu().numpy()
+                un_masks[class_name] = un_mask
+                true_labels[class_name] = labels_class[class_name][un_mask].cpu().numpy()
+                predicted_labels_2_report[class_name] = preds[un_mask].cpu().numpy()
 
-            mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
+            un_mask_all_or = torch.logical_or(torch.logical_or(un_masks["nikud"], un_masks["dagesh"]), un_masks["sin"])
 
-            correct_nikud = (torch.ones(mask_all_or.shape) == 1).to(device)
-            correct_dagesh = (torch.ones(mask_all_or.shape) == 1).to(device)
-            correct_sin = (torch.ones(mask_all_or.shape) == 1).to(device)
+            correct_nikud = (torch.ones(un_mask_all_or.shape) == 1).to(device)
+            correct_dagesh = (torch.ones(un_mask_all_or.shape) == 1).to(device)
+            correct_sin = (torch.ones(un_mask_all_or.shape) == 1).to(device)
 
-            correct_nikud[masks["nikud"]] = predictions["nikud"][masks["nikud"]] == labels_class["nikud"][
-                masks["nikud"]]
-            correct_dagesh[masks["dagesh"]] = predictions["dagesh"][masks["dagesh"]] == labels_class["dagesh"][
-                masks["dagesh"]]
-            correct_sin[masks["sin"]] = predictions["sin"][masks["sin"]] == labels_class["sin"][masks["sin"]]
+            correct_nikud[un_masks["nikud"]] = predictions["nikud"][un_masks["nikud"]] == labels_class["nikud"][un_masks["nikud"]]
+            correct_dagesh[un_masks["dagesh"]] = predictions["dagesh"][un_masks["dagesh"]] == labels_class["dagesh"][un_masks["dagesh"]]
+            correct_sin[un_masks["sin"]] = predictions["sin"][un_masks["sin"]] == labels_class["sin"][un_masks["sin"]]
 
             letter_correct_mask = torch.logical_and(
                 torch.logical_and(correct_sin, correct_dagesh),
                 correct_nikud)
-            all_nikud_types_letter_level_correct += torch.sum(letter_correct_mask[mask_all_or])
+            all_nikud_types_letter_level_correct += torch.sum(letter_correct_mask[un_mask_all_or])
 
-            letter_correct_mask[~mask_all_or] = True
-            correct_num, total_words_num = calc_num_correct_words(inputs.cpu(), letter_correct_mask)
+            letter_correct_mask[~un_mask_all_or] = True
+            total_correct_count, total_words_num = calc_num_correct_words(inputs.cpu(), letter_correct_mask)
 
             words_count += total_words_num
-            correct_words_count += correct_num
+            correct_words_count += total_correct_count
 
-            letters_count += mask_all_or.sum()
+            letters_count += un_mask_all_or.sum()
 
-            nikud_letter_level_correct += torch.sum(correct_nikud[mask_all_or])
-            dagesh_letter_level_correct += torch.sum(correct_dagesh[mask_all_or])
-            sin_letter_level_correct += torch.sum(correct_sin[mask_all_or])
+            nikud_letter_level_correct += torch.sum(correct_nikud[un_mask_all_or])
+            dagesh_letter_level_correct += torch.sum(correct_dagesh[un_mask_all_or])
+            sin_letter_level_correct += torch.sum(correct_sin[un_mask_all_or])
 
     for i, name in enumerate(CLASSES_LIST):
         report = classification_report(true_labels[name], predicted_labels_2_report[name], output_dict=True)
