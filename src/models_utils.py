@@ -1,15 +1,15 @@
-# ML
-# DL
+# general
 import json
 import os
-import random
 
-import matplotlib.pyplot as plt
+# ML
 import numpy as np
 import pandas as pd
-# visual
-import seaborn as sns
 import torch
+
+# visual
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
@@ -103,10 +103,12 @@ def predict(model, data_loader):
             pred_sin[mask_sin] = -1
 
             pred_labels = np.concatenate((pred_nikud, pred_dagesh, pred_sin), axis=2)
+
             if all_labels is None:
                 all_labels = pred_labels
             else:
                 all_labels = np.concatenate((all_labels, pred_labels), axis=0)
+
     return all_labels
 
 
@@ -201,7 +203,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
         all_nikud_types_correct_preds_letter = 0.0
 
         letter_count = 0.0
-        correct_words = 0.0
+        correct_words_count = 0.0
         word_count = 0.0
         with torch.no_grad():
             for index_data, data in enumerate(dev_loader):
@@ -218,13 +220,13 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
                     loss = criterions[class_name](reshaped_tensor, labels[:, :, i]).to(device)
-                    mask = labels[:, :, i] != -1
-                    num_relevant = mask.sum()
+                    un_masked = labels[:, :, i] != -1
+                    num_relevant = un_masked.sum()
                     sum[class_name] += num_relevant
                     _, preds = torch.max(probs, 2)
                     dev_loss[class_name] += loss.item() * num_relevant
-                    correct_preds[class_name] += torch.sum(preds[mask] == labels[:, :, i][mask])
-                    masks[class_name] = mask
+                    correct_preds[class_name] += torch.sum(preds[un_masked] == labels[:, :, i][un_masked])
+                    masks[class_name] = un_masked
                     predictions[class_name] = preds
                     labels_class[class_name] = labels[:, :, i]
 
@@ -246,7 +248,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 correct_num, total_words_num = find_num_correct_words(inputs.cpu(), letter_correct_mask)
 
                 word_count += total_words_num
-                correct_words += correct_num
+                correct_words_count += correct_num
                 letter_count += mask_all_or.sum()
 
         for class_name in ["nikud", "dagesh", "sin"]:
@@ -260,7 +262,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
         accuracy_dev_values["all_nikud_letter"].append(dev_all_nikud_types_accuracy_letter)
 
-        word_all_nikud_accuracy = correct_words / word_count
+        word_all_nikud_accuracy = correct_words_count / word_count
         accuracy_dev_values["all_nikud_word"].append(word_all_nikud_accuracy)
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n" \
@@ -284,21 +286,6 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss,
             }
-        # else:
-        #     # If the validation loss is not decreasing
-        #     epochs_no_improve += 1
-        #     # If the validation loss has not decreased for the 'patience' number of epochs, stop training
-        #     if epochs_no_improve == training_params['patience']:
-        #         early_stop = True
-
-        # if dev_accuracy_letter > best_accuracy:
-        #     best_accuracy = dev_accuracy_letter
-        #     best_model = {
-        #         'epoch': epoch,
-        #         'model_state_dict': model.state_dict(),
-        #         'optimizer_state_dict': optimizer.state_dict(),
-        #         'loss': loss,
-        #     }
 
         if epoch % training_params["checkpoints_frequency"] == 0:
             save_checkpoint_path = os.path.join(output_checkpoints_path, f'checkpoint_model_epoch_{epoch + 1}.pth')
@@ -308,8 +295,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': loss,
             }
-            torch.save(checkpoint["model_state_dict"],
-                       save_checkpoint_path)  # save_model(model, save_model_path)  # TODO: use this function in model class
+            torch.save(checkpoint["model_state_dict"], save_checkpoint_path)
 
     save_model_path = os.path.join(output_model_path, 'best_model.pth')
     torch.save(best_model["model_state_dict"], save_model_path)
@@ -333,7 +319,6 @@ def save_dict_as_json(dict, file_path, file_name):
         json_file.write(json_data)
 
 
-# TODO: Add word level acc for all kinds
 def evaluate(model, test_data, debug_folder=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -353,9 +338,9 @@ def evaluate(model, test_data, debug_folder=None):
     dagesh_letter_level_correct = 0.0
     sin_letter_level_correct = 0.0
 
-    letter_count = 0.0
-    word_count = 0.0
-    correct_words = 0.0
+    letters_count = 0.0
+    words_count = 0.0
+    correct_words_count = 0.0
     with torch.no_grad():
         for index_data, data in enumerate(test_data):
             if DEBUG_MODE and index_data > 100:
@@ -366,7 +351,7 @@ def evaluate(model, test_data, debug_folder=None):
             attention_mask = attention_mask.to(device)
             labels = labels.to(device)
 
-            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)  # , attention_mask)
+            nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
             for i, (probs, class_name) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
@@ -393,10 +378,6 @@ def evaluate(model, test_data, debug_folder=None):
                 masks["dagesh"]]
             correct_sin[masks["sin"]] = predictions["sin"][masks["sin"]] == labels_class["sin"][masks["sin"]]
 
-            # all_nikud_types_letter_level_correct += torch.sum(
-            #     torch.logical_and(torch.logical_and(correct_sin[mask_all_or], correct_dagesh[mask_all_or]),
-            #                       correct_nikud[mask_all_or]))
-
             letter_correct_mask = torch.logical_and(
                 torch.logical_and(correct_sin, correct_dagesh),
                 correct_nikud)
@@ -405,10 +386,10 @@ def evaluate(model, test_data, debug_folder=None):
             letter_correct_mask[~mask_all_or] = True
             correct_num, total_words_num = find_num_correct_words(inputs.cpu(), letter_correct_mask)
 
-            word_count += total_words_num
-            correct_words += correct_num
+            words_count += total_words_num
+            correct_words_count += correct_num
 
-            letter_count += mask_all_or.sum()
+            letters_count += mask_all_or.sum()
 
             nikud_letter_level_correct += torch.sum(correct_nikud[mask_all_or])
             dagesh_letter_level_correct += torch.sum(correct_dagesh[mask_all_or])
@@ -418,7 +399,6 @@ def evaluate(model, test_data, debug_folder=None):
         report = classification_report(true_labels[name], predicted_labels_2_report[name], output_dict=True)
 
         reports[name] = report
-        # reports = None
         index_labels = np.unique(true_labels[name])
         cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
 
@@ -439,11 +419,11 @@ def evaluate(model, test_data, debug_folder=None):
         else:
             plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
 
-    all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / letter_count
-    all_nikud_types_word_level_correct = correct_words / word_count
-    nikud_letter_level_correct = nikud_letter_level_correct / letter_count
-    dagesh_letter_level_correct = dagesh_letter_level_correct / letter_count
-    sin_letter_level_correct = sin_letter_level_correct / letter_count
+    all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / letters_count
+    all_nikud_types_word_level_correct = correct_words_count / words_count
+    nikud_letter_level_correct = nikud_letter_level_correct / letters_count
+    dagesh_letter_level_correct = dagesh_letter_level_correct / letters_count
+    sin_letter_level_correct = sin_letter_level_correct / letters_count
     print(f"nikud_letter_level_correct = {nikud_letter_level_correct}")
     print(f"dagesh_letter_level_correct = {dagesh_letter_level_correct}")
     print(f"sin_letter_level_correct = {sin_letter_level_correct}")
