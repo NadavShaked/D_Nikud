@@ -3,28 +3,25 @@ import subprocess
 import yaml
 
 # ML
-import torch
 import torch.nn as nn
 from transformers import AutoConfig, RobertaForMaskedLM, PretrainedConfig
 
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-
 
 class DnikudModel(nn.Module):
-    def __init__(self, config, nikud_size, dagesh_size, sin_size, pretrain_model=None):
+    def __init__(self, config, nikud_size, dagesh_size, sin_size, pretrain_model=None, device='cpu'):
         super(DnikudModel, self).__init__()
+
         if pretrain_model is not None:
-            model_base = RobertaForMaskedLM.from_pretrained(pretrain_model).to(DEVICE)
+            model_base = RobertaForMaskedLM.from_pretrained(pretrain_model).to(device)
         else:
-            model_base = RobertaForMaskedLM(config=config).to(DEVICE)
+            model_base = RobertaForMaskedLM(config=config).to(device)
 
         self.model = model_base.roberta
         for name, param in self.model.named_parameters():
             param.requires_grad = False
 
         self.lstm1 = nn.LSTM(config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1, batch_first=True)
-        self.lstm2 = nn.LSTM(2 * config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1,
-                             batch_first=True)
+        self.lstm2 = nn.LSTM(2 * config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1, batch_first=True)
         self.dense = nn.Linear(2 * config.hidden_size, config.hidden_size)
         self.out_nikud = nn.Linear(config.hidden_size, nikud_size)
         self.out_dagesh = nn.Linear(config.hidden_size, dagesh_size)

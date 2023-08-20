@@ -147,8 +147,13 @@ def train(use_pretrain=False):
 
     base_model_name = "tau/tavbert-he"
     config = AutoConfig.from_pretrained(base_model_name)
-    model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                           len(Nikud.label_2_id["sin"]), pretrain_model=base_model_name).to(DEVICE)
+    model_DM = DnikudModel(config,
+                           len(Nikud.label_2_id["nikud"]),
+                           len(Nikud.label_2_id["dagesh"]),
+                           len(Nikud.label_2_id["sin"]),
+                           pretrain_model=base_model_name,
+                           device=DEVICE
+                           ).to(DEVICE)
 
     if use_pretrain:
         # load last best model:
@@ -288,8 +293,12 @@ def hyperparams_checker(use_pretrain=False):
         base_model_name = "tau/tavbert-he"
         config = AutoConfig.from_pretrained(base_model_name)
 
-        model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                               len(Nikud.label_2_id["sin"])).to(DEVICE)
+        model_DM = DnikudModel(config,
+                               len(Nikud.label_2_id["nikud"]),
+                               len(Nikud.label_2_id["dagesh"]),
+                               len(Nikud.label_2_id["sin"]),
+                               device=DEVICE
+                               ).to(DEVICE)
         if use_pretrain:
             # load last best model:
             state_dict_model = model_DM.state_dict()
@@ -343,8 +352,12 @@ def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batc
     if model_DM is None:
         dir_model_config = os.path.join(args.output_model_dir, "config.yml")
         config = ModelConfig.load_from_file(dir_model_config)
-        model_DM = DnikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                               len(Nikud.label_2_id["sin"])).to(DEVICE)
+        model_DM = DnikudModel(config,
+                               len(Nikud.label_2_id["nikud"]),
+                               len(Nikud.label_2_id["dagesh"]),
+                               len(Nikud.label_2_id["sin"]),
+                               device=DEVICE
+                               ).to(DEVICE)
         state_dict_model = model_DM.state_dict()
         state_dict_model.update(
             torch.load(BEST_MODEL_PATH))
@@ -421,7 +434,8 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
         model_DM = DnikudModel(config,
                                len(Nikud.label_2_id["nikud"]),
                                len(Nikud.label_2_id["dagesh"]),
-                               len(Nikud.label_2_id["sin"])
+                               len(Nikud.label_2_id["sin"]),
+                               device=DEVICE
                                ).to(DEVICE)
 
         state_dict_model = model_DM.state_dict()
@@ -468,7 +482,8 @@ def test_by_folders(main_folder):
     model_DM = DnikudModel(config,
                            len(Nikud.label_2_id["nikud"]),
                            len(Nikud.label_2_id["dagesh"]),
-                           len(Nikud.label_2_id["sin"])
+                           len(Nikud.label_2_id["sin"]),
+                           device=DEVICE
                            ).to(DEVICE)
 
     state_dict_model = model_DM.state_dict()
@@ -553,7 +568,8 @@ def predict_folder_flow(folder, output_folder):
     model_DM = DnikudModel(config,
                            len(Nikud.label_2_id["nikud"]),
                            len(Nikud.label_2_id["dagesh"]),
-                           len(Nikud.label_2_id["sin"])
+                           len(Nikud.label_2_id["sin"]),
+                           device=DEVICE
                            ).to(DEVICE)
 
     state_dict_model = model_DM.state_dict()
@@ -654,7 +670,8 @@ def do_predict(input_path, output_path, log_level="DEBUG"):
     model_DM = DnikudModel(config,
                            len(Nikud.label_2_id["nikud"]),
                            len(Nikud.label_2_id["dagesh"]),
-                           len(Nikud.label_2_id["sin"])
+                           len(Nikud.label_2_id["sin"]),
+                           device=DEVICE
                            ).to(DEVICE)
     state_dict_model = model_DM.state_dict()
     state_dict_model.update(torch.load(BEST_MODEL_PATH))
