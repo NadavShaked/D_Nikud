@@ -154,39 +154,39 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
             optimizer.zero_grad()
             nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
-            for i, (probs, name_class) in enumerate(
+            for i, (probs, class_name) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
                 reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                  probs.shape[2],
                                                                                  probs.shape[1])
-                loss = criterions[name_class](reshaped_tensor, labels[:, :, i]).to(device)
+                loss = criterions[class_name](reshaped_tensor, labels[:, :, i]).to(device)
 
                 num_relevant = (labels[:, :, i] != -1).sum()
-                train_loss[name_class] += loss.item() * num_relevant
-                sum[name_class] += num_relevant
+                train_loss[class_name] += loss.item() * num_relevant
+                sum[class_name] += num_relevant
 
                 loss.backward(retain_graph=True)
 
-            for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
-                steps_loss_train_values[name_class].append(float(train_loss[name_class] / sum[name_class]))
+            for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+                steps_loss_train_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
 
             optimizer.step()
             if (index_data + 1) % 100 == 0:
                 msg = f'epoch: {epoch} , index_data: {index_data + 1}\n'
 
-                for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
-                    msg += f'mean loss train {name_class}: {float(train_loss[name_class] / sum[name_class])}, '
+                for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+                    msg += f'mean loss train {class_name}: {float(train_loss[class_name] / sum[class_name])}, '
                 logger.debug(msg[:-2])
 
-        for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
-            epochs_loss_train_values[name_class].append(float(train_loss[name_class] / sum[name_class]))
+        for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+            epochs_loss_train_values[class_name].append(float(train_loss[class_name] / sum[class_name]))
 
-        for name_class in train_loss.keys():
-            train_loss[name_class] /= sum[name_class]
+        for class_name in train_loss.keys():
+            train_loss[class_name] /= sum[class_name]
 
         msg = f"Epoch {epoch + 1}/{training_params['n_epochs']}\n"
-        for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
-            msg += f'mean loss train {name_class}: {train_loss[name_class]}, '
+        for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+            msg += f'mean loss train {class_name}: {train_loss[class_name]}, '
         logger.debug(msg[:-2])
 
         model.eval()
@@ -212,30 +212,30 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
                 nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
 
-                for i, (probs, name_class) in enumerate(
+                for i, (probs, class_name) in enumerate(
                         zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
                     reshaped_tensor = torch.transpose(probs, 1, 2).contiguous().view(probs.shape[0],
                                                                                      probs.shape[2],
                                                                                      probs.shape[1])
-                    loss = criterions[name_class](reshaped_tensor, labels[:, :, i]).to(device)
+                    loss = criterions[class_name](reshaped_tensor, labels[:, :, i]).to(device)
                     mask = labels[:, :, i] != -1
                     num_relevant = mask.sum()
-                    sum[name_class] += num_relevant
+                    sum[class_name] += num_relevant
                     _, preds = torch.max(probs, 2)
-                    dev_loss[name_class] += loss.item() * num_relevant
-                    correct_preds[name_class] += torch.sum(preds[mask] == labels[:, :, i][mask])
-                    masks[name_class] = mask
-                    predictions[name_class] = preds
-                    labels_class[name_class] = labels[:, :, i]
+                    dev_loss[class_name] += loss.item() * num_relevant
+                    correct_preds[class_name] += torch.sum(preds[mask] == labels[:, :, i][mask])
+                    masks[class_name] = mask
+                    predictions[class_name] = preds
+                    labels_class[class_name] = labels[:, :, i]
 
                 mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
 
-                correct = {name_class: (torch.ones(mask_all_or.shape) == 1).to(device) for name_class in
+                correct = {class_name: (torch.ones(mask_all_or.shape) == 1).to(device) for class_name in
                            ["nikud", "dagesh", "sin"]}
 
-                for i, name_class in enumerate(["nikud", "dagesh", "sin"]):
-                    correct[name_class][masks[name_class]] = predictions[name_class][masks[name_class]] == \
-                                                             labels_class[name_class][masks[name_class]]
+                for i, class_name in enumerate(["nikud", "dagesh", "sin"]):
+                    correct[class_name][masks[class_name]] = predictions[class_name][masks[class_name]] == \
+                                                             labels_class[class_name][masks[class_name]]
 
                 letter_correct_mask = torch.logical_and(
                     torch.logical_and(correct["sin"], correct["dagesh"]),
@@ -249,12 +249,12 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
                 correct_words += correct_num
                 letter_count += mask_all_or.sum()
 
-        for name_class in ["nikud", "dagesh", "sin"]:
-            dev_loss[name_class] /= sum[name_class]
-            dev_accuracy[name_class] = float(correct_preds[name_class].double() / sum[name_class])
+        for class_name in ["nikud", "dagesh", "sin"]:
+            dev_loss[class_name] /= sum[class_name]
+            dev_accuracy[class_name] = float(correct_preds[class_name].double() / sum[class_name])
 
-            loss_dev_values[name_class].append(float(dev_loss[name_class]))
-            accuracy_dev_values[name_class].append(float(dev_accuracy[name_class]))
+            loss_dev_values[class_name].append(float(dev_loss[class_name]))
+            accuracy_dev_values[class_name].append(float(dev_accuracy[class_name]))
 
         dev_all_nikud_types_accuracy_letter = float(all_nikud_types_correct_preds_letter / letter_count)
 
@@ -368,18 +368,18 @@ def evaluate(model, test_data, debug_folder=None):
 
             nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)  # , attention_mask)
 
-            for i, (probs, name_class) in enumerate(
+            for i, (probs, class_name) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], ["nikud", "dagesh", "sin"])):
-                labels_class[name_class] = labels[:, :, i]
-                mask = labels_class[name_class] != -1
+                labels_class[class_name] = labels[:, :, i]
+                mask = labels_class[class_name] != -1
                 num_relevant = mask.sum()
-                sum[name_class] += num_relevant
+                sum[class_name] += num_relevant
                 _, preds = torch.max(probs, 2)
-                correct_preds[name_class] += torch.sum(preds[mask] == labels_class[name_class][mask])
-                predictions[name_class] = preds
-                masks[name_class] = mask
-                true_labels[name_class] = labels_class[name_class][mask].cpu().numpy()
-                predicted_labels_2_report[name_class] = preds[mask].cpu().numpy()
+                correct_preds[class_name] += torch.sum(preds[mask] == labels_class[class_name][mask])
+                predictions[class_name] = preds
+                masks[class_name] = mask
+                true_labels[class_name] = labels_class[class_name][mask].cpu().numpy()
+                predicted_labels_2_report[class_name] = preds[mask].cpu().numpy()
 
             mask_all_or = torch.logical_or(torch.logical_or(masks["nikud"], masks["dagesh"]), masks["sin"])
 

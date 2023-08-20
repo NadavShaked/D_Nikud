@@ -157,16 +157,16 @@ class Letter:
             labels.remove(Nikud.nikud_dict["PUNCTUATION MAQAF"])
         if Nikud.nikud_dict["METEG"] in labels:
             labels.remove(Nikud.nikud_dict["METEG"])
-        for index, (name_class, group) in enumerate(
+        for index, (class_name, group) in enumerate(
                 zip(["dagesh", "sin", "nikud"], [[Nikud.DAGESH_LETTER], Nikud.sin, Nikud.nikud])):
             # notice - order is important : dagesh then sin and then nikud
             if dagesh_sin_nikud[index]:
                 if i < len(labels) and labels[i] in group:
-                    labels_ids[name_class] = Nikud.label_2_id[name_class][labels[i]]
+                    labels_ids[class_name] = Nikud.label_2_id[class_name][labels[i]]
                     i += 1
                     count += 1
                 else:
-                    labels_ids[name_class] = Nikud.label_2_id[name_class]["WITHOUT"]
+                    labels_ids[class_name] = Nikud.label_2_id[class_name]["WITHOUT"]
 
         # assert len(labels) == count
         if np.array(dagesh_sin_nikud).all() and len(labels) == 3 and labels[0] in Nikud.sin:
