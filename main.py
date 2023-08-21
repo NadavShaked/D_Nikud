@@ -581,7 +581,7 @@ def predict_folder_flow(folder, output_folder):
 
     elapsed_time = end_time - start_time
 
-    msg = f"dnikud predict took {elapsed_time} seconds to run."
+    msg = f"D-Nikud predict took {elapsed_time} seconds to run."
     logger.debug(msg)
 
 
