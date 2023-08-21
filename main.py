@@ -409,7 +409,7 @@ def extract_text_to_compare_nakdimon(text):
     return res
 
 
-def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=None, model_DM=None):
+def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=None, model_DM=None, compare_nakdimon=False):
     # dir_model_config = os.path.join(args.output_model_dir, "config.yml")
     dir_model_config = "models/config.yml"
     config = ModelConfig.load_from_file(dir_model_config)
@@ -443,7 +443,10 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
             print(line)
     else:
         with open(output_file, "w", encoding='utf-8') as f:
-            f.write(extract_text_to_compare_nakdimon(text_data_with_labels))
+            if compare_nakdimon:
+                f.write(extract_text_to_compare_nakdimon(text_data_with_labels))
+            else:
+                f.write(text_data_with_labels)
 
 
 def orgenize_data(main_folder):
@@ -512,7 +515,7 @@ def test_by_folders(main_folder):
             logger.info(msg)
 
 
-def predict_folder_flow(folder, output_folder):
+def predict_folder_flow(folder, output_folder, compare_nakdimon=False):
     args = parse_arguments()
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir,
@@ -543,7 +546,7 @@ def predict_folder_flow(folder, output_folder):
     print(f"dnikud predict took {elapsed_time} seconds to run.")
 
 
-def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
+def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM, compare_nakdimon=False):
     if not os.path.exists(output_folder):
         os.mkdir(output_folder)
 
@@ -552,11 +555,11 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
         if filename.lower().endswith('.txt') and os.path.isfile(file_path):
             output_file = os.path.join(output_folder, filename)
             predict_text(file_path, output_file=output_file, logger=logger, tokenizer_tavbert=tokenizer_tavbert,
-                         model_DM=model_DM)
+                         model_DM=model_DM, compare_nakdimon=compare_nakdimon)
         elif os.path.isdir(file_path) and filename != ".git":
             sub_folder = file_path
             sub_folder_output = os.path.join(output_folder, filename)
-            predict_folder(sub_folder, sub_folder_output, logger, tokenizer_tavbert, model_DM)
+            predict_folder(sub_folder, sub_folder_output, logger, tokenizer_tavbert, model_DM, compare_nakdimon=compare_nakdimon)
 
 
 def update_compare_folder(folder, output_folder):
@@ -641,6 +644,7 @@ if __name__ == '__main__':
 
     # predict
     # "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test\law\law.txt" "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test\law\law.txt"
+
     # parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     #     description="""Predict D-nikud""",
     # )
@@ -663,19 +667,17 @@ if __name__ == '__main__':
     #
     # sys.exit(0)
 
-
-
-    folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test"
-    # data = []
-    for sub_folder in os.listdir(folder):
-        # if sub_folder != "law":
-        #     continue
-        print(sub_folder)
-        sub_folder_path = os.path.join(folder, sub_folder)
-        # num_files, num_letters = info_folder(sub_folder_path, 0, 0)
-        evaluate_text(sub_folder_path)
-        # data.append(sub_data)
-    # print(data)
+    # folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test"
+    # # data = []
+    # for sub_folder in os.listdir(folder):
+    #     # if sub_folder != "law":
+    #     #     continue
+    #     print(sub_folder)
+    #     sub_folder_path = os.path.join(folder, sub_folder)
+    #     # num_files, num_letters = info_folder(sub_folder_path, 0, 0)
+    #     evaluate_text(sub_folder_path)
+    #     # data.append(sub_data)
+    # # print(data)
 
     # predict "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected" "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_v4"
     # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
@@ -690,9 +692,9 @@ if __name__ == '__main__':
     #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male_not_use")
     # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male",
     #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male_nakdimon")
-    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female\Dnikud_v6")
-    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\dnikud_test\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\dnikud_test\expected2")
+    predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\expected",
+                        output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_v8", compare_nakdimon=True)
+    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_v8",
+    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_v82")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")
     # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
