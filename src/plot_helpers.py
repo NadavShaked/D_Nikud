@@ -39,7 +39,7 @@ def generate_word_and_letter_accuracy_plot(word_and_letter_accuracy_dict, title,
     plt.title(title)
 
     ax = plt.gca()
-    indexes = list(range(1, len(word_and_letter_accuracy_dict["all_nikud_word"]) + 1))
+    indexes = list(range(1, len(word_and_letter_accuracy_dict["all_nikud_letter"]) + 1))
 
     # Plot data series with different colors and labels
     ax.plot(indexes, word_and_letter_accuracy_dict["all_nikud_letter"], color='blue', label='Letter')
