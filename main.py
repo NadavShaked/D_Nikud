@@ -353,7 +353,7 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM, c
                          logger=logger,
                          tokenizer_tavbert=tokenizer_tavbert,
                          model_DM=model_DM, compare_nakdimon=compare_nakdimon)
-        elif os.path.isdir(file_path) and filename != ".git":
+        elif os.path.isdir(file_path) and filename != ".git" and filename != "README.md":
             sub_folder = file_path
             sub_folder_output = os.path.join(output_folder, filename)
             predict_folder(sub_folder, sub_folder_output, logger, tokenizer_tavbert, model_DM,
