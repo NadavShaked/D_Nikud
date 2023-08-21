@@ -21,7 +21,7 @@ from src.models_utils import training, evaluate, predict
 from src.plot_helpers import plot_results, generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
 from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE, MAX_LENGTH_SEN
-from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths, create_folder_if_not_exist
+from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths, create_missing_folders
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
@@ -61,7 +61,7 @@ def parse_arguments():
                         default="DEBUG", help="Set the logging level")
     parser.add_argument("-ld", "--log_dir", dest="log_dir",
                         default=os.path.join(Path(__file__).parent, "logging"), help="Set the logger path")
-    parser.add_argument("-df", "--debug_folder", dest="debug_folder",
+    parser.add_argument("-df", "--plots_folder", dest="plots_folder",
                         default=os.path.join(Path(__file__).parent, "plots"), help="Set the debug folder")
     parser.add_argument("-dataf", "--data_folder", dest="data_folder",
                         default=os.path.join(Path(__file__).parent, "data"),
@@ -74,25 +74,22 @@ def generate_folders(args, name_log):
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
 
-    create_folder_if_not_exist(args.debug_folder)
+    plots_folder = os.path.join(args.plots_folder, f"plots_{date_time}")
+    create_missing_folders(plots_folder)
 
-    debug_folder = os.path.join(args.debug_folder, f"debug_plots_{date_time}")
-    create_folder_if_not_exist(debug_folder)
-
-    output_dir_running = os.path.join(output_model_dir, "trained", "latest", f"output_models_{date_time}")
-    create_folder_if_not_exist(output_dir_running)
+    output_model_folder = os.path.join(output_model_dir, "trained", "latest", f"output_models_{date_time}")
+    create_missing_folders(output_model_folder)
 
     output_log_dir = os.path.join(args.log_dir, f"{name_log}_{date_time}")
-    create_folder_if_not_exist(output_log_dir)
+    create_missing_folders(output_log_dir)
 
-    return output_model_dir, output_log_dir, output_dir_running, debug_folder
+    return output_model_dir, output_log_dir, output_model_folder, plots_folder
 
 
 def train(use_pretrain=False):
     args = parse_arguments()
 
-    output_model_dir, output_log_dir, output_dir_running, debug_folder = generate_folders(args,
-                                                                                          name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
+    output_model_dir, output_log_dir, output_dir_running, plots_folder = generate_folders(args, name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
 
     logger = get_logger(args.loglevel, output_log_dir)
 
@@ -121,7 +118,7 @@ def train(use_pretrain=False):
                                 max_length=dataset_train.max_length,
                                 is_train=True)
 
-    dataset_train.show_data_labels(debug_folder=debug_folder)
+    dataset_train.show_data_labels(plots_folder=plots_folder)
 
     msg = f'Max length of data: {dataset_train.max_length}'
     logger.debug(msg)
@@ -193,17 +190,17 @@ def train(use_pretrain=False):
         device=DEVICE
     )
 
-    generate_plot_by_nikud_dagesh_sin_dict(epochs_loss_train_values, "Train epochs loss", "Loss", debug_folder)
-    generate_plot_by_nikud_dagesh_sin_dict(steps_loss_train_values, "Train steps loss", "Loss", debug_folder)
-    generate_plot_by_nikud_dagesh_sin_dict(loss_dev_values, "Dev epochs loss", "Loss", debug_folder)
-    generate_plot_by_nikud_dagesh_sin_dict(accuracy_dev_values, "Dev accuracy", "Accuracy", debug_folder)
-    generate_word_and_letter_accuracy_plot(accuracy_dev_values, debug_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(epochs_loss_train_values, "Train epochs loss", "Loss", plots_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(steps_loss_train_values, "Train steps loss", "Loss", plots_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(loss_dev_values, "Dev epochs loss", "Loss", plots_folder)
+    generate_plot_by_nikud_dagesh_sin_dict(accuracy_dev_values, "Dev accuracy", "Accuracy", plots_folder)
+    generate_word_and_letter_accuracy_plot(accuracy_dev_values, plots_folder)
 
     model_DM.load_state_dict(best_model_details['model_state_dict'])
 
-    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, debug_folder,
+    report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, plots_folder,
                                                                             device=DEVICE)
-    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, debug_folder,
+    report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, plots_folder,
                                                                                device=DEVICE)
 
     msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
@@ -228,7 +225,7 @@ def get_logger(log_level, log_location):
     cnsl_handler.setLevel(log_level)
     logger.addHandler(cnsl_handler)
 
-    create_folder_if_not_exist(log_location)
+    create_missing_folders(log_location)
 
     file_location = os.path.join(log_location, 'Diacritization_Model_DEBUG.log')
     file_log_formatter = logging.Formatter(log_format)
@@ -248,8 +245,9 @@ def get_logger(log_level, log_location):
 
 def hyperparams_checker(use_pretrain=False):
     args = parse_arguments()
-    debug_folder = args.debug_folder
-    create_folder_if_not_exist(debug_folder)
+
+    plots_folder = args.plots_folder
+    create_missing_folders(plots_folder)
 
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
@@ -284,7 +282,7 @@ def hyperparams_checker(use_pretrain=False):
         nfl = np.random.choice(num_freeze_layers)
         batch_size = int(np.random.choice(batch_size_values))
 
-        output_model_dir, output_log_dir, output_dir_running, debug_folder = generate_folders(args,
+        output_model_dir, output_log_dir, output_dir_running, plots_folder = generate_folders(args,
                                                                                               name_log=f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}")
         logger = get_logger(args.loglevel, output_log_dir)
 
@@ -353,7 +351,7 @@ def evaluate_text(path, model_DM=None, tokenizer_tavbert=None, logger=None, batc
         output_log_dir = os.path.join(args.log_dir,
                                       f"evaluate_{path_name}_{date_time}")
 
-        create_folder_if_not_exist(output_log_dir)
+        create_missing_folders(output_log_dir)
         logger = get_logger(args.loglevel, output_log_dir)
 
     msg = f"evaluate text: {path_name} on D-nikud Model"
@@ -431,7 +429,7 @@ def predict_text(text_file, tokenizer_tavbert=None, output_file=None, logger=Non
         date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
         output_log_dir = os.path.join(args.log_dir, f"log_model_predict_{date_time}")
 
-        create_folder_if_not_exist(output_log_dir)
+        create_missing_folders(output_log_dir)
         logger = get_logger(args.loglevel, output_log_dir)
 
     dataset = NikudDataset(tokenizer_tavbert,
@@ -469,7 +467,7 @@ def organize_data(main_folder):
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir, f"log_orgenize_data_{date_time}")
 
-    create_folder_if_not_exist(output_log_dir)
+    create_missing_folders(output_log_dir)
     logger = get_logger(args.loglevel, output_log_dir)
 
     x = NikudDataset(None)
@@ -499,7 +497,7 @@ def test_by_folders(main_folder):
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir, f"evaluate_{os.path.basename(main_folder)}_{date_time}")
-    create_folder_if_not_exist(output_log_dir)
+    create_missing_folders(output_log_dir)
     logger = get_logger(args.loglevel, output_log_dir)
 
     msg = f'evaluate all_data: {main_folder}'
@@ -555,7 +553,7 @@ def predict_folder_flow(folder, output_folder):
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(args.log_dir, f"log_orgenize_data_{date_time}")
-    create_folder_if_not_exist(output_log_dir)
+    create_missing_folders(output_log_dir)
     logger = get_logger(args.loglevel, output_log_dir)
 
     msg = f"prepare data in folder - {os.path.basename(folder)}"
@@ -588,7 +586,7 @@ def predict_folder_flow(folder, output_folder):
 
 
 def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
-    create_folder_if_not_exist(output_folder)
+    create_missing_folders(output_folder)
 
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -606,7 +604,7 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM):
 
 
 def update_compare_folder(folder, output_folder):
-    create_folder_if_not_exist(output_folder)
+    create_missing_folders(output_folder)
 
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -661,7 +659,7 @@ def do_predict(input_path, output_path, log_level="DEBUG"):
 
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
     output_log_dir = os.path.join(os.path.join(Path(__file__).parent, "logging"), f"log_model_predict_{date_time}")
-    create_folder_if_not_exist(output_log_dir)
+    create_missing_folders(output_log_dir)
     logger = get_logger(log_level, output_log_dir)
 
     model_DM = DNikudModel(config,

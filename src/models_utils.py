@@ -15,7 +15,7 @@ from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
 
 from src.running_params import DEBUG_MODE
-from src.utiles_data import Nikud, create_folder_if_not_exist
+from src.utiles_data import Nikud, create_missing_folders
 
 CLASSES_LIST = ["nikud", "dagesh", "sin"]
 
@@ -135,7 +135,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
     }
 
     output_checkpoints_path = os.path.join(output_model_path, "checkpoints")
-    create_folder_if_not_exist(output_checkpoints_path)
+    create_missing_folders(output_checkpoints_path)
 
     train_steps_loss_values = {"nikud": [], "dagesh": [], "sin": []}
     train_epochs_loss_values = {"nikud": [], "dagesh": [], "sin": []}
@@ -307,7 +307,7 @@ def training(model, train_loader, dev_loader, criterion_nikud, criterion_dagesh,
 
 def save_progress_details(accuracy_dev_values, epochs_loss_train_values, loss_dev_values, steps_loss_train_values):
     epochs_data_path = "epochs_data"
-    create_folder_if_not_exist(epochs_data_path)
+    create_missing_folders(epochs_data_path)
 
     save_dict_as_json(steps_loss_train_values, epochs_data_path, "steps_loss_train_values.json")
     save_dict_as_json(epochs_loss_train_values, epochs_data_path, "epochs_loss_train_values.json")
@@ -321,7 +321,7 @@ def save_dict_as_json(dict, file_path, file_name):
         json_file.write(json_data)
 
 
-def evaluate(model, test_data, debug_folder=None, device='cpu'):
+def evaluate(model, test_data, plots_folder=None, device='cpu'):
     model.to(device)
     model.eval()
 
@@ -414,10 +414,10 @@ def evaluate(model, test_data, debug_folder=None, device='cpu'):
         plt.title("Confusion Matrix")
         plt.xlabel("True Label")
         plt.ylabel("Predicted Label")
-        if debug_folder is None:
+        if plots_folder is None:
             plt.show()
         else:
-            plt.savefig(os.path.join(debug_folder, F'Confusion_Matrix_{name}.jpg'))
+            plt.savefig(os.path.join(plots_folder, F'Confusion_Matrix_{name}.jpg'))
 
     all_nikud_types_letter_level_correct = all_nikud_types_letter_level_correct / letters_count
     all_nikud_types_word_level_correct = correct_words_count / words_count

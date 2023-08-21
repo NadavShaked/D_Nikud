@@ -348,7 +348,7 @@ class NikudDataset(Dataset):
         logger.debug(msg)
         for type_data in ["train", "dev", "test"]:
             folder_type = folder_path.replace(main_folder_name, type_data)
-            create_folder_if_not_exist(folder_type)
+            create_missing_folders(folder_type)
 
         all_data = []
 
@@ -407,7 +407,7 @@ class NikudDataset(Dataset):
         data_list = combine_sentences(data_list, is_train=self.is_train, max_length=MAX_LENGTH_SEN)
         return data_list
 
-    def show_data_labels(self, debug_folder=None):
+    def show_data_labels(self, plots_folder=None):
         nikud = [Nikud.id_2_label["nikud"][label.nikud] for _, label_list in self.data for label in label_list if
                   label.nikud != -1]
         dagesh = [Nikud.id_2_label["dagesh"][label.dagesh] for _, label_list in self.data for label in label_list if
@@ -432,10 +432,10 @@ class NikudDataset(Dataset):
         ax.set_xticks(bar_positions)
         ax.set_xticklabels(unique_vowels_names, rotation=30, ha='right', fontsize=8)
 
-        if debug_folder is None:
+        if plots_folder is None:
             plt.show()
         else:
-            plt.savefig(os.path.join(debug_folder, 'show_data_labels.jpg'))
+            plt.savefig(os.path.join(plots_folder, 'show_data_labels.jpg'))
 
     def calc_max_length(self, maximum=MAX_LENGTH_SEN):
         if self.max_length > maximum:
@@ -494,6 +494,7 @@ def get_sub_folders_paths(main_folder):
     return list_paths
 
 
-def create_folder_if_not_exist(folder_path):
+def create_missing_folders(folder_path):
+    # Check if the folder doesn't exist and create it if needed
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
