@@ -285,7 +285,6 @@ class NikudDataset(Dataset):
         all_origin_data = []
         if DEBUG_MODE:
             all_files = all_files[2:4]
-            # all_files = [os.path.join(folder_path, r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\haser\WikipediaHebrewWithVocalization.txt")]
         for file in all_files:
             if "not_use" in file or "NakdanResults" in file:
                 continue
@@ -307,7 +306,7 @@ class NikudDataset(Dataset):
         data_list = self.split_text(file_data)
 
         for sen in tqdm(data_list, desc=f"Source: {os.path.basename(filepath)}"):
-            if sen == "":  # todo- mabye add check for every word
+            if sen == "":
                 continue
 
             labels = []
