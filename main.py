@@ -527,7 +527,7 @@ def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, model_DM
     generate_plot_by_nikud_dagesh_sin_dict(steps_loss_train_values, "Train steps loss", "Loss", plots_folder)
     generate_plot_by_nikud_dagesh_sin_dict(loss_dev_values, "Dev epochs loss", "Loss", plots_folder)
     generate_plot_by_nikud_dagesh_sin_dict(accuracy_dev_values, "Dev accuracy", "Accuracy", plots_folder)
-    generate_word_and_letter_accuracy_plot(accuracy_dev_values, plots_folder)
+    generate_word_and_letter_accuracy_plot(accuracy_dev_values, "Accuracy", plots_folder)
 
     msg = 'Done'
     logger.info(msg)

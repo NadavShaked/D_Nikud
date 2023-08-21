@@ -1,9 +1,0 @@
-טקסט תנכי:
-https://github.com/Sefaria/Sefaria-Export/tree/master
-
-
-Public domain texts from Project Ben-Yehuda:
-https://github.com/projectbenyehuda/public_domain_dump/tree/master
-
-
-https://he.wikipedia.org/wiki/%D7%A0%D7%99%D7%A7%D7%95%D7%93_%D7%94%D7%A2%D7%91%D7%A8%D7%99%D7%AA_%D7%91%D7%AA_%D7%99%D7%9E%D7%99%D7%A0%D7%95
