@@ -1,3 +1,3 @@
-[submodule "DNikud_Data"]
-	path = DNikud_data
-	url = https://github.com/NadavShaked/D_Nikud_Data.git
+[submodule "D_Nikud_Data"]
+	path = main
+	url = https://github.com/NadavShaked/D_Nikud_Data
