@@ -584,7 +584,7 @@ def predict_folder_flow(folder, output_folder, compare_nakdimon=False):
 
     elapsed_time = end_time - start_time
 
-    msg = f"dnikud predict took {elapsed_time} seconds to run."
+    msg = f"D-Nikud predict took {elapsed_time} seconds to run."
     logger.debug(msg)
 
 def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM, compare_nakdimon=False):
