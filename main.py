@@ -3,12 +3,10 @@ import argparse
 import os
 import random
 import sys
-import time
 from datetime import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-
 
 # ML
 import numpy as np
@@ -22,7 +20,7 @@ from src.models_utils import training, evaluate, predict
 from src.plot_helpers import generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
 from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE, MAX_LENGTH_SEN
-from src.utiles_data import NikudDataset, Nikud, Letters, get_sub_folders_paths, create_missing_folders, \
+from src.utiles_data import NikudDataset, Nikud, get_sub_folders_paths, create_missing_folders, \
     extract_text_to_compare_nakdimon
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -323,8 +321,6 @@ def evaluate_text(path, model_DM, tokenizer_tavbert, logger, plots_folder, batch
     logger.debug(msg)
 
 
-
-
 def predict_text(text_file, tokenizer_tavbert, output_file, logger, model_DM, compare_nakdimon=False):
     dataset = NikudDataset(tokenizer_tavbert, file=text_file, logger=logger, max_length=MAX_LENGTH_SEN)
 
@@ -349,6 +345,7 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM, c
 
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
+
         if filename.lower().endswith('.txt') and os.path.isfile(file_path):
             output_file = os.path.join(output_folder, filename)
             predict_text(file_path,
@@ -365,8 +362,10 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM, c
 
 def update_compare_folder(folder, output_folder):
     create_missing_folders(output_folder)
+
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
+
         if filename.lower().endswith('.txt') and os.path.isfile(file_path):
             output_file = os.path.join(output_folder, filename)
             with open(file_path, "r", encoding='utf-8') as f:
@@ -382,6 +381,7 @@ def update_compare_folder(folder, output_folder):
 def check_files_excepted(folder):
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
+
         if filename.lower().endswith('.txt') and os.path.isfile(file_path):
             try:
                 x = NikudDataset(None, file=file_path)
