@@ -16,26 +16,26 @@ class DNikudModel(nn.Module):
         else:
             model_base = RobertaForMaskedLM(config=config).to(device)
 
-        self.bert_model = model_base.roberta
-        for name, param in self.bert_model.named_parameters():
+        self.model = model_base.roberta
+        for name, param in self.model.named_parameters():
             param.requires_grad = False
 
         self.lstm1 = nn.LSTM(config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1, batch_first=True)
         self.lstm2 = nn.LSTM(2 * config.hidden_size, config.hidden_size, bidirectional=True, dropout=0.1, batch_first=True)
         self.dense = nn.Linear(2 * config.hidden_size, config.hidden_size)
-        self.out_nikud = nn.Linear(config.hidden_size, nikud_size)
-        self.out_dagesh = nn.Linear(config.hidden_size, dagesh_size)
-        self.out_sin = nn.Linear(config.hidden_size, sin_size)
+        self.out_n = nn.Linear(config.hidden_size, nikud_size)
+        self.out_d = nn.Linear(config.hidden_size, dagesh_size)
+        self.out_s = nn.Linear(config.hidden_size, sin_size)
 
     def forward(self, input_ids, attention_mask):
-        last_hidden_state = self.bert_model(input_ids, attention_mask=attention_mask).last_hidden_state
+        last_hidden_state = self.model(input_ids, attention_mask=attention_mask).last_hidden_state
         lstm1, _ = self.lstm1(last_hidden_state)
         lstm2, _ = self.lstm2(lstm1)
         dense = self.dense(lstm2)
 
-        nikud = self.out_nikud(dense)
-        dagesh = self.out_dagesh(dense)
-        sin = self.out_sin(dense)
+        nikud = self.out_n(dense)
+        dagesh = self.out_d(dense)
+        sin = self.out_s(dense)
 
         return nikud, dagesh, sin
 

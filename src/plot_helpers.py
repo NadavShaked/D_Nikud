@@ -5,23 +5,23 @@ import os
 import pandas as pd
 
 # visual
-from tabulate import tabulate
+# from tabulate import tabulate
 import matplotlib.pyplot as plt
 
 cols = ["precision", "recall", "f1-score", "support"]
 
 
-def plot_results(logger, reports, report_filename="results"):
-    if reports is None:
-        return
-
-    logger.debug(f"plot report : {report_filename}")
-    for name, report in reports.items():
-        df = pd.DataFrame(report).transpose()
-        df = df[cols]
-
-        msg = "\n" + tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f")
-        logger.debug(msg)
+# def plot_results(logger, reports, report_filename="results"):
+#     if reports is None:
+#         return
+#
+#     logger.debug(f"plot report : {report_filename}")
+#     for name, report in reports.items():
+#         df = pd.DataFrame(report).transpose()
+#         df = df[cols]
+#
+#         msg = "\n" + tabulate(df, headers='keys', tablefmt='psql', floatfmt=".4f")
+#         logger.debug(msg)
 
 
 def generate_plot_by_nikud_dagesh_sin_dict(nikud_dagesh_sin_dict, title, y_axis, plot_folder=None):

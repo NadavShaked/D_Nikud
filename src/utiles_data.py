@@ -1,19 +1,19 @@
 # general
 import os.path
 import random
+from pathlib import Path
 from typing import List, Tuple
+from uuid import uuid1
+import re
 import glob2
-
-# ML
-import numpy as np
-from torch.utils.data import Dataset
-
 # visual
 import matplotlib
 import matplotlib.pyplot as plt
+# ML
+import numpy as np
 import torch
+from torch.utils.data import Dataset
 from tqdm import tqdm
-from uuid import uuid1
 
 from src.running_params import DEBUG_MODE, MAX_LENGTH_SEN
 
@@ -497,3 +497,57 @@ def create_missing_folders(folder_path):
     # Check if the folder doesn't exist and create it if needed
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
+
+def organize_data(main_folder, logger):
+    x = NikudDataset(None)
+    x.delete_files(os.path.join(Path(main_folder).parent, "train"))
+    x.delete_files(os.path.join(Path(main_folder).parent, "dev"))
+    x.delete_files(os.path.join(Path(main_folder).parent, "test"))
+    x.split_data(main_folder, main_folder_name=os.path.basename(main_folder), logger=logger)
+
+
+def info_folder(folder, num_files, num_hebrew_letters):
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if filename.lower().endswith('.txt') and os.path.isfile(file_path):
+            num_files += 1
+            dataset = NikudDataset(None, file=file_path)
+            for line in dataset.data:
+                for c in line[0]:
+                    if c in Letters.hebrew:
+                        num_hebrew_letters += 1
+
+        elif os.path.isdir(file_path) and filename != ".git":
+            sub_folder = file_path
+            n1, n2 = info_folder(sub_folder, num_files, num_hebrew_letters)
+            num_files += n1
+            num_hebrew_letters += n2
+    return num_files, num_hebrew_letters
+
+
+def extract_text_to_compare_nakdimon(text):
+    res = text.replace('|', '')
+    res = res.replace(chr(Nikud.nikud_dict["KUBUTZ"]) + 'ו' + chr(Nikud.nikud_dict["METEG"]),
+                      'ו' + chr(Nikud.nikud_dict['DAGESH OR SHURUK']))
+    res = res.replace(chr(Nikud.nikud_dict["HOLAM"]) + 'ו' + chr(Nikud.nikud_dict["METEG"]),
+                      'ו')
+    res = res.replace("ו" + chr(Nikud.nikud_dict["HOLAM"]) + chr(Nikud.nikud_dict["KAMATZ"]),
+                      'ו' + chr(Nikud.nikud_dict["KAMATZ"]))
+    res = res.replace(chr(Nikud.nikud_dict["METEG"]), '')
+    res = res.replace(chr(Nikud.nikud_dict["KAMATZ"]) + chr(Nikud.nikud_dict["HIRIK"]),
+                      chr(Nikud.nikud_dict["KAMATZ"]) + 'י' + chr(Nikud.nikud_dict["HIRIK"]))
+    res = res.replace(chr(Nikud.nikud_dict["PATAKH"]) + chr(Nikud.nikud_dict["HIRIK"]),
+                      chr(Nikud.nikud_dict["PATAKH"]) + 'י' + chr(Nikud.nikud_dict["HIRIK"]))
+    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION MAQAF"]), '')
+    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION PASEQ"]), '')
+    res = res.replace(chr(Nikud.nikud_dict["KAMATZ_KATAN"]), chr(Nikud.nikud_dict["KAMATZ"]))
+
+    res = re.sub(chr(Nikud.nikud_dict["KUBUTZ"]) + 'ו' + '(?=[א-ת])', 'ו',
+                 res)
+    res = res.replace(chr(Nikud.nikud_dict["REDUCED_KAMATZ"]) + 'ו', 'ו')
+
+    res = res.replace(chr(Nikud.nikud_dict["DAGESH OR SHURUK"]) * 2, chr(Nikud.nikud_dict["DAGESH OR SHURUK"]))
+    res = res.replace('\u05be', '-')
+    res = res.replace('יְהוָֹה', 'יהוה')
+
+    return res

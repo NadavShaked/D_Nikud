@@ -10,7 +10,6 @@ import torch
 # visual
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
 
@@ -284,7 +283,6 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
     predictions = {"nikud": 0, "dagesh": 0, "sin": 0}
     predicted_labels_2_report = {"nikud": 0, "dagesh": 0, "sin": 0}
     un_masks = {"nikud": 0, "dagesh": 0, "sin": 0}
-    reports = {}
     correct_preds = {"nikud": 0, "dagesh": 0, "sin": 0}
     relevant_count = {"nikud": 0, "dagesh": 0, "sin": 0}
     labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
@@ -351,9 +349,6 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
             sin_letter_level_correct += torch.sum(correct_sin[un_mask_all_or])
 
     for i, name in enumerate(CLASSES_LIST):
-        report = classification_report(true_labels[name], predicted_labels_2_report[name], output_dict=True)
-
-        reports[name] = report
         index_labels = np.unique(true_labels[name])
         cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
 
@@ -384,4 +379,4 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
     print(f"sin_letter_level_correct = {sin_letter_level_correct}")
     print(f"word_level_correct = {all_nikud_types_word_level_correct}")
 
-    return reports, all_nikud_types_word_level_correct, all_nikud_types_letter_level_correct
+    return all_nikud_types_word_level_correct, all_nikud_types_letter_level_correct
