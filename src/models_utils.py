@@ -283,7 +283,7 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
     true_labels = {"nikud": 0, "dagesh": 0, "sin": 0}
     predictions = {"nikud": 0, "dagesh": 0, "sin": 0}
     predicted_labels_2_report = {"nikud": 0, "dagesh": 0, "sin": 0}
-    un_masks = {"nikud": 0, "dagesh": 0, "sin": 0}
+    not_masks = {"nikud": 0, "dagesh": 0, "sin": 0}
     correct_preds = {"nikud": 0, "dagesh": 0, "sin": 0}
     relevant_count = {"nikud": 0, "dagesh": 0, "sin": 0}
     labels_class = {"nikud": 0.0, "dagesh": 0.0, "sin": 0.0}
@@ -312,42 +312,42 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
             for i, (probs, class_name) in enumerate(
                     zip([nikud_probs, dagesh_probs, sin_probs], CLASSES_LIST)):
                 labels_class[class_name] = labels[:, :, i]
-                un_mask = labels_class[class_name] != -1
-                num_relevant = un_mask.sum()
+                not_masked = labels_class[class_name] != -1
+                num_relevant = not_masked.sum()
                 relevant_count[class_name] += num_relevant
                 _, preds = torch.max(probs, 2)
-                correct_preds[class_name] += torch.sum(preds[un_mask] == labels_class[class_name][un_mask])
+                correct_preds[class_name] += torch.sum(preds[not_masked] == labels_class[class_name][not_masked])
                 predictions[class_name] = preds
-                un_masks[class_name] = un_mask
-                true_labels[class_name] = labels_class[class_name][un_mask].cpu().numpy()
-                predicted_labels_2_report[class_name] = preds[un_mask].cpu().numpy()
+                not_masks[class_name] = not_masked
+                true_labels[class_name] = labels_class[class_name][not_masked].cpu().numpy()
+                predicted_labels_2_report[class_name] = preds[not_masked].cpu().numpy()
 
-            un_mask_all_or = torch.logical_or(torch.logical_or(un_masks["nikud"], un_masks["dagesh"]), un_masks["sin"])
+            not_mask_all_or = torch.logical_or(torch.logical_or(not_masks["nikud"], not_masks["dagesh"]), not_masks["sin"])
 
-            correct_nikud = (torch.ones(un_mask_all_or.shape) == 1).to(device)
-            correct_dagesh = (torch.ones(un_mask_all_or.shape) == 1).to(device)
-            correct_sin = (torch.ones(un_mask_all_or.shape) == 1).to(device)
+            correct_nikud = (torch.ones(not_mask_all_or.shape) == 1).to(device)
+            correct_dagesh = (torch.ones(not_mask_all_or.shape) == 1).to(device)
+            correct_sin = (torch.ones(not_mask_all_or.shape) == 1).to(device)
 
-            correct_nikud[un_masks["nikud"]] = predictions["nikud"][un_masks["nikud"]] == labels_class["nikud"][un_masks["nikud"]]
-            correct_dagesh[un_masks["dagesh"]] = predictions["dagesh"][un_masks["dagesh"]] == labels_class["dagesh"][un_masks["dagesh"]]
-            correct_sin[un_masks["sin"]] = predictions["sin"][un_masks["sin"]] == labels_class["sin"][un_masks["sin"]]
+            correct_nikud[not_masks["nikud"]] = predictions["nikud"][not_masks["nikud"]] == labels_class["nikud"][not_masks["nikud"]]
+            correct_dagesh[not_masks["dagesh"]] = predictions["dagesh"][not_masks["dagesh"]] == labels_class["dagesh"][not_masks["dagesh"]]
+            correct_sin[not_masks["sin"]] = predictions["sin"][not_masks["sin"]] == labels_class["sin"][not_masks["sin"]]
 
             letter_correct_mask = torch.logical_and(
                 torch.logical_and(correct_sin, correct_dagesh),
                 correct_nikud)
-            all_nikud_types_letter_level_correct += torch.sum(letter_correct_mask[un_mask_all_or])
+            all_nikud_types_letter_level_correct += torch.sum(letter_correct_mask[not_mask_all_or])
 
-            letter_correct_mask[~un_mask_all_or] = True
+            letter_correct_mask[~not_mask_all_or] = True
             total_correct_count, total_words_num = calc_num_correct_words(inputs.cpu(), letter_correct_mask)
 
             words_count += total_words_num
             correct_words_count += total_correct_count
 
-            letters_count += un_mask_all_or.sum()
+            letters_count += not_mask_all_or.sum()
 
-            nikud_letter_level_correct += torch.sum(correct_nikud[un_mask_all_or])
-            dagesh_letter_level_correct += torch.sum(correct_dagesh[un_mask_all_or])
-            sin_letter_level_correct += torch.sum(correct_sin[un_mask_all_or])
+            nikud_letter_level_correct += torch.sum(correct_nikud[not_mask_all_or])
+            dagesh_letter_level_correct += torch.sum(correct_dagesh[not_mask_all_or])
+            sin_letter_level_correct += torch.sum(correct_sin[not_mask_all_or])
 
     for i, name in enumerate(CLASSES_LIST):
         index_labels = np.unique(true_labels[name])
