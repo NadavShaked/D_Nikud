@@ -92,6 +92,9 @@ This command will evaluate the model's accuracy on the dataset found in the `dat
 
 The "Train" command enables the training of the diacritization model using your own dataset. This command supports fine-tuning a pre-trained model, adjusting hyperparameters such as learning rate and batch size, and specifying various training settings.
 
+⚠️ **Important Note:** Any file or folder in the specified data folder that contains the string "not_use" in its name will be excluded from the training and testing processes. This feature allows you to selectively exclude specific data from the training process if needed.
+
+
 To train the diacritization model, use the following command:
 
 ```bash
