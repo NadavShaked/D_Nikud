@@ -219,13 +219,20 @@ def combine_sentences(list_sentences, max_length=0, is_train=False):
     index = 0
     while index < len(list_sentences):
         sen = list_sentences[index]
+
+        if not text_contains_nikud(sen) and ('------------------' in sen or sen == '\n'):
+            if len(new_sen) > 0:
+                all_new_sentences.append(new_sen)
+                if not is_train:
+                    all_new_sentences.append(sen)
+                new_sen = ""
+                index += 1
+                continue
+
         if not text_contains_nikud(sen) and is_train:
-            if '------------------' in sen or sen == '\n':
-                if len(new_sen) > 0:
-                    all_new_sentences.append(new_sen)
-                    new_sen = ""
             index += 1
             continue
+
         if len(sen) > max_length:
             update_sen = sen.replace(". ", f". {unique_key}")
             update_sen = update_sen.replace("? ", f"? {unique_key}")
@@ -286,7 +293,7 @@ class NikudDataset(Dataset):
         all_data = []
         all_origin_data = []
         if DEBUG_MODE:
-            all_files = all_files[2:4]
+            all_files = all_files[0:2]
         for file in all_files:
             if "not_use" in file or "NakdanResults" in file:
                 continue
