@@ -1,7 +1,6 @@
 # general
 import argparse
 import os
-import random
 import sys
 from datetime import datetime
 import logging
@@ -9,7 +8,6 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 # ML
-import numpy as np
 import torch
 import torch.nn as nn
 from transformers import AutoConfig, AutoTokenizer
