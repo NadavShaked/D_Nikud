@@ -447,7 +447,7 @@ def do_evaluate(input_path, logger, model_DM, tokenizer_tavbert, plots_folder):
                           tokenizer_tavbert=tokenizer_tavbert,
                           logger=logger,
                           plots_folder=plots_folder,
-                          batch_size=args.batch_size)
+                          batch_size=BATCH_SIZE)
 
             msg = f'\n---------------------------------------\n'
             logger.info(msg)
@@ -534,6 +534,25 @@ def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, model_DM
 
 
 if __name__ == '__main__':
+    # folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\models\trained\output_models_19_08_23__08_47\output_models_19_08_23__08_47\checkpoints"
+    # for model_path in os.listdir(folder):
+    #     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
+    #     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
+    #     logger = get_logger("DEBUG", "PREDICT", date_time)
+    #     dir_model_config = "models/config.yml"
+    #     config = ModelConfig.load_from_file(dir_model_config)
+    #
+    #     model_DM = DNikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+    #                            len(Nikud.label_2_id["sin"]), device=DEVICE).to(DEVICE)
+    #     state_dict_model = model_DM.state_dict()
+    #     state_dict_model.update(torch.load(os.path.join(folder, model_path)))
+    #     model_DM.load_state_dict(state_dict_model)
+    #     # input_path, output_path, tokenizer_tavbert, logger, model_DM, compare_nakdimon
+    #     do_predict(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\expected",
+    #                         output_path=rf"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_{model_path}",
+    #                         tokenizer_tavbert=tokenizer_tavbert,logger=logger, model_DM=model_DM, compare_nakdimon=True)
+    #
+
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -542,6 +561,8 @@ if __name__ == '__main__':
                         default="DEBUG", help="Set the logging level")
     parser.add_argument("-m", "--output_model_dir", type=str, default='models', help='Save directory for model')
     subparsers = parser.add_subparsers(help='sub-command help', dest="command", required=True)
+
+    # predict r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected" r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_pred"
 
     parser_predict = subparsers.add_parser('predict', help='diacritize a text files ')
     parser_predict.add_argument('input_path', help='input file or folder')
@@ -581,6 +602,8 @@ if __name__ == '__main__':
 
     msg = 'Loading model...'
     logger.debug(msg)
+
+
 
     if args.command in ["evaluate", "predict"] or (args.command == "train" and args.from_pretrain):
         dir_model_config = os.path.join(kwargs["output_model_dir"], "config.yml")
@@ -636,7 +659,7 @@ if __name__ == '__main__':
     # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
     # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
     # predict_text(
-    #     r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt")
+    #     r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected")
     # train(use_pretrain=False)
     # hyperparams_checker()
     # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test_modern")
