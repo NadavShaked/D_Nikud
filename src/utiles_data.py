@@ -286,7 +286,7 @@ class NikudDataset(Dataset):
         all_data = []
         all_origin_data = []
         if DEBUG_MODE:
-            all_files = all_files[2:4]
+            all_files = all_files[0:2]
         for file in all_files:
             if "not_use" in file or "NakdanResults" in file:
                 continue
