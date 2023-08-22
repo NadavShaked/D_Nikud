@@ -1,6 +1,8 @@
 # D-Nikud
 
-This repository contains the main code for a diacritization (nikud) model using the TAVBERT architecture. The model is designed to predict diacritics (nikud) for Hebrew text. The code includes functionalities for predicting, evaluating, and training the diacritization model.
+Welcome to the D-Nikud Diacritization Model main code repository! This repository is dedicated to the implementation of our innovative D-Nikud model, which use the TavBERT architecture and Bi-LSTM to predict and apply diacritics (nikud) to Hebrew text. Diacritics play a crucial role in accurately conveying pronunciation and interpretation, making our model an essential tool for enhancing the quality of Hebrew text analysis.
+
+The code provided here encompasses various functionalities, including prediction, evaluation, and training of the D-Nikud diacritization model. 
 
 ## Prerequisites
 
@@ -22,7 +24,7 @@ Before running the script, make sure you have the following installed:
 
 ## Introduction
 
-The main code in this repository implements a diacritization model using the TAVBERT architecture. The model aims to predict diacritics for Hebrew text, which improves the correct pronunciation and interpretation of the text.
+Our D-Nikud model utilizes the TevBERT architecture and Bi-LSTM for diacritization (nikud) of Hebrew text. Diacritics (nikud) are essential for accurate pronunciation and interpretation of the text. This repository provides the core code for implementing and utilizing the D-Nikud model.
 
 ## Usage
 
