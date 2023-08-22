@@ -19,7 +19,7 @@ from src.models import DNikudModel, ModelConfig
 from src.models_utils import training, evaluate, predict
 from src.plot_helpers import generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
-from src.running_params import SEED, BEST_MODEL_PATH, BATCH_SIZE, MAX_LENGTH_SEN
+from src.running_params import SEED, BATCH_SIZE, MAX_LENGTH_SEN
 from src.utiles_data import NikudDataset, Nikud, get_sub_folders_paths, create_missing_folders, \
     extract_text_to_compare_nakdimon
 
@@ -538,41 +538,49 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                      description="""Predict D-nikud""")
-    parser.add_argument("-l", "--log", dest="log_level", choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-                        default="DEBUG", help="Set the logging level")
-    parser.add_argument("-m", "--output_model_dir", type=str, default='models', help='Save directory for model')
-    subparsers = parser.add_subparsers(help='sub-command help', dest="command", required=True)
+    parser.add_argument('-l', '--log', dest='log_level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
+                        default='DEBUG', help='Set the logging level')
+    parser.add_argument('-m', '--output_model_dir', type=str, default='models', help='save directory for model')
+    subparsers = parser.add_subparsers(help='sub-command help', dest='command', required=True)
 
     parser_predict = subparsers.add_parser('predict', help='diacritize a text files ')
     parser_predict.add_argument('input_path', help='input file or folder')
     parser_predict.add_argument('output_path', help='output file')
-    parser_predict.add_argument("-c", "--compare", dest="compare_nakdimon",
-                                default="False", help="predict text for comparing with Nakdimon")
+    parser_predict.add_argument('-ptmp', '--pretrain_model_path', type=str,
+                                default=os.path.join(Path(__file__).parent, 'models', 'prod', 'best_model.pth'),
+                                help='pre-train model path - use only if you want to use trained model weights')
+    parser_predict.add_argument('-c', '--compare', dest='compare_nakdimon',
+                                default=False, help='predict text for comparing with Nakdimon')
     parser_predict.set_defaults(func=do_predict)
 
     parser_evaluate = subparsers.add_parser('evaluate', help='evaluate D-nikud')
     parser_evaluate.add_argument('input_path', help='input file or folder')
-    parser_evaluate.add_argument("-df", "--plots_folder", dest="plots_folder",
-                        default=os.path.join(Path(__file__).parent, "plots"), help="Set the debug folder")
+    parser_evaluate.add_argument('-ptmp', '--pretrain_model_path', type=str,
+                                default=os.path.join(Path(__file__).parent, 'models', 'prod', 'best_model.pth'),
+                                help='pre-train model path - use only if you want to use trained model weights')
+    parser_evaluate.add_argument('-df', '--plots_folder', dest='plots_folder',
+                                 default=os.path.join(Path(__file__).parent, 'plots'), help='Set the debug folder')
     parser_evaluate.set_defaults(func=do_evaluate)
 
     parser_train = subparsers.add_parser('train', help='train D-nikud')
-    parser_train.add_argument('--from_pretrain', default=False, help='continue from pretrained')
+    parser_train.add_argument('-ptmp', '--pretrain_model_path', type=str,
+                                default=None,
+                                help='pre-train model path - use only if you want to use trained model weights')
     parser_train.add_argument('--learning_rate', type=float, default=0.001, help='Learning rate')
     parser_train.add_argument('--batch_size', type=int, default=32, help='batch_size')
     parser_train.add_argument('--n_epochs', type=int, default=10, help='number of epochs')
-    parser_train.add_argument("--data_folder", dest="data_folder",
-                        default=os.path.join(Path(__file__).parent, "D_Nikud_Data"), help="Set the debug folder")
+    parser_train.add_argument('--data_folder', dest='data_folder',
+                              default=os.path.join(Path(__file__).parent, 'D_Nikud_Data'), help='Set the debug folder')
     parser_train.add_argument('--checkpoints_frequency', type=int, default=1,
-                        help='checkpoints frequency for save the model')
-    parser_train.add_argument("-df", "--plots_folder", dest="plots_folder",
-                        default=os.path.join(Path(__file__).parent, "plots"), help="Set the debug folder")
+                              help='checkpoints frequency for save the model')
+    parser_train.add_argument('-df', '--plots_folder', dest='plots_folder',
+                              default=os.path.join(Path(__file__).parent, 'plots'), help='Set the debug folder')
     parser_train.set_defaults(func=do_train)
 
     args = parser.parse_args()
     kwargs = vars(args).copy()
     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
-    logger = get_logger(kwargs["log_level"], args.command, date_time)
+    logger = get_logger(kwargs['log_level'], args.command, date_time)
 
     del kwargs['log_level']
 
@@ -582,16 +590,15 @@ if __name__ == '__main__':
     msg = 'Loading model...'
     logger.debug(msg)
 
-    if args.command in ["evaluate", "predict"] or (args.command == "train" and args.from_pretrain):
-        dir_model_config = os.path.join(kwargs["output_model_dir"], "config.yml")
+    if args.command in ["evaluate", "predict"] or (args.command == "train" and args.pretrain_model_path is not None):
+        dir_model_config = os.path.join("models", "config.yml")
         config = ModelConfig.load_from_file(dir_model_config)
 
         model_DM = DNikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
                                len(Nikud.label_2_id["sin"]), device=DEVICE).to(DEVICE)
         state_dict_model = model_DM.state_dict()
-        state_dict_model.update(torch.load(BEST_MODEL_PATH))
+        state_dict_model.update(torch.load(args.pretrain_model_path))
         model_DM.load_state_dict(state_dict_model)
-
     else:
         base_model_name = "tau/tavbert-he"
         config = AutoConfig.from_pretrained(base_model_name)
@@ -609,7 +616,7 @@ if __name__ == '__main__':
         dir_model_config = os.path.join(kwargs['output_model_dir'], "config.yml")
         kwargs['dir_model_config'] = dir_model_config
         kwargs['output_trained_model_dir'] = output_trained_model_dir
-        del kwargs['from_pretrain']
+    del kwargs['pretrain_model_path']
     del kwargs['output_model_dir']
     kwargs['model_DM'] = model_DM
 
