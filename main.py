@@ -297,7 +297,7 @@ def get_logger(log_level, name_func, date_time=datetime.now().strftime('%d_%m_%y
 #     print(best_hyperparameters)
 #
 
-def evaluate_text(path, model_DM, tokenizer_tavbert, logger, plots_folder, batch_size=BATCH_SIZE):
+def evaluate_text(path, dnikud_model, tokenizer_tavbert, logger, plots_folder, batch_size=BATCH_SIZE):
     path_name = os.path.basename(path)
 
     msg = f"evaluate text: {path_name} on D-nikud Model"
@@ -313,19 +313,19 @@ def evaluate_text(path, model_DM, tokenizer_tavbert, logger, plots_folder, batch
     dataset.prepare_data(name="evaluate")
     mtb_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=batch_size)
 
-    word_level_correct, letter_level_correct_dev = evaluate(model_DM, mtb_dl, plots_folder, device=DEVICE)
+    word_level_correct, letter_level_correct_dev = evaluate(dnikud_model, mtb_dl, plots_folder, device=DEVICE)
 
     msg = f"Dnikud Model\n{path_name} evaluate\nLetter level accuracy:{letter_level_correct_dev}\n" \
           f"Word level accuracy: {word_level_correct}"
     logger.debug(msg)
 
 
-def predict_text(text_file, tokenizer_tavbert, output_file, logger, model_DM, compare_nakdimon=False):
+def predict_text(text_file, tokenizer_tavbert, output_file, logger, dnikud_model, compare_nakdimon=False):
     dataset = NikudDataset(tokenizer_tavbert, file=text_file, logger=logger, max_length=MAX_LENGTH_SEN)
 
     dataset.prepare_data(name="prediction")
     mtb_prediction_dl = torch.utils.data.DataLoader(dataset.prepered_data, batch_size=BATCH_SIZE)
-    all_labels = predict(model_DM, mtb_prediction_dl, DEVICE)
+    all_labels = predict(dnikud_model, mtb_prediction_dl, DEVICE)
     text_data_with_labels = dataset.back_2_text(labels=all_labels)
 
     if output_file is None:
@@ -339,7 +339,7 @@ def predict_text(text_file, tokenizer_tavbert, output_file, logger, model_DM, co
                 f.write(text_data_with_labels)
 
 
-def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM, compare_nakdimon=False):
+def predict_folder(folder, output_folder, logger, tokenizer_tavbert, dnikud_model, compare_nakdimon=False):
     create_missing_folders(output_folder)
 
     for filename in os.listdir(folder):
@@ -351,11 +351,11 @@ def predict_folder(folder, output_folder, logger, tokenizer_tavbert, model_DM, c
                          output_file=output_file,
                          logger=logger,
                          tokenizer_tavbert=tokenizer_tavbert,
-                         model_DM=model_DM, compare_nakdimon=compare_nakdimon)
+                         dnikud_model=dnikud_model, compare_nakdimon=compare_nakdimon)
         elif os.path.isdir(file_path) and filename != ".git" and filename != "README.md":
             sub_folder = file_path
             sub_folder_output = os.path.join(output_folder, filename)
-            predict_folder(sub_folder, sub_folder_output, logger, tokenizer_tavbert, model_DM,
+            predict_folder(sub_folder, sub_folder_output, logger, tokenizer_tavbert, dnikud_model,
                            compare_nakdimon=compare_nakdimon)
 
 
@@ -390,24 +390,24 @@ def check_files_excepted(folder):
             check_files_excepted(file_path)
 
 
-def do_predict(input_path, output_path, tokenizer_tavbert, logger, model_DM, compare_nakdimon):
+def do_predict(input_path, output_path, tokenizer_tavbert, logger, dnikud_model, compare_nakdimon):
     if os.path.isdir(input_path):
-        predict_folder(input_path, output_path, logger, tokenizer_tavbert, model_DM, compare_nakdimon=compare_nakdimon)
+        predict_folder(input_path, output_path, logger, tokenizer_tavbert, dnikud_model, compare_nakdimon=compare_nakdimon)
     elif os.path.isfile(input_path):
         predict_text(input_path,
                      output_file=output_path,
                      logger=logger,
                      tokenizer_tavbert=tokenizer_tavbert,
-                     model_DM=model_DM, compare_nakdimon=compare_nakdimon)
+                     dnikud_model=dnikud_model, compare_nakdimon=compare_nakdimon)
     else:
         raise Exception("Input file not exist")
 
-def evaluate_folder(folder_path, logger, model_DM, tokenizer_tavbert, plots_folder):
+def evaluate_folder(folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder):
     msg = f'evaluate sub folder: {folder_path}'
     logger.info(msg)
 
     evaluate_text(folder_path,
-                  model_DM=model_DM,
+                  dnikud_model=dnikud_model,
                   tokenizer_tavbert=tokenizer_tavbert,
                   logger=logger,
                   plots_folder=plots_folder,
@@ -425,15 +425,15 @@ def evaluate_folder(folder_path, logger, model_DM, tokenizer_tavbert, plots_fold
                 or "NakdanResults" in sub_folder_path):
             continue
 
-        evaluate_folder(sub_folder_path, logger, model_DM, tokenizer_tavbert, plots_folder)
+        evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
 
 
-def do_evaluate(input_path, logger, model_DM, tokenizer_tavbert, plots_folder):
+def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folder):
     msg = f'evaluate all_data: {input_path}'
     logger.info(msg)
 
     evaluate_text(input_path,
-                  model_DM=model_DM,
+                  dnikud_model=dnikud_model,
                   tokenizer_tavbert=tokenizer_tavbert,
                   logger=logger,
                   plots_folder=plots_folder,
@@ -451,10 +451,10 @@ def do_evaluate(input_path, logger, model_DM, tokenizer_tavbert, plots_folder):
                 or "NakdanResults" in sub_folder_path):
             continue
 
-        evaluate_folder(sub_folder_path, logger, model_DM, tokenizer_tavbert, plots_folder)
+        evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
 
 
-def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, model_DM, output_trained_model_dir, data_folder,
+def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, dnikud_model, output_trained_model_dir, data_folder,
              n_epochs, checkpoints_frequency, learning_rate, batch_size):
     msg = 'Loading data...'
     logger.debug(msg)
@@ -499,7 +499,7 @@ def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, model_DM
         our_model_config = ModelConfig(dataset_train.max_length)
         our_model_config.save_to_file(dir_model_config)
 
-    optimizer = torch.optim.Adam(model_DM.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(dnikud_model.parameters(), lr=learning_rate)
 
     msg = 'training...'
     logger.debug(msg)
@@ -511,7 +511,7 @@ def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, model_DM
     training_params = {"n_epochs": n_epochs, "checkpoints_frequency": checkpoints_frequency}
     (best_model_details, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values,
      accuracy_dev_values) = training(
-        model_DM,
+        dnikud_model,
         mtb_train_dl,
         mtb_dev_dl,
         criterion_nikud,
@@ -595,21 +595,21 @@ if __name__ == '__main__':
         dir_model_config = os.path.join("models", "config.yml")
         config = ModelConfig.load_from_file(dir_model_config)
 
-        model_DM = DNikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-                               len(Nikud.label_2_id["sin"]), device=DEVICE).to(DEVICE)
-        state_dict_model = model_DM.state_dict()
+        dnikud_model = DNikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
+                                   len(Nikud.label_2_id["sin"]), device=DEVICE).to(DEVICE)
+        state_dict_model = dnikud_model.state_dict()
         state_dict_model.update(torch.load(args.pretrain_model_path))
-        model_DM.load_state_dict(state_dict_model)
+        dnikud_model.load_state_dict(state_dict_model)
     else:
         base_model_name = "tau/tavbert-he"
         config = AutoConfig.from_pretrained(base_model_name)
-        model_DM = DNikudModel(config,
-                               len(Nikud.label_2_id["nikud"]),
-                               len(Nikud.label_2_id["dagesh"]),
-                               len(Nikud.label_2_id["sin"]),
-                               pretrain_model=base_model_name,
-                               device=DEVICE
-                               ).to(DEVICE)
+        dnikud_model = DNikudModel(config,
+                                   len(Nikud.label_2_id["nikud"]),
+                                   len(Nikud.label_2_id["dagesh"]),
+                                   len(Nikud.label_2_id["sin"]),
+                                   pretrain_model=base_model_name,
+                                   device=DEVICE
+                                   ).to(DEVICE)
 
     if args.command == "train":
         output_trained_model_dir = os.path.join(kwargs['output_model_dir'], "latest", f"output_models_{date_time}")
@@ -619,7 +619,7 @@ if __name__ == '__main__':
         kwargs['output_trained_model_dir'] = output_trained_model_dir
     del kwargs['pretrain_model_path']
     del kwargs['output_model_dir']
-    kwargs['model_DM'] = model_DM
+    kwargs['dnikud_model'] = dnikud_model
 
     del kwargs['command']
     del kwargs['func']
