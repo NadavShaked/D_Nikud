@@ -18,6 +18,7 @@ from src.utiles_data import Nikud, create_missing_folders
 
 CLASSES_LIST = ["nikud", "dagesh", "sin"]
 
+
 def calc_num_correct_words(input, letter_correct_mask):
     SPACE_TOKEN = 104
     START_SENTENCE_TOKEN = 1

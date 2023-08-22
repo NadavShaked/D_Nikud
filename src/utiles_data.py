@@ -6,14 +6,16 @@ from typing import List, Tuple
 from uuid import uuid1
 import re
 import glob2
+
 # visual
 import matplotlib
 import matplotlib.pyplot as plt
+from tqdm import tqdm
+
 # ML
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from tqdm import tqdm
 
 from src.running_params import DEBUG_MODE, MAX_LENGTH_SEN
 
@@ -256,7 +258,7 @@ def combine_sentences(list_sentences, max_length=0, is_train=False):
         else:
             all_new_sentences.append(new_sen)
             new_sen = sen
-        # if new(new_sen)
+
         index += 1
     if len(new_sen) > 0:
         all_new_sentences.append(new_sen)
@@ -492,7 +494,6 @@ def get_sub_folders_paths(main_folder):
             list_paths.extend(get_sub_folders_paths(path))
     return list_paths
 
-
 def create_missing_folders(folder_path):
     # Check if the folder doesn't exist and create it if needed
     if not os.path.exists(folder_path):
@@ -504,7 +505,6 @@ def organize_data(main_folder, logger):
     x.delete_files(os.path.join(Path(main_folder).parent, "dev"))
     x.delete_files(os.path.join(Path(main_folder).parent, "test"))
     x.split_data(main_folder, main_folder_name=os.path.basename(main_folder), logger=logger)
-
 
 def info_folder(folder, num_files, num_hebrew_letters):
     for filename in os.listdir(folder):
@@ -523,7 +523,6 @@ def info_folder(folder, num_files, num_hebrew_letters):
             num_files += n1
             num_hebrew_letters += n2
     return num_files, num_hebrew_letters
-
 
 def extract_text_to_compare_nakdimon(text):
     res = text.replace('|', '')
