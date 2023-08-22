@@ -402,54 +402,56 @@ def do_predict(input_path, output_path, tokenizer_tavbert, logger, model_DM, com
     else:
         raise Exception("Input file not exist")
 
-
-def do_evaluate(input_path, logger, model_DM, tokenizer_tavbert, plots_folder):
-    msg = f'evaluate all_data: {input_path}'
+def evaluate_folder(folder_path, logger, model_DM, tokenizer_tavbert, plots_folder):
+    msg = f'evaluate sub folder: {folder_path}'
     logger.info(msg)
 
-    evaluate_text(input_path,
+    evaluate_text(folder_path,
                   model_DM=model_DM,
                   tokenizer_tavbert=tokenizer_tavbert,
                   logger=logger,
                   plots_folder=plots_folder,
                   batch_size=BATCH_SIZE)
 
+    msg = f'\n***************************************\n'
+    logger.info(msg)
+
+    for sub_folder_name in os.listdir(folder_path):
+        sub_folder_path = os.path.join(folder_path, sub_folder_name)
+
+        if (not os.path.isdir(sub_folder_path)
+                or sub_folder_path == ".git"
+                or "not_use" in sub_folder_path
+                or "NakdanResults" in sub_folder_path):
+            continue
+
+        evaluate_folder(sub_folder_path, logger, model_DM, tokenizer_tavbert, plots_folder)
+
+
+def do_evaluate(input_path, logger, model_DM, tokenizer_tavbert, plots_folder):
+    msg = f'evaluate all_data: {input_path}'
+    logger.info(msg)
+
+    # evaluate_text(input_path,
+    #               model_DM=model_DM,
+    #               tokenizer_tavbert=tokenizer_tavbert,
+    #               logger=logger,
+    #               plots_folder=plots_folder,
+    #               batch_size=BATCH_SIZE)
+
     msg = f'\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n'
     logger.info(msg)
 
     for sub_folder_name in os.listdir(input_path):
-        sub_folder = os.path.join(input_path, sub_folder_name)
+        sub_folder_path = os.path.join(input_path, sub_folder_name)
 
-        if not os.path.isdir(sub_folder) or sub_folder == ".git":
+        if (not os.path.isdir(sub_folder_path)
+                or sub_folder_path == ".git"
+                or "not_use" in sub_folder_path
+                or "NakdanResults" in sub_folder_path):
             continue
 
-        msg = f'evaluate sub folder: {sub_folder}'
-        logger.info(msg)
-
-        evaluate_text(sub_folder,
-                      model_DM=model_DM,
-                      tokenizer_tavbert=tokenizer_tavbert,
-                      logger=logger,
-                      plots_folder=plots_folder,
-                      batch_size=BATCH_SIZE)
-
-        msg = f'\n***************************************\n'
-        logger.info(msg)
-
-        folders = get_sub_folders_paths(sub_folder)
-        for folder in folders:
-            msg = f'evaluate sub folder: {folder}'
-            logger.info(msg)
-
-            evaluate_text(folder,
-                          model_DM=model_DM,
-                          tokenizer_tavbert=tokenizer_tavbert,
-                          logger=logger,
-                          plots_folder=plots_folder,
-                          batch_size=BATCH_SIZE)
-
-            msg = f'\n---------------------------------------\n'
-            logger.info(msg)
+        evaluate_folder(sub_folder_path, logger, model_DM, tokenizer_tavbert, plots_folder)
 
 
 def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, model_DM, output_trained_model_dir, data_folder,
