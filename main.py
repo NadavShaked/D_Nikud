@@ -306,8 +306,7 @@ def evaluate_text(path, model_DM, tokenizer_tavbert, logger, plots_folder, batch
     if os.path.isfile(path):
         dataset = NikudDataset(tokenizer_tavbert, file=path, logger=logger, max_length=MAX_LENGTH_SEN, is_train=True)
     elif os.path.isdir(path):
-        dataset = NikudDataset(tokenizer_tavbert, folder=path, logger=logger, max_length=MAX_LENGTH_SEN,
-                               is_train=True)
+        dataset = NikudDataset(tokenizer_tavbert, folder=path, logger=logger, max_length=MAX_LENGTH_SEN, is_train=True)
     else:
         raise Exception("input path doesnt exist")
 
@@ -447,7 +446,7 @@ def do_evaluate(input_path, logger, model_DM, tokenizer_tavbert, plots_folder):
                           tokenizer_tavbert=tokenizer_tavbert,
                           logger=logger,
                           plots_folder=plots_folder,
-                          batch_size=args.batch_size)
+                          batch_size=BATCH_SIZE)
 
             msg = f'\n---------------------------------------\n'
             logger.info(msg)
