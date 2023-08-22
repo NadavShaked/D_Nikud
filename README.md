@@ -37,8 +37,7 @@ Clone the repository:
 
 ### Predict
 
-The "Predict" command enables the prediction of diacritics for input text files or folders containing un-diacritized text. It generates diacritization predictions using the specified diacritization model and saves the results to the specified output file. Optionally, you can choose to predict text for comparison with Nakdimon using the `-c/--compare` flag.
-
+The "Predict" command enables the prediction of diacritics for input text files or folders containing diacritized or un-diacritized text. It generates diacritization predictions using the specified diacritization model and saves the results to the specified output file. Optionally, you can choose to predict text for comparison with Nakdimon using the `-c/--compare` flag.
 To predict diacritics for input text files or folders, use the following command:
 
 ```bash
