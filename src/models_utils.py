@@ -375,6 +375,7 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
     nikud_letter_level_correct = nikud_letter_level_correct / letters_count
     dagesh_letter_level_correct = dagesh_letter_level_correct / letters_count
     sin_letter_level_correct = sin_letter_level_correct / letters_count
+    print("\n")
     print(f"nikud_letter_level_correct = {nikud_letter_level_correct}")
     print(f"dagesh_letter_level_correct = {dagesh_letter_level_correct}")
     print(f"sin_letter_level_correct = {sin_letter_level_correct}")
