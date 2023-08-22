@@ -432,12 +432,12 @@ def do_evaluate(input_path, logger, model_DM, tokenizer_tavbert, plots_folder):
     msg = f'evaluate all_data: {input_path}'
     logger.info(msg)
 
-    # evaluate_text(input_path,
-    #               model_DM=model_DM,
-    #               tokenizer_tavbert=tokenizer_tavbert,
-    #               logger=logger,
-    #               plots_folder=plots_folder,
-    #               batch_size=BATCH_SIZE)
+    evaluate_text(input_path,
+                  model_DM=model_DM,
+                  tokenizer_tavbert=tokenizer_tavbert,
+                  logger=logger,
+                  plots_folder=plots_folder,
+                  batch_size=BATCH_SIZE)
 
     msg = f'\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n'
     logger.info(msg)
