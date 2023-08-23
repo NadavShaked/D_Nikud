@@ -280,9 +280,9 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
     model.to(device)
     model.eval()
 
-    true_labels = {"nikud": 0, "dagesh": 0, "sin": 0}
+    true_labels = {"nikud": [], "dagesh": [], "sin": []}
     predictions = {"nikud": 0, "dagesh": 0, "sin": 0}
-    predicted_labels_2_report = {"nikud": 0, "dagesh": 0, "sin": 0}
+    predicted_labels_2_report = {"nikud": [], "dagesh": [], "sin": []}
     not_masks = {"nikud": 0, "dagesh": 0, "sin": 0}
     correct_preds = {"nikud": 0, "dagesh": 0, "sin": 0}
     relevant_count = {"nikud": 0, "dagesh": 0, "sin": 0}
@@ -319,8 +319,17 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
                 correct_preds[class_name] += torch.sum(preds[not_masked] == labels_class[class_name][not_masked])
                 predictions[class_name] = preds
                 not_masks[class_name] = not_masked
-                true_labels[class_name] = labels_class[class_name][not_masked].cpu().numpy()
-                predicted_labels_2_report[class_name] = preds[not_masked].cpu().numpy()
+
+                if len(true_labels[class_name]) == 0:
+                    true_labels[class_name] = labels_class[class_name][not_masked].cpu().numpy()
+                else:
+                    true_labels[class_name] = np.concatenate((true_labels[class_name], labels_class[class_name][not_masked].cpu().numpy()))
+
+                if len(predicted_labels_2_report[class_name]) == 0:
+                    predicted_labels_2_report[class_name] = preds[not_masked].cpu().numpy()
+                else:
+                    predicted_labels_2_report[class_name] = np.concatenate((predicted_labels_2_report[class_name], preds[not_masked].cpu().numpy()))
+
 
             not_mask_all_or = torch.logical_or(torch.logical_or(not_masks["nikud"], not_masks["dagesh"]), not_masks["sin"])
 
@@ -350,6 +359,7 @@ def evaluate(model, test_data, plots_folder=None, device='cpu'):
             sin_letter_level_correct += torch.sum(correct_sin[not_mask_all_or])
 
     for i, name in enumerate(CLASSES_LIST):
+
         index_labels = np.unique(true_labels[name])
         cm = confusion_matrix(true_labels[name], predicted_labels_2_report[name], labels=index_labels)
 

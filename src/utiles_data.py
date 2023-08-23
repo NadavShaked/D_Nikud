@@ -175,7 +175,10 @@ class Letter:
         if np.array(dagesh_sin_nikud).all() and len(labels) == 3 and labels[0] in Nikud.sin:
             labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
-            labels_ids["sin"] = Nikud.label_2_id["sin"][labels[0]]
+
+        if self.can_sin(self.letter) and len(labels) == 2 and labels[1] == Nikud.DAGESH_LETTER:
+            labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
+            labels_ids["nikud"] = Nikud.label_2_id[class_name]["WITHOUT"]
 
         if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
                 Nikud.label_2_id["nikud"]["WITHOUT"]:

@@ -19,23 +19,12 @@ from src.models import DNikudModel, ModelConfig
 from src.models_utils import training, evaluate, predict
 from src.plot_helpers import generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
-from src.running_params import SEED, BATCH_SIZE, MAX_LENGTH_SEN
+from src.running_params import BATCH_SIZE, MAX_LENGTH_SEN
 from src.utiles_data import NikudDataset, Nikud, get_sub_folders_paths, create_missing_folders, \
     extract_text_to_compare_nakdimon
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
-
-# TODO: DELETE SEEDS
-
-# Set the random seed for Python
-random.seed(SEED)
-
-# Set the random seed for numpy
-np.random.seed(SEED)
-
-# Set the random seed for torch to SEED
-torch.manual_seed(SEED)
 
 
 # def train(use_pretrain=False):
@@ -297,7 +286,7 @@ def get_logger(log_level, name_func, date_time=datetime.now().strftime('%d_%m_%y
 #     print(best_hyperparameters)
 #
 
-def evaluate_text(path, dnikud_model, tokenizer_tavbert, logger, plots_folder, batch_size=BATCH_SIZE):
+def evaluate_text(path, dnikud_model, tokenizer_tavbert, logger, plots_folder=None, batch_size=BATCH_SIZE):
     path_name = os.path.basename(path)
 
     msg = f"evaluate text: {path_name} on D-nikud Model"
@@ -392,7 +381,8 @@ def check_files_excepted(folder):
 
 def do_predict(input_path, output_path, tokenizer_tavbert, logger, dnikud_model, compare_nakdimon):
     if os.path.isdir(input_path):
-        predict_folder(input_path, output_path, logger, tokenizer_tavbert, dnikud_model, compare_nakdimon=compare_nakdimon)
+        predict_folder(input_path, output_path, logger, tokenizer_tavbert, dnikud_model,
+                       compare_nakdimon=compare_nakdimon)
     elif os.path.isfile(input_path):
         predict_text(input_path,
                      output_file=output_path,
@@ -401,6 +391,7 @@ def do_predict(input_path, output_path, tokenizer_tavbert, logger, dnikud_model,
                      dnikud_model=dnikud_model, compare_nakdimon=compare_nakdimon)
     else:
         raise Exception("Input file not exist")
+
 
 def evaluate_folder(folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder):
     msg = f'evaluate sub folder: {folder_path}'
@@ -454,7 +445,8 @@ def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folde
         evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
 
 
-def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, dnikud_model, output_trained_model_dir, data_folder,
+def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, dnikud_model, output_trained_model_dir,
+             data_folder,
              n_epochs, checkpoints_frequency, learning_rate, batch_size):
     msg = 'Loading data...'
     logger.debug(msg)
@@ -535,25 +527,6 @@ def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, dnikud_m
 
 
 if __name__ == '__main__':
-    # folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\models\trained\output_models_19_08_23__08_47\output_models_19_08_23__08_47\checkpoints"
-    # for model_path in os.listdir(folder):
-    #     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
-    #     date_time = datetime.now().strftime('%d_%m_%y__%H_%M')
-    #     logger = get_logger("DEBUG", "PREDICT", date_time)
-    #     dir_model_config = "models/config.yml"
-    #     config = ModelConfig.load_from_file(dir_model_config)
-    #
-    #     model_DM = DNikudModel(config, len(Nikud.label_2_id["nikud"]), len(Nikud.label_2_id["dagesh"]),
-    #                            len(Nikud.label_2_id["sin"]), device=DEVICE).to(DEVICE)
-    #     state_dict_model = model_DM.state_dict()
-    #     state_dict_model.update(torch.load(os.path.join(folder, model_path)))
-    #     model_DM.load_state_dict(state_dict_model)
-    #     # input_path, output_path, tokenizer_tavbert, logger, model_DM, compare_nakdimon
-    #     do_predict(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\expected",
-    #                         output_path=rf"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_{model_path}",
-    #                         tokenizer_tavbert=tokenizer_tavbert,logger=logger, model_DM=model_DM, compare_nakdimon=True)
-    #
-
     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -562,8 +535,6 @@ if __name__ == '__main__':
                         default='DEBUG', help='Set the logging level')
     parser.add_argument('-m', '--output_model_dir', type=str, default='models', help='save directory for model')
     subparsers = parser.add_subparsers(help='sub-command help', dest='command', required=True)
-
-    # predict "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected" "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_pred"
 
     parser_predict = subparsers.add_parser('predict', help='diacritize a text files ')
     parser_predict.add_argument('input_path', help='input file or folder')
@@ -574,9 +545,6 @@ if __name__ == '__main__':
     parser_predict.add_argument('-c', '--compare', dest='compare_nakdimon',
                                 default=False, help='predict text for comparing with Nakdimon')
     parser_predict.set_defaults(func=do_predict)
-
-    # predict "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected" "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_pred" --pretrain_model_path "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\models\trained\prod\dnikud_v4.pth"
-    # evaluate "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_pred" --pretrain_model_path "C:\Users\adir\Desktop\studies\nlp\nlp-final-project\models\trained\prod\dnikud_v4.pth"
 
     parser_evaluate = subparsers.add_parser('evaluate', help='evaluate D-nikud')
     parser_evaluate.add_argument('input_path', help='input file or folder')
@@ -651,38 +619,3 @@ if __name__ == '__main__':
     args.func(**kwargs)
 
     sys.exit(0)
-
-    # evaluate  "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_v44"
-    # folder = r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test"
-    # # data = []
-    # for sub_folder in os.listdir(folder):
-    #     # if sub_folder != "law":
-    #     #     continue
-    #     print(sub_folder)
-    #     sub_folder_path = os.path.join(folder, sub_folder)
-    #     # num_files, num_letters = info_folder(sub_folder_path, 0, 0)
-    #     evaluate_text(sub_folder_path)
-    #     # data.append(sub_data)
-    # # print(data)
-
-    # predict "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected" "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_v4"
-    # orgenize_data(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized")
-    # evaluate_text(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\WikipediaHebrewWithVocalization.txt")
-    # predict_text(
-    #     r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected")
-    # train(use_pretrain=False)
-    # hyperparams_checker()
-    # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test_modern")
-    # test_by_folders(main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\test")
-    # test_by_folders(
-    #     main_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\male_female\male_not_use")
-    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data\hebrew_diacritized\dicta\male_nakdimon")
-    # predict_folder_flow(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\expected",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_v8",
-    #                     compare_nakdimon=True)
-    # update_compare_folder(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_v8",
-    #                     output_folder=r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\new\Dnikud_v82")
-    # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nlp-final-project\data")
-    # check_files_excepted(r"C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\haser\expected\haser")
-# predict "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\expected" "C:\Users\adir\Desktop\studies\nlp\nakdimon\tests\female2\Dnikud_v44"
