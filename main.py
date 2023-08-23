@@ -187,7 +187,7 @@ def evaluate_folder(folder_path, logger, dnikud_model, tokenizer_tavbert, plots_
         evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
 
 
-def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folder):
+def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folder, eval_sub_folders=False):
     msg = f'evaluate all_data: {input_path}'
     logger.info(msg)
 
@@ -201,16 +201,17 @@ def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folde
     msg = f'\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n'
     logger.info(msg)
 
-    for sub_folder_name in os.listdir(input_path):
-        sub_folder_path = os.path.join(input_path, sub_folder_name)
+    if eval_sub_folders:
+        for sub_folder_name in os.listdir(input_path):
+            sub_folder_path = os.path.join(input_path, sub_folder_name)
 
-        if (not os.path.isdir(sub_folder_path)
-                or sub_folder_path == ".git"
-                or "not_use" in sub_folder_path
-                or "NakdanResults" in sub_folder_path):
-            continue
+            if (not os.path.isdir(sub_folder_path)
+                    or sub_folder_path == ".git"
+                    or "not_use" in sub_folder_path
+                    or "NakdanResults" in sub_folder_path):
+                continue
 
-        evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
+            evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
 
 
 def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, dnikud_model, output_trained_model_dir, data_folder,
@@ -319,7 +320,11 @@ if __name__ == '__main__':
                                 default=os.path.join(Path(__file__).parent, 'models', 'prod', 'best_model.pth'),
                                 help='pre-train model path - use only if you want to use trained model weights')
     parser_evaluate.add_argument('-df', '--plots_folder', dest='plots_folder',
-                                 default=os.path.join(Path(__file__).parent, 'plots'), help='Set the debug folder')
+                                 default=os.path.join(Path(__file__).parent, 'plots'), help='set the debug folder')
+    parser_evaluate.add_argument('-es', '--eval_sub_folders', dest='eval_sub_folders',
+                                 default=False, help='accuracy calculation includes the evaluation of sub-folders '
+                                                     'within the input_path folder, providing independent assessments '
+                                                     'for each subfolder.')
     parser_evaluate.set_defaults(func=do_evaluate)
 
 
