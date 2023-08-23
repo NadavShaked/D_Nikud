@@ -1,7 +1,6 @@
 # general
 import argparse
 import os
-import random
 import sys
 from datetime import datetime
 import logging
@@ -9,7 +8,6 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 # ML
-import numpy as np
 import torch
 import torch.nn as nn
 from transformers import AutoConfig, AutoTokenizer
@@ -20,139 +18,11 @@ from src.models_utils import training, evaluate, predict
 from src.plot_helpers import generate_plot_by_nikud_dagesh_sin_dict, \
     generate_word_and_letter_accuracy_plot
 from src.running_params import BATCH_SIZE, MAX_LENGTH_SEN
-from src.utiles_data import NikudDataset, Nikud, get_sub_folders_paths, create_missing_folders, \
+from src.utiles_data import NikudDataset, Nikud, create_missing_folders, \
     extract_text_to_compare_nakdimon
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 assert DEVICE == 'cuda'
-
-
-# def train(use_pretrain=False):
-#     args = parse_arguments()
-#
-#     output_model_dir, output_log_dir, output_dir_running, plots_folder = generate_folders(args,
-#                                                                                           name_log=f"log_model_lr_{args.learning_rate}_bs_{BATCH_SIZE}")
-#
-#     logger = get_logger(args.loglevel, output_log_dir)
-#
-#     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-#     msg = f'Device detected: {device}'
-#     logger.info(msg)
-#
-#     msg = 'Loading data...'
-#     logger.debug(msg)
-#
-#     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
-#
-#     dataset_train = NikudDataset(tokenizer_tavbert,
-#                                  folder=os.path.join(args.data_folder, "train"),
-#                                  logger=logger,
-#                                  max_length=MAX_LENGTH_SEN,
-#                                  is_train=True)
-#     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert,
-#                                folder=os.path.join(args.data_folder, "dev"),
-#                                logger=logger,
-#                                max_length=dataset_train.max_length,
-#                                is_train=True)
-#     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert,
-#                                 folder=os.path.join(args.data_folder, "test"),
-#                                 logger=logger,
-#                                 max_length=dataset_train.max_length,
-#                                 is_train=True)
-#
-#     dataset_train.show_data_labels(plots_folder=plots_folder)
-#
-#     msg = f'Max length of data: {dataset_train.max_length}'
-#     logger.debug(msg)
-#
-#     msg = f'Num rows in train data: {len(dataset_train.data)}, ' \
-#           f'Num rows in dev data: {len(dataset_dev.data)}, ' \
-#           f'Num rows in test data: {len(dataset_test.data)}'
-#     logger.debug(msg)
-#
-#     msg = 'Loading tokenizer and prepare data...'
-#     logger.debug(msg)
-#
-#     dataset_train.prepare_data(name="train")
-#     dataset_dev.prepare_data(name="dev")
-#     dataset_test.prepare_data(name="test")
-#
-#     mtb_train_dl = torch.utils.data.DataLoader(dataset_train.prepered_data, batch_size=BATCH_SIZE)
-#     mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev.prepered_data, batch_size=BATCH_SIZE)
-#     mtb_test_dl = torch.utils.data.DataLoader(dataset_test.prepered_data, batch_size=BATCH_SIZE)
-#
-#     msg = 'Loading model...'
-#     logger.debug(msg)
-#
-#     base_model_name = "tau/tavbert-he"
-#     config = AutoConfig.from_pretrained(base_model_name)
-#     model_DM = DNikudModel(config,
-#                            len(Nikud.label_2_id["nikud"]),
-#                            len(Nikud.label_2_id["dagesh"]),
-#                            len(Nikud.label_2_id["sin"]),
-#                            pretrain_model=base_model_name,
-#                            device=DEVICE
-#                            ).to(DEVICE)
-#
-#     if use_pretrain:
-#         # load last best model:
-#         state_dict_model = model_DM.state_dict()
-#         state_dict_model.update(
-#             torch.load(BEST_MODEL_PATH))
-#         model_DM.load_state_dict(state_dict_model)
-#
-#     dir_model_config = os.path.join(output_model_dir, "config.yml")
-#
-#     if not os.path.isfile(dir_model_config):
-#         our_model_config = ModelConfig(dataset_train.max_length)
-#         our_model_config.save_to_file(dir_model_config)
-#
-#     optimizer = torch.optim.Adam(model_DM.parameters(), lr=args.learning_rate)
-#
-#     msg = 'training...'
-#     logger.debug(msg)
-#
-#     criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD_OR_IRRELEVANT).to(DEVICE)
-#     criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD_OR_IRRELEVANT).to(DEVICE)
-#     criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD_OR_IRRELEVANT).to(DEVICE)
-#
-#     training_params = {"n_epochs": args.n_epochs, "checkpoints_frequency": args.checkpoints_frequency}
-#     (best_model_details, best_accuracy, epochs_loss_train_values, steps_loss_train_values, loss_dev_values,
-#      accuracy_dev_values) = training(
-#         model_DM,
-#         mtb_train_dl,
-#         mtb_dev_dl,
-#         criterion_nikud,
-#         criterion_dagesh,
-#         criterion_sin,
-#         training_params,
-#         logger,
-#         output_dir_running,
-#         optimizer,
-#         device=DEVICE
-#     )
-#
-#     generate_plot_by_nikud_dagesh_sin_dict(epochs_loss_train_values, "Train epochs loss", "Loss", plots_folder)
-#     generate_plot_by_nikud_dagesh_sin_dict(steps_loss_train_values, "Train steps loss", "Loss", plots_folder)
-#     generate_plot_by_nikud_dagesh_sin_dict(loss_dev_values, "Dev epochs loss", "Loss", plots_folder)
-#     generate_plot_by_nikud_dagesh_sin_dict(accuracy_dev_values, "Dev accuracy", "Accuracy", plots_folder)
-#     generate_word_and_letter_accuracy_plot(accuracy_dev_values, plots_folder)
-#
-#     report_dev, word_level_correct_dev, letter_level_correct_dev = evaluate(model_DM, mtb_dev_dl, plots_folder,
-#                                                                             device=DEVICE)
-#     report_test, word_level_correct_test, letter_level_correct_test = evaluate(model_DM, mtb_test_dl, plots_folder,
-#                                                                                device=DEVICE)
-#
-#     msg = f"Diacritization Model\nDev dataset\nLetter level accuracy:{letter_level_correct_dev}\n" \
-#           f"Word level accuracy: {word_level_correct_dev}\n--------------------\nTest dataset\n" \
-#           f"Letter level accuracy: {letter_level_correct_test}\nWord level accuracy: {word_level_correct_test}"
-#     logger.debug(msg)
-#
-#     plot_results(logger, report_dev, report_filename="results_dev")
-#     plot_results(logger, report_test, report_filename="results_test")
-#
-#     msg = 'Done'
-#     logger.info(msg)
 
 
 def get_logger(log_level, name_func, date_time=datetime.now().strftime('%d_%m_%y__%H_%M')):
@@ -185,106 +55,6 @@ def get_logger(log_level, name_func, date_time=datetime.now().strftime('%d_%m_%y
 
     return logger
 
-
-# def hyperparams_checker(use_pretrain=False):
-#     args = parse_arguments()
-#
-#     plots_folder = args.plots_folder
-#     create_missing_folders(plots_folder)
-#
-#     tokenizer_tavbert = AutoTokenizer.from_pretrained("tau/tavbert-he")
-#
-#     dataset_train = NikudDataset(tokenizer_tavbert, folder=os.path.join(args.data_folder, "train"), logger=None,
-#                                  max_length=MAX_LENGTH_SEN, is_train=True)
-#     dataset_dev = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "dev"), logger=None,
-#                                max_length=dataset_train.max_length, is_train=True)
-#     dataset_test = NikudDataset(tokenizer=tokenizer_tavbert, folder=os.path.join(args.data_folder, "test"),
-#                                 logger=None, max_length=dataset_train.max_length, is_train=True)
-#
-#     dataset_train.prepare_data(name="train")
-#     dataset_dev.prepare_data(name="dev")
-#     dataset_test.prepare_data(name="test")
-#
-#     # hyperparameters search space
-#     lr_values = np.logspace(-6, -1, num=6)  # learning rates between 1e-6 and 1e-1
-#     num_freeze_layers = list(range(1, 10, 2))  # learning rates between 1e-6 and 1e-1
-#     batch_size_values = [2 ** i for i in range(3, 7)]  # batch sizes between 32 and 512
-#
-#     # number of random combinations to test
-#     num_combinations = 20
-#
-#     # best hyperparameters and their performance
-#     best_accuracy = 0.0
-#     best_hyperparameters = None
-#
-#     training_params = {"n_epochs": args.n_epochs, "checkpoints_frequency": args.checkpoints_frequency}
-#
-#     for _ in range(num_combinations):
-#         torch.cuda.empty_cache()
-#         lr = np.random.choice(lr_values)
-#         nfl = np.random.choice(num_freeze_layers)
-#         batch_size = int(np.random.choice(batch_size_values))
-#
-#         output_model_dir, output_log_dir, output_dir_running, plots_folder = generate_folders(args,
-#                                                                                               name_log=f"log_model_lr_{lr}_bs_{batch_size}_nfl_{nfl}")
-#         logger = get_logger(args.loglevel, output_log_dir)
-#
-#         msg = 'Loading model...'
-#         logger.debug(msg)
-#
-#         base_model_name = "tau/tavbert-he"
-#         config = AutoConfig.from_pretrained(base_model_name)
-#
-#         model_DM = DNikudModel(config,
-#                                len(Nikud.label_2_id["nikud"]),
-#                                len(Nikud.label_2_id["dagesh"]),
-#                                len(Nikud.label_2_id["sin"]),
-#                                device=DEVICE
-#                                ).to(DEVICE)
-#         if use_pretrain:
-#             # load last best model:
-#             state_dict_model = model_DM.state_dict()
-#             state_dict_model.update(
-#                 torch.load(BEST_MODEL_PATH))
-#             model_DM.load_state_dict(state_dict_model)
-#
-#         # set these hyperparameters in your optimizer
-#         optimizer = torch.optim.Adam(model_DM.parameters(), lr=args.learning_rate)
-#
-#         # redefine your data loaders with the new batch size
-#         mtb_train_dl = torch.utils.data.DataLoader(dataset_train.prepered_data, batch_size=batch_size)
-#         mtb_dev_dl = torch.utils.data.DataLoader(dataset_dev.prepered_data, batch_size=batch_size)
-#
-#         criterion_nikud = nn.CrossEntropyLoss(ignore_index=Nikud.PAD_OR_IRRELEVANT).to(DEVICE)
-#         criterion_dagesh = nn.CrossEntropyLoss(ignore_index=Nikud.PAD_OR_IRRELEVANT).to(DEVICE)
-#         criterion_sin = nn.CrossEntropyLoss(ignore_index=Nikud.PAD_OR_IRRELEVANT).to(DEVICE)
-#
-#         # call your training function and get the dev accuracy
-#         (best_model_details,
-#          _,
-#          epochs_loss_train_values,
-#          steps_loss_train_values,
-#          loss_dev_values,
-#          accuracy_dev_values) = training(model_DM,
-#                                          mtb_train_dl,
-#                                          mtb_dev_dl,
-#                                          criterion_nikud,
-#                                          criterion_dagesh,
-#                                          criterion_sin,
-#                                          training_params,
-#                                          logger,
-#                                          output_dir_running,
-#                                          optimizer,
-#                                          device=DEVICE)
-#
-#         # if these hyperparameters are better, store them
-#         if accuracy_dev_values["all_nikud_letter"] > best_accuracy:
-#             best_accuracy = accuracy_dev_values["all_nikud_letter"]
-#             best_hyperparameters = (lr, batch_size)
-#
-#     # print the best hyperparameters
-#     print(best_hyperparameters)
-#
 
 def evaluate_text(path, dnikud_model, tokenizer_tavbert, logger, plots_folder=None, batch_size=BATCH_SIZE):
     path_name = os.path.basename(path)
@@ -419,7 +189,7 @@ def evaluate_folder(folder_path, logger, dnikud_model, tokenizer_tavbert, plots_
         evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
 
 
-def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folder):
+def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folder, eval_sub_folders=False):
     msg = f'evaluate all_data: {input_path}'
     logger.info(msg)
 
@@ -433,16 +203,17 @@ def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folde
     msg = f'\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n'
     logger.info(msg)
 
-    for sub_folder_name in os.listdir(input_path):
-        sub_folder_path = os.path.join(input_path, sub_folder_name)
+    if eval_sub_folders:
+        for sub_folder_name in os.listdir(input_path):
+            sub_folder_path = os.path.join(input_path, sub_folder_name)
 
-        if (not os.path.isdir(sub_folder_path)
-                or sub_folder_path == ".git"
-                or "not_use" in sub_folder_path
-                or "NakdanResults" in sub_folder_path):
-            continue
+            if (not os.path.isdir(sub_folder_path)
+                    or sub_folder_path == ".git"
+                    or "not_use" in sub_folder_path
+                    or "NakdanResults" in sub_folder_path):
+                continue
 
-        evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
+            evaluate_folder(sub_folder_path, logger, dnikud_model, tokenizer_tavbert, plots_folder)
 
 
 def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, dnikud_model, output_trained_model_dir,
@@ -552,7 +323,11 @@ if __name__ == '__main__':
                                 default=os.path.join(Path(__file__).parent, 'models', 'prod', 'best_model.pth'),
                                 help='pre-train model path - use only if you want to use trained model weights')
     parser_evaluate.add_argument('-df', '--plots_folder', dest='plots_folder',
-                                 default=os.path.join(Path(__file__).parent, 'plots'), help='Set the debug folder')
+                                 default=os.path.join(Path(__file__).parent, 'plots'), help='set the debug folder')
+    parser_evaluate.add_argument('-es', '--eval_sub_folders', dest='eval_sub_folders',
+                                 default=False, help='accuracy calculation includes the evaluation of sub-folders '
+                                                     'within the input_path folder, providing independent assessments '
+                                                     'for each subfolder.')
     parser_evaluate.set_defaults(func=do_evaluate)
 
 
