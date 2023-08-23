@@ -72,12 +72,13 @@ The "Evaluate" command assesses the performance of the diacritization model by c
 To evaluate the diacritization model, you can use the following command:
 
 ```bash
-python main.py evaluate <input_path> [-ptmp/--pretrain_model_path <pretrain_model_path>] [-df/--plots_folder <plots_folder>]
+python main.py evaluate <input_path> [-ptmp/--pretrain_model_path <pretrain_model_path>] [-df/--plots_folder <plots_folder>] [-es/--eval_sub_folders]
 ```
 
 - `<input_path>`: Path to the input file or folder containing text data for evaluation.
 - `-ptmp/--pretrain_model_path`: Optional. Path to the pre-trained model weights to be employed for evaluation. If this parameter is not specified, the command will default to using our pre-trained D-Nikud model.
 - `-df/--plots_folder`: Optional. Path to the folder where evaluation plots will be saved. If not provided, the default plots folder will be used.
+- `-es/--eval_sub_folders`: Optional. Include this flag to enable accuracy calculation for sub-folders within the `input_path` folder, providing independent assessments for each subfolder.
 
 For example, to evaluate the diacritization model's performance on a specific dataset, you might run:
 
