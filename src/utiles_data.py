@@ -1,7 +1,5 @@
 # general
 import os.path
-import random
-from pathlib import Path
 from typing import List, Tuple
 from uuid import uuid1
 import re
@@ -354,64 +352,6 @@ class NikudDataset(Dataset):
 
         return data, orig_data
 
-    def split_data(self, folder_path: str, logger=None, main_folder_name="hebrew_diacritized"):
-        msg = f"prepare data in folder - {os.path.basename(folder_path)}"
-        logger.debug(msg)
-        for type_data in ["train", "dev", "test"]:
-            folder_type = folder_path.replace(main_folder_name, type_data)
-            create_missing_folders(folder_type)
-
-        all_data = []
-
-        for filename in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, filename)
-            if filename.lower().endswith('.txt') and os.path.isfile(file_path):
-                all_data.extend(self.read_data_split(file_path))
-            elif os.path.isdir(file_path) and filename != ".git":
-                self.split_data(file_path, logger)
-
-        random.shuffle(all_data)
-
-        if len(all_data) > 0:
-            self.split_2_train_dev_test(all_data, folder_path)
-
-        return all_data
-
-    def read_data_split(self, filepath: str) -> List[Tuple[str, list]]:  # TODO: DELETE
-        with open(filepath, 'r', encoding='utf-8') as file:
-            file_data = file.read()
-        data_list = self.split_text(file_data)
-
-        return data_list
-
-    def split_2_train_dev_test(self, data_list, filepath):  # TODO: DELETE
-        import math
-        train_size = (int)(0.9 * len(data_list))
-        dev_size = math.ceil(0.05 * len(data_list))
-        dev_end_index = train_size + dev_size
-        train_data = data_list[: train_size]
-        dev_data = data_list[train_size: dev_end_index]
-        test_data = data_list[dev_end_index:]
-
-        name_folder = os.path.basename(filepath)
-        self.write_list_to_text_file(train_data, os.path.join(filepath, f"{name_folder}.txt"), "train")
-        self.write_list_to_text_file(dev_data, os.path.join(filepath, f"{name_folder}.txt"), "dev")
-        self.write_list_to_text_file(test_data, os.path.join(filepath, f"{name_folder}.txt"), "test")
-
-    def write_list_to_text_file(self, data_list, file_path, type,
-                                main_folder_name="hebrew_diacritized"):  # TODO: DELETE
-        file_path = file_path.replace(main_folder_name, type)
-        with open(file_path, 'w', encoding='utf-8') as f:
-            for item in data_list:
-                f.write(item + "\n------------------\n")
-
-    def delete_files(self, folder_path):  # TODO: DELETE
-        all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
-
-        for file_path in all_files:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-
     def split_text(self, file_data):
         file_data = file_data.replace("\n", f"\n{unique_key}")
         data_list = file_data.split(unique_key)
@@ -509,14 +449,19 @@ def create_missing_folders(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-def organize_data(main_folder, logger):
-    x = NikudDataset(None)
-    x.delete_files(os.path.join(Path(main_folder).parent, "train"))
-    x.delete_files(os.path.join(Path(main_folder).parent, "dev"))
-    x.delete_files(os.path.join(Path(main_folder).parent, "test"))
-    x.split_data(main_folder, main_folder_name=os.path.basename(main_folder), logger=logger)
 
 def info_folder(folder, num_files, num_hebrew_letters):
+    """
+    Recursively counts the number of files and the number of Hebrew letters in all subfolders of the given folder path.
+
+    Args:
+        folder (str): The path of the folder to be analyzed.
+        num_files (int): The running total of the number of files encountered so far.
+        num_hebrew_letters (int): The running total of the number of Hebrew letters encountered so far.
+
+    Returns:
+        Tuple[int, int]: A tuple containing the total number of files and the total number of Hebrew letters.
+    """
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         if filename.lower().endswith('.txt') and os.path.isfile(file_path):
