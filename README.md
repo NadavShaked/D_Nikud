@@ -120,10 +120,10 @@ python main.py train --learning_rate 0.001 --batch_size 16 --n_epochs 20
 If you want to continue training from a pre-trained model and save model checkpoints every 3 epochs, you can use:
 
 ```bash
-python main.py train --from_pretrain --checkpoints_frequency 3 -ptmp path/to/pretrained/model.pth
+python main.py train --checkpoints_frequency 3 -ptmp path/to/pretrained/model.pth
 ```
 
-In this example, the command will resume training from the specified pre-trained model and save checkpoints every 3 epochs. Training logs and plots will be saved in the specified plots folder.
+In this example, the command will resume training from the specified pre-trained model that located at 'path/to/pretrained/model.pth' and save checkpoints every 3 epochs. Training plots will be saved in the specified plots folder.
 
 Remember to adjust the command options according to your training requirements and preferences. If you don't provide the `-ptmp` parameter, the command will start training from scratch using the default D-Nikud model architecture.
 
