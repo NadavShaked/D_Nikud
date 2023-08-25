@@ -330,6 +330,7 @@ if __name__ == '__main__':
                                                      'for each subfolder.')
     parser_evaluate.set_defaults(func=do_evaluate)
 
+    # train --n_epochs 20
 
     parser_train = subparsers.add_parser('train', help='train D-nikud')
     parser_train.add_argument('-ptmp', '--pretrain_model_path', type=str,
@@ -339,7 +340,7 @@ if __name__ == '__main__':
     parser_train.add_argument('--batch_size', type=int, default=32, help='batch_size')
     parser_train.add_argument('--n_epochs', type=int, default=10, help='number of epochs')
     parser_train.add_argument('--data_folder', dest='data_folder',
-                              default=os.path.join(Path(__file__).parent, 'D_Nikud_Data'), help='Set the debug folder')
+                              default=os.path.join(Path(__file__).parent, 'data'), help='Set the debug folder')
     parser_train.add_argument('--checkpoints_frequency', type=int, default=1,
                               help='checkpoints frequency for save the model')
     parser_train.add_argument('-df', '--plots_folder', dest='plots_folder',
