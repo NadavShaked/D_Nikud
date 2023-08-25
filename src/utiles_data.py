@@ -339,7 +339,10 @@ class NikudDataset(Dataset):
 
                 label = []
                 l = Letter(sen[index])
-
+                if not ( l.letter not in Nikud.all_nikud_chr):
+                    if sen[index-1] == '\n':
+                        index += 1
+                        continue
                 assert l.letter not in Nikud.all_nikud_chr
                 if sen[index] in Letters.hebrew:
                     index += 1
