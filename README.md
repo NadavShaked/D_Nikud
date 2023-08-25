@@ -94,7 +94,6 @@ The "Train" command enables the training of the diacritization model using your 
 
 ⚠️ **Important Note:** Any file or folder in the specified data folder that contains the string "not_use" or "NakdanResults" in its name will be excluded from the training and testing processes. This feature allows you to selectively exclude specific data from the training process if needed.
 
-
 To train the diacritization model, use the following command:
 
 ```bash
@@ -110,6 +109,15 @@ python main.py train [--learning_rate <learning_rate>] [--batch_size <batch_size
 - `--checkpoints_frequency`: Optional. Frequency of saving model checkpoints during training (default is 1).
 - `-df/--plots_folder`: Optional. Path to the folder where training plots will be saved.
 - `-ptmp/--pretrain_model_path`: Optional. Path to the pre-trained model weights to be used for training continuation. Use this only if you want to fine-tune a specific pre-trained model.
+
+⚠️ **Folder Structure:** The `--data_folder` must have the following structure:
+- **data_folder**
+  - **train**
+    - Contains training data
+  - **dev**
+    - Contains development/validation data
+  - **test**
+    - Contains testing data
 
 For instance, to initiate training with a specified learning rate, batch size, and number of epochs, you can execute:
 
