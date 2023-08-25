@@ -31,9 +31,14 @@ Our D-Nikud model utilizes the TevBERT architecture and Bi-LSTM for diacritizati
 Clone the repository:
 
    ```bash
-   git clone https://github.com/NadavShaked/nlp-final-project.git
-   cd d-nikud-prediction
+   git clone https://github.com/NadavShaked/D_Nikud.git
+   cd D-Nikud
    ```
+Clone D-Nikud data:
+   ```bash
+   git submodule update --init --recursive
+   ```
+
 
 ### Predict
 
