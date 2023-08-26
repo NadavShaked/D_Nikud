@@ -142,8 +142,7 @@ Remember to adjust the command options according to your training requirements a
 
 ## Acknowledgments
 
-This script utilizes the D-Nikud model developed by [Adi Rosenthal](https://github.com/Adirosenthal) and [Nadav Shaked](https://github.com/NadavShaked).
-
+This script utilizes the D-Nikud model developed by [Adi Rosenthal](https://github.com/Adirosenthal540) and [Nadav Shaked](https://github.com/NadavShaked).
 
 ## License
 
