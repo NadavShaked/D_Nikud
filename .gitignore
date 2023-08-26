@@ -1,2 +1,2735 @@
 misc.xml
 nlp-final-project.iml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
+/Dnikud.docx
+/data/dev/biblical/biblical_not_use/biblical.txt
+/data/dev/biblical/rabanit/rabanit.txt
+/data/dev/biblical/religious/religious.txt
+/data/dev/biblical/zevi_scharfstein/zevi_scharfstein.txt
+/data/dev/dicta/dictaTestCorpus/dictaTestCorpus.txt
+/data/dev/dicta/haser_not_use/haser.txt
+/data/dev/dicta/male/male.txt
+/data/dev/dicta/male_nakdimon/male_nakdimon.txt
+/data/dev/dicta/shortstoryproject_Dicta/shortstoryproject_Dicta.txt
+/data/dev/law/law.txt
+/data/dev/male_female/female_not_use/female.txt
+/data/dev/male_female/male/male.txt
+/data/dev/modern/blogs/blogs.txt
+/data/dev/modern/books/books.txt
+/data/dev/modern/bsheva/bsheva.txt
+/data/dev/modern/critics/critics.txt
+/data/dev/modern/dont_panic/dont_panic.txt
+/data/dev/modern/forums/forums.txt
+/data/dev/modern/govil/govil.txt
+/data/dev/modern/hadrei-haredim/hadrei-haredim.txt
+/data/dev/modern/news/news.txt
+/data/dev/modern/random_internet/random_internet.txt
+/data/dev/modern/wiki/wiki.txt
+/data/dev/modern/yanshuf/yanshuf.txt
+/data/dev/modern/yisrael-hayom/yisrael-hayom.txt
+/data/dev/modern/ynet/ynet.txt
+/data/dev/poetry/poetry.txt
+/data/dev/pre_modern/abraham_regelson/abraham_regelson.txt
+/data/dev/pre_modern/bialik/bialik.txt
+/data/dev/pre_modern/elisha_porat/elisha_porat.txt
+/data/dev/pre_modern/itzhak_berkman/itzhak_berkman.txt
+/data/dev/pre_modern/pesah_kaplan/pesah_kaplan.txt
+/data/dev/pre_modern/shaul_tchernichovsky/shaul_tchernichovsky.txt
+/data/dev/pre_modern/uriel_ofek/uriel_ofek.txt
+/data/dev/pre_modern/yisrael_dushman/yisrael_dushman.txt
+/data/dev/pre_modern/zvi_zviri/zvi_zviri.txt
+/data/dev/shortstoryproject_predotted/shortstoryproject_predotted.txt
+/data/dictaTestCorpus/1.txt
+/data/dictaTestCorpus/10.txt
+/data/dictaTestCorpus/11.txt
+/data/dictaTestCorpus/12.txt
+/data/dictaTestCorpus/13.txt
+/data/dictaTestCorpus/14.txt
+/data/dictaTestCorpus/15.txt
+/data/dictaTestCorpus/16.txt
+/data/dictaTestCorpus/17.txt
+/data/dictaTestCorpus/18.txt
+/data/dictaTestCorpus/19.txt
+/data/dictaTestCorpus/2.txt
+/data/dictaTestCorpus/20.txt
+/data/dictaTestCorpus/21.txt
+/data/dictaTestCorpus/22.txt
+/data/dictaTestCorpus/3.txt
+/data/dictaTestCorpus/5.txt
+/data/dictaTestCorpus/6.txt
+/data/dictaTestCorpus/7.txt
+/data/dictaTestCorpus/8.txt
+/data/dictaTestCorpus/9.txt
+/data/hebrew_diacritized/README.md
+/data/hebrew_diacritized/biblical/bible.txt
+/data/hebrew_diacritized/biblical/birkat_hamazon.txt
+/data/hebrew_diacritized/biblical/rabanit/hakdama_leorot.txt
+/data/hebrew_diacritized/biblical/rabanit/hartzaat_harav.txt
+/data/hebrew_diacritized/biblical/rabanit/orhot_hayim.txt
+/data/hebrew_diacritized/biblical/rabanit/rambam_mamre.txt
+/data/hebrew_diacritized/biblical/rabanit/short_table.txt
+/data/hebrew_diacritized/biblical/rabanit/tomer_dvora.txt
+/data/hebrew_diacritized/biblical/religious/atar_hashabat.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9296.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9297.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9298.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9299.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9300.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9301.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9302.txt
+/data/hebrew_diacritized/biblical/zevi_scharfstein/9303.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/1.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/10.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/11.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/12.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/13.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/14.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/15.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/16.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/17.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/18.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/19.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/2.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/20.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/21.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/22.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/3.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/5.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/6.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/7.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/8.txt
+/data/hebrew_diacritized/dicta/dictaTestCorpus/9.txt
+/data/hebrew_diacritized/dicta/haser/WikipediaHebrewWithVocalization.txt
+/data/hebrew_diacritized/dicta/male/WikipediaHebrewWithVocalization-WithMetegToMarkMatresLectionis.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדגר אלן פו - הבור והמטוטלת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדגר אלן פו - הלב המדובב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדגר אלן פו - המכתב הגנוב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדגר אלן פו - נפילת בית אשר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדהם עאדל - כליון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדוארדו ברטי - יומנה של קוראת עיתונים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדוארדו חלפון - המתאגרף הפולני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדם מארק - טמגוצ׳י.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדם מקומבר - הגן האוטומטי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אדמונדו פאס סולדן - פוקנר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/או. הנרי - העלה האחרון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/או. הנרי - כופר נפשו של הצ_יף האדום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/או. הנרי - מתנת חכמי-הקדם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אוגוסטין קופסה - התקררות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אווה מנסה - עצלות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אונורה דה בלזק - אל ורדוגו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אוסקר וויילד - הדייג ונשמתו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אוסקר וויילד - מודל למיליונר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אופיר עוז - למה אנחנו לא עושים את זה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אופיר עוז - שמחתי לא להכיר אותך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אופק קהילה - המסתורי שיש ביניהם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אורי אורלב - הסינים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אורי ניסן גנסין - קטטה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אורית וולפיילר - שווייצריה זה כאן  .txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אורלי קסטל-בלום - אלף שקל לסיפור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אורלי קסטל-בלום - כדור כחול.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אורנה פילץ - גיבורות גדולות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אחמד עומר - נהר הדבש ואגם החלב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איאד ברגותי - הסרט הכתום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איגנאסיו פדיה - גידול סיאמי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איימי בנדר - יומיים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איימי גאסטין - גולדענע מדינה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איימי המפל - בשערי ממלכת החיות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איימן סיכסק - אל יפו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אייפר טונץ_ - הנוסעת בשלג.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אילנה ברנשטיין - מעשייה בעורב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אילנה המרמן - לראות אותם רואים את הים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אילנה רודשבסקי - קפה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אילקה פפ-זקור - קוויאר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איסאק באבל - האווז הראשון שלי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איראדה אל-ג_בורי - גם הוא ראה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אירן נמירובסקי - יום א_.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אישה דה לה קרוס - Famous Blue Raincoat.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אישטוון ארקן - סיפורים בני דקה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איתמר אורלב - בית אבות לגיבורי מלחמה, ורשה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/איתמר אורלב - מלחמה אין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלוורו אנריגה - חרפה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלוי טיסון - בעניין החתונה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלונזו קוואטו - מלאך ושמו גבריאל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלזה מורנטה - המשחק הסודי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלחנדרה לאורנסיץ_ - הסוד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלחנדרה סינה - הזקיף.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלחנדרה קוסטמגנה - גורילות בקונגו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלחנדרו סמברה - תודה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אליס ביאלסקי - זויה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אליס ביאלסקי - ריקוד הברבורים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אליסה רו גרסיה - הריבוע.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אליעזר בלום - האור הגדול.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אליף באטומן - קיץ בסמרקנד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלכס פז-גולדמן - משלוש יוצא אחד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלכס פז-גולדמן - שלושה בסירה אחת עם פאני היל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלכסנדר גרין - ההתרחשות ברחוב הכלב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלכסנדר סרגייביץ_ פושקין - מלכת פיק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אלכסנדר קלוגה - אני מפוצץ רק עם פקודה בכתב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אמברוז בירס - התרחשות בגשר נחל הינשוף.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אמיל חביבי - שער מנדלבאום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אמילי ברוט - מאיפה יוצא הפיפי שלך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אמיליאנו מונחה - אחד שסתם היה שם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אמינה סבגי אוזדמר - איסטנבול שלי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנג_לה קרטר - הגבירה מבית האהבה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנדז_י סטשיוק - סבתא והרוחות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנדרי בלאטניק - סדקים או יבשה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנדריאה יפטנוביץ_ - הצורך להיות בן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנדריאס שטיכמן - וואטאן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנדרס קייסדו - הצופה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנה ליכטיקמן - חדרים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנה סטרובינץ - הנצח של יאשה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנה פריצקאו - חמישים גוונים של אפור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנונימי - עפיפון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנחל ספאטה - חצאים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנט גרשנר - פרנצלאואר ברג, לילה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטולי קוזנצוב - הניצב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטון צ_כוב - דרמה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטון צ_כוב - יגון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטון צ_כוב - מתה לישון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטון צ_כוב - ספר תלונות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטוניה באום - הילד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטוניו אורטוניו - גבריות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטוניו אורטוניו - הגן היפני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנטוניו טאבוקי - הרכבות הנוסעות למדראס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אנתוני מארה - בניטו פיקונה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אסמאא אלע_ול - תל אלהווא.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אסתי ג. חיים - קיץ.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אסתי ג. חיים - רקדנית שחורה בלהקת יחיד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אפריל ביטון - זוהרה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אקוטגאווה ריונוסוקה - הקור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אקוטגאווה ריונוסוקה - סנין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אקוטגאווה ריונוסוקה - ראשומון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ארווינד אדיגה - צומת באר המים הקרירים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ארי ליברמן - בילי שוב מת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אריאל מגנוס - מילא את חובתו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ארנה קזין - פיקניק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ארנו שמידט - המתופף של הצאר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ארתור שניצלר - מותו של רווק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אשכול נבו - זבובים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אתגר קרת - חמישים עמודים גג.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/אתגר קרת - תקלה בקצה הגלקסיה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בועז יזרעאלי - אלישע.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בועז יזרעאלי - הקוף.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בלה שייר - ABC.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בלה שייר - פעמיים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בנימין תמוז - התופרת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בף - אריות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ברברה הוניגמן - קבר כפול.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ברונו שולץ - אוגוסט.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בריאן ליאונג - שש דרכים לקפוץ מגשר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/בריס די-ג_יי פנקייק - פעם אחר פעם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ברם סטוקר - האורח של דרקולה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג. ק. צ_סטרטון - האיש הלא נראה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ובאנה ריברו - יום לא מושלם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ובאני בוקאצ_ו - הבז של פדריגו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ובאני בוקאצ_ו - הלב של רוסיליונה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ובאני כרמלו ורגה - אבירות כפרית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ובאני כרמלו ורגה - רוסו מלפלו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ובראן חליל ג_ובראן - מאדאם רוז האני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_וזף קונרד - אנרכיסט.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ון בילבאו - עגל הלגו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ונתן לתם - טבעוני בהתהוות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ונתן סוויפט - הצעה צנועה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ורג_ שפירו - נכדו של מתנקש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_יימס בולדווין - מצב קודם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_יימס ג_ויס - אוולין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_יימס ג_ויס - ערבי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_יין רוג_רס - אדום תופס את העין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_מייקה קינקייד - ביוגרפיה של שמלה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ניפר איגן - עיר הברקת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_סי גרינגראס - דעיכתה של האלקה הגדולה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג_ק לונדון - להבעיר מדורה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גדי טאוב - קפה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גואדלופה נטל - פטריות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גואדלופה נטל - צניחת עפעפיים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גוונית_ ג_ונס - היקום של הדברים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גונסאלו הרנאנדס - אזעקת שווא.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גוסטב פלובר - לב תמים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גוסטב פלובר - תשוקה ומוסריות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גי דה מופסן - המחרוזת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גי דה מופסן - המתה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גי דה מופסן - זוג רעים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גיאורג קליין - מעשיית הגמדים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גיירמו פדנלי - בגיל ההוא הייתי רק ילד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גלית דהן קרליבך - המטוס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/גרהם גרין - ההורסים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג׳וזפה ברטו - הבחורה נוסעת לקלבריה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ג׳וליה פרמנטו - שלושה גברים באמריקה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דה לורנס - אלוף סוס-העץ.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דה לורנס - ניחוח כריזנטמות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דוד ברגלסון - יורדים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דורון כהן - היום המאושר בחייך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דוריאן שטיינהוף - אם אתה חייב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דוריס לסינג - מבעד למנהרה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דורית פלג - דיונה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דורית קלנר - חופשת מולדת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דורית רביניאן - ירידת מים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דורית שילה - רחמים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דורתה נורס - גן החורף.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דיאן גודמן - אברקדברה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דיוויד מינס - איש הברק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דיוויד קואמן - ללכת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דיוויד קונסטנטין - מקלט.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דייגו וקיו - איש הטבק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דינה רובינה - המתאבד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דן הרמה ואן ווס - ריאיון עם רוצח.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דניאיל חארמס - הוללות לא מתוכננת או הקופאית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דניאיל חארמס - עלילות הזקנה שקנתה דיו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דניאל מייסון - מותו של האגרופן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דנילו קיש - כבוד אחרון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דניס ג_ונסון - שניים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דרור בורשטיין - טיטניום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/דרור כהן - המספיד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/האנס כריסטיאן אנדרסן - מוכרת הגפרורים הקטנה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הוגו פון הופמנסטל - חווייתו של המרשל בסומפייר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הוראסיו קירוגה - דבש בר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הוראסיו קירוגה - הבן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הוראסיו קירוגה - התרנגולת השחוטה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הוראסיו קירוגה - כרית הנוצות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הילרי מנטל - ההתנקשות במרגרט תאצ_ר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הנרי ג_יימס - הדבר האמיתי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הנרי ג_יימס - עץ הדעת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/הרטמוט לנגה - סונטת ולדשטיין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/השאם נפאע - הנעל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/וו ג_ייקובס - כף הקוף.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/וו מינג-יי - הקוסם שעל הגשר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ויסאם ג_ובראן - קצף על חולות עכו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ויקטור פלווין - מוצא המינים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/וירג_יניה וולף - הסימן על הקיר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ולדימיר סורוקין - הפקעת הוורודה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ולריה קוראה פיס - בית מחוץ לעיר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/וסיני אלאערג_ - התרמית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ורד זינגר - חלל נגטיבי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ורד זינגר - עד החג הבא זה יעבור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ורד זינגר - רק שחור, בגללכם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ורה ג_קוני - הישרדות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ורה ג_קוני - מים קפואים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ורוניק ביזו - אשתו של ז_ורז_.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ורלאם שלמוב - חלב ממותק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ז_אומה קברה - חלומו של גוטפריד היינריך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ז_אן דוסת - חופן עפר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ז_אן דוסת - פנים יפות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ז_וז_ה באנק - לידיה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ז_ורדי נופקה - טבעת אירוסין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ז_לימיר פריש - דרישת שלום מדלמטיה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/זארה קאן - סיאנס עם השטאזי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/זיאד ח_דאש - כרים הרומנטי, רוחץ המתים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/זיאד ח_דאש - סופר שמחבר סיפורים קצרים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/זכריא תאמר - השוטר והסוס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ח_ליל נאציף - מנהרת לוצרן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חביב אל-סא_אח - אני וחיים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חביב אלסאלמי - הביקור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חג_י ג_אבר - קצף שחור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חואן ויורו - איש אמונה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חואן פבלו רונקונה - מותו של הקנגרו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חואן קרדנס - לאורך המשעול.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חואן קרלוס אונטי - ברוך הבא, בוב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חואן רולפו - נתנו לנו את האדמה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חוליו קורטאסר - בית תפוס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חוסה מיגל טומסנה - בנים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חוסה מיגל טומסנה - האבק בבית של המינגווי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חורחה איבגואנגויטיה - האישה שלא.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חורחה וולפי - מאסטוזו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חורחה פ_ ארננדס - ידידות אמת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חיה משב - סוד הדברים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חיה משב - תאגיד הברווזים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/חסן בלאסם - המציאות והתיעוד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טאשה קארלוקה - ואז נינה סימון שרה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טאשה קארלוקה - עוף לארוחת בוקר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טוביאס וולף - כדור בראש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טילי אולסן - אני עומדת כאן ומגהצת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טל ניצן - ועוד אחדחינם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טל ניצן - חדר 211 _ חורחה לואיס בורחס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טל ניצן - קלרה מתעוררת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טלאל אבו שוויש - אורות אדומים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טליה לוין - פירורים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/טרה פביאנובה - איך הלכתי לבית הספר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יאכים טופול - קצת דבש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יאן סנלה - פני חלב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יארוסלב האשק - איך נפגשתי עם מחבר ההספד עליי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יארוסלב האשק - תמונת הקיסר פראנץ יוזף הראשון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יבגני שוורץ - צמד אחים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יהודית הנדל - הרקדן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יהודית הנדל - תפוחים בדבש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יואב בן-ארי - הזמזום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יואב כץ - שדיים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יואב רוזן - קופי ופייסט.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יואב שפיר בירן - הצחוק האחרון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יובל פלוטקין - רוורס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יובל פלוטקין - שפת גופה שלא בפניו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יונתן ברג - מה אתה היית עושה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יונתן דה שליט - לילה, הר הזיתים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יונתן פיין - שפת תהום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יונתן רז פורטוגלי - רשימות מן הגנזך העירוני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יונתן שגיב - ובעצם כל הדיון הזה בינינו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יוסוף אידריס - האוצר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יוסי וקסמן - ארוחת הבוקר בדשא.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יוסי וקסמן - גבריאלה (מתוך ליבשן).txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יוסל בירשטיין - המכתב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יוסף שוורצמן - ביום אפור אחד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יותם אמיתי - התקווה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יותם ראובני - אחד העם 90.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יחזקאל רחמים - איך נזכור את כולם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יחזקאל רחמים - לסגור את המדינה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יחזקאל רחמים - מים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יעל ישראל - הגן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יעל משעלי - כי היום יפנה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יערה שחורי - החברה שלה מתגרשת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - המתנה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – ארבה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – ברד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – דבר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – דם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – חושך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – כינים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – מכת בכורות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – ערוב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – צפרדע.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - מכות עכשיו – שחין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - סיפור ישן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - סרגוסה בברלין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יפתח אלוני - תותבות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יצחק אוורבוך-אורפז - טליתא קומי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יצחק לאור - מנינגיטיס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ירון כהן - מותו המוזר של פקיד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/יריב ספיר - מגני שמש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ישעיהו קורן - ברזני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/כמאל ריאחי - הברטה זוכה תמיד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/כמאל ריאחי - המרד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/כמאל ריאחי - קוראים לו ציפור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/כנרת רובינשטיין - האחות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/כנרת רובינשטיין - על כרעי תרנגולת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/כנרת רוזנבלום - דמי מפתח.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לאה גולדברג - גן השושנים (אגדה).txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לאה גולדברג - סתיו (אגדה).txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לאוניד לוינזון - רמזור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לאיה חופרסה - אמא נגד האדמה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לארס סובי כריסטנסן - קנאת ספרים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לב טולסטוי - לאחר הנשף.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לביא תדהר - האוסמה האחרון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לו מנפרדו - אנטומיה של נשמה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לואיג_י פירנדלו - אתה צוחק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לואיס נגרון - הגן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לודמילה פטרושבסקיה - כמו פנלופה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לוניס בן עלי - כיצד לזרוק סופר אל חור שחור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לוסי מוד מונטגומרי - אמילי בת מולד הירח.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לוסיאנו למברטי - השיר ששרנו יום יום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לוסיה פואנסו - קוהיבה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לורד ביירון - מקטע של רומן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לורה ג_ין מקיי - קמבודיה האמיתית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לורי סגל - הבאג המהופך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לזלי ננקה ארימה - גלורי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לטיפה לבסיר - החיפושית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליאוניד אנדרייב - אלעזר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליאוניד אנדרייב - בן-טוביה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליאת אלקיים - דבש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לידיה דיוויס - טלוויזיה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליה דזה - חלום על איל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליה נירגד - תודה, לא.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליליאנה לרה - אקדחי כסף.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליליאנה קולנסי - אני מתפלל בשבילך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לילך גליל - דריכות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ליסה שילוח-עוזרד - הפרופסור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/לסלו דארבשי - עצות לבעלי כלבים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מאג_לה בודואן - הסרט האדום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מאיה גז - לבד בפריז.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מאיה גז - פומיקי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מארק טוויין - יומנה של חוה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מהא ג_וויני - הערבי האחרון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מהא חסן - המספרות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מוחמד אל-אספר - סיפורו של גרב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מוחמד ח_לפוף - חורף שגרתי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מוחמד חמד - הצלם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מוחמד סעיד חג_יוג_ - הגיבור בעל אלף הפרצופים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מונירו רוואניפור - משוגעת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מורין פ. מקיו - רכבת לינקולן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מוריס ברינג - מיומנו של שרלוק הולמס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מורתדא גזאר - מסגד דיי־ביי־דיי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מחמוד שוקיר - המושב של רונאלדו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיגל דה אונאמונו - בטרכופילים ובטרכופובים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיגל דה סרוונטס - כח הדם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיגל סראנו לאראס - אוקסיטוצין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיטל שרון - לו הייתי צ_יממנדה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מייקל קנינגהם - ברבור פרא.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיכאיל בולגקוב - בוהמה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיכאיל בולגקוב - הכתר האדום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיכאיל בולגקוב - סופת שלגים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיכאל זושצ_נקו - דלות או ערדל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיכאל לנץ - מות האם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מיכל יערה כרמי - חמניות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מירה מגן - שמישהו יסגור את השער.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מירי שחם - הקבר של אריס סאן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מירנדה ג׳ולי - רוי ספייבי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מישל דסאר - יש יבשות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מנג_ו קפור - שוקולד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מנדלי מוכר ספרים - לקורות סוס נושא ספרים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מנסור אלסווים - ג_אבר סביל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מעין גולדמן - התלמיד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מקס בילר - האדריכל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מקסים לוסקוטוף - קץ הימים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מרגריטה איוב - שבילים אפשריים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מרגריטה לאוס - בית נופש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מרטין קלוגר - הגנבים היפים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מריאנה אנריקס - המלאכית הקטנה יוצאת מקברה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מריה מרטוצ_ה - לוטאן יושבת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מרים סיון - דירות א_.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מרינה גרוסלרנר - הכישרון לאושר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מרינה פרסאגואה - האיים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מרסל אמה - חוצה הקירות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/משאדו די אסיס - המניע הנסתר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מתי שמואלוף - זכרונות מחיפה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מתי שמואלוף - מתי פוגש בכספי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מתיאס אנאר - הסתערות אחרונה לקוזאקים של הדון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מתיאס ברנדט - בשום מקום אחר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מתיאס קנדיירה - מה קורה, מותק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מתיאס קפלי - אתה רק מדמם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/מתן חרמוני - טוביה פוגש את דטנר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נאג_י ד_אהר - התייפחות לילית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נביל עודה - אינתיפאדה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נד באומן - אור וחלל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נוית בראל - בעיות בחשבון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נוית בראל - מידות החום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נועה סוזנה מורג - רותחין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נורית זרחי - פ. ה. האיש בגלימה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נטעלי גבירץ - הכל כלול, קיטי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נינה פינטו-אבקסיס - אש בבית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ניסן שור - הישראלי הנצחי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ניקולאי לסקוב - רוחה של גברת ז_אנליס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ניקולס מבראקיס - קאסוס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ניר ברעם - בית הכרם. ירושלים, 1985.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ניר יהודאי - דחפים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ניר סופר-דודק - תקאסים צבוע.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נעה ידלין - איבה שלום.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נתניאל הותורן - התמונות הנבואיות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/נתניאל ריץ_ - ממלכת צפון מזרח.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ס. יזהר - חרלמוב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סאקי - אסמה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סברינה חואנג - נערת חלומותיו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סוהיל כיואן - גלובליזציה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סטיבן קריין - פנים מעלה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סטיבן שוורץ - לראות את מיילס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סיגיזמונד קרז_יז_נובסקי - מטרבועין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סילבינה אוקמפו - הקול.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סילבן טסון - שיממון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סלבה אלמדה - אשתו של מנהל העבודה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סלים אל-ביכ - תסריט.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סלין אסייג - הקיפודיות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סלמאן נאטור - מפתחות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סמד בהרנגי - הדג השחור הקטן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סמואל שמעון - שני מלוכנים בקטורז ז_וויה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סמי ברדוגו - קסנטיני, הילד האחרון של המאה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סמיר סאלמי - חתולים שחורים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סמנתה שוובלין - סנטה קלאוס ישן בבית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ססר איירה - הכלב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/סשה סטנישיץ_ - האשליה הגדולה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עאטף אבו סיף - ארוחה עם מלט.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עבד אל רחמן מוניף - הדלת הפתוחה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עבד אל-האדי אל-עיג_לה - Endgame.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עבד אל-עזיז ברכה סאכן - לידה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עדי שורק - ארכיטקט בכיכר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עדנה שמש - והים איננו מלא.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עודד נעמן - הבגידה אפשרית תמיד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עוזי וייל - האיש שהעביר את הכותל המערבי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עוזי וייל - עוד סיפור אהבה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עומר ויסמן - לא-אני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עידו גפן - איך זוכרים מדבר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עידן רבי - שישים מיליגרם פרוזאק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עלא חליחל - בעלי נהג אוטובוס.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עלא חליחל - שערורייה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עלי בדר - פשעו המסתורי של האלחוטן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עלית קרפ - יאללה ביתר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עלית קרפ - נעליים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עלמה גניהר - אויבת סיפור האהבה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עלמה גניהר - הנער שלא היה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/עמרי חורש - הטמנה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ערן הורוביץ - פטל קדוש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פ. סקוט פיצג_רלד - הדבר הנכון.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פאביו מוראביטו - דלתות אסורות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פאבל הילה - אבולעפיה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פאולו סקוט - Funny Valentine.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פבל מובשוביץ_ - מרק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פדרו מאיראל - הבוקר מוקדם.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פו סונג-לינג - הסוס שבתמונה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פולקר צסטרופ - ערב ארוך מדי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פטר ביכסל - האיש שלא רצה יותר לדעת שום דבר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פטר שטאם - בני האלוהים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פיודור דוסטוייבסקי - חלומו של אדם מגוחך.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פיודור דוסטוייבסקי - רומן בתשעה מכתבים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פייר י. מיילאק - בבר של ליוויה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פיל קליי - עשרה קילומטר דרומה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פרג או׳קונורה - נורה של מרכוס הקטן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פרננדה טריאס - המדד לאהבה שלי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פרנץ קפקא - גזר הדין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פרנץ קפקא - הנוסע.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/פרנץ קפקא - לפני החוק.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/צ_רלס דיקנס - כוון הרכבת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/צביקה מאיר - דורות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קאטו רמון - דעיכה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קארן קוהלר - דגנו זיקוקים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קובי ניב - התחנה האחרונה מיצ_קונג.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קוסטס קצולאריס - כלב מת בחצות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קל קוק - נימה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קלאודיה ארננדס - הזמנה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קלייר ויי ווטקינס - הדבר האחרון שאנחנו צריכים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קלמנס י_ זץ - הגופה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קלמנס מאייר - מחוץ לדלת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קלריס ליספקטור - קופים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קנה קוזניט - נוכח האווזים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קרולינה וגאס - אוזניים של דב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קריסטינה שילקה - זה אני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קרלה סוארס - האספנית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/קתרין רגלה - הצופים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ראג_י בטחיש - חמישים שקל.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ראדו פרסקיבסקו - 39_.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ראה גלנאקי - יד כמעט תכולה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ראיה סייקינן - רעב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ראלף רותמן - גת שמנים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רבינדראנת טאגור - מנהל הדואר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רוב דויל - ג_ון-פול פיניגן, ריאליסט בזוי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רוברט לואי סטיבנסון - בעל ואשה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רוברט מוסיל - הפורטוגזית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רוברט מנאסה - הנאורות שלפני הנפילה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רוברטו בולניו - קלרה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רודיארד קיפלינג - מבעד לאש.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רודריגו ריי רוסה - מים שקטים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רווה שגיא - הילד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רונית ידעיה - קרם ברולה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רונית מטלון - ילדה בקפה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רועי חן - לב של אבן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רועי כספי - מה מתרחש בטבריה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רות אלמוג - אחרי טו בשבט.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רות אלמוג - תיקון אמנותי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ריטה קוגן - ANU BANU.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ריטה קוגן - ארץ סלע.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ריי ברדבורי - אין חדש, או מה הרג את הכלב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ריי ברדבורי - מסע קטן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ריינר מריה רילקה - שיעור התעמלות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רייצ_ל ב. גלזר - ה-JPEG.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רינג לרדנר - חתונת הזהב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רינג לרדנר - תספורת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ריצ_רד בראוטיגן - 1_3 1_3 1_3.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/ריקי כהן - להחזיר את שלג.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רמונה אוסובל - דרך צלחה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/רע_ד אלסוהיל - ארנבי בגדאד.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שארמה שילדס - נמלוניה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שה ג_ה-צון - בקולנוע פריז.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שהם סמיט - גואדלופה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שהם סמיט - יד כותבת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שוכרי אלמבח_ות - בגינדה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שי אזולאי - יעקב ולנשטיין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שי אספריל - כבודו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שיח_ה חוסין חליוה - ביקור לילי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שיח_ה חוסין חליוה - רע מחפש את עיניו.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שילה הטי - בתולת ים בצנצנת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שיר חייק - לדוידי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שירה פנקס - ג_ינג_ית חילווה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שירי שפירא - השאלה והחזרה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שלומית פישר - ודודי חלף עבר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שני פוקר - השולי לבלי היכר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרה מסה - כמה מילימטרים בקושי.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרה פבורן - דרך הטבע.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרווד אנדרסון - כוחו של אלוהים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרון אס - הגנבת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרון הורודי - קוצים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרי שביט - פגישה צרפתית.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרית יפרח - העלאה בדרגה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרית יפרח - וונדר וומן על הכביש המהיר.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/שרלוט ברונטה - נפוליאון ורוח הרפאים.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תא לורנס - לפוצץ רכבת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תדאוש קונביצקי - רב טוראי קוז_יולק ואני.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תהילה חכימי - אישה בחלל עבודה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תום בייקין-אוחיון - סורן קירקגור.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תומאס סנצ_ס בלוקיו - תקלה בשירות.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תומר גרדי - יבול, מאת גרשון שופמן.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תיאודורה ארמסטרונג - עכביש בצנצנת.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תיירי הורגלן - האיש במעיל הרוח הצהוב.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תמר גלבץ - הפעם האחרונה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תמר לויט - סיפור על חופשה עצובה.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תמר מרין - מה אתה מסתכל על.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תמר מרין - ספירסטין.txt
+/data/hebrew_diacritized/dicta/shortstoryproject_Dicta/תמר עילם גינדין - דאראב בתיבה.txt
+/data/hebrew_diacritized/law/1.txt
+/data/hebrew_diacritized/law/10.txt
+/data/hebrew_diacritized/law/11.txt
+/data/hebrew_diacritized/law/12.txt
+/data/hebrew_diacritized/law/13.txt
+/data/hebrew_diacritized/law/2.txt
+/data/hebrew_diacritized/law/3.txt
+/data/hebrew_diacritized/law/4.txt
+/data/hebrew_diacritized/law/5.txt
+/data/hebrew_diacritized/law/6.txt
+/data/hebrew_diacritized/law/7.txt
+/data/hebrew_diacritized/law/8.txt
+/data/hebrew_diacritized/law/9.txt
+/data/hebrew_diacritized/male_female/female/sentences_from_books.txt
+/data/hebrew_diacritized/male_female/female/sentences_with_proffesions.txt
+/data/hebrew_diacritized/male_female/female/sentences_with_verbs.txt
+/data/hebrew_diacritized/male_female/male/sentences_from_books.txt
+/data/hebrew_diacritized/male_female/male/sentences_with_proffesions.txt
+/data/hebrew_diacritized/male_female/male/sentences_with_verbs.txt
+/data/hebrew_diacritized/modern/blogs/1.txt
+/data/hebrew_diacritized/modern/blogs/10.txt
+/data/hebrew_diacritized/modern/blogs/11.txt
+/data/hebrew_diacritized/modern/blogs/12.txt
+/data/hebrew_diacritized/modern/blogs/13.txt
+/data/hebrew_diacritized/modern/blogs/14.txt
+/data/hebrew_diacritized/modern/blogs/15.txt
+/data/hebrew_diacritized/modern/blogs/16.txt
+/data/hebrew_diacritized/modern/blogs/17.txt
+/data/hebrew_diacritized/modern/blogs/18.txt
+/data/hebrew_diacritized/modern/blogs/19.txt
+/data/hebrew_diacritized/modern/blogs/2.txt
+/data/hebrew_diacritized/modern/blogs/20.txt
+/data/hebrew_diacritized/modern/blogs/21.txt
+/data/hebrew_diacritized/modern/blogs/22.txt
+/data/hebrew_diacritized/modern/blogs/24.txt
+/data/hebrew_diacritized/modern/blogs/25.txt
+/data/hebrew_diacritized/modern/blogs/26.txt
+/data/hebrew_diacritized/modern/blogs/27.txt
+/data/hebrew_diacritized/modern/blogs/28.txt
+/data/hebrew_diacritized/modern/blogs/29.txt
+/data/hebrew_diacritized/modern/blogs/30.txt
+/data/hebrew_diacritized/modern/blogs/31.txt
+/data/hebrew_diacritized/modern/blogs/32.txt
+/data/hebrew_diacritized/modern/blogs/33.txt
+/data/hebrew_diacritized/modern/blogs/34.txt
+/data/hebrew_diacritized/modern/blogs/35.txt
+/data/hebrew_diacritized/modern/blogs/36.txt
+/data/hebrew_diacritized/modern/blogs/37.txt
+/data/hebrew_diacritized/modern/blogs/39.txt
+/data/hebrew_diacritized/modern/blogs/6.txt
+/data/hebrew_diacritized/modern/blogs/7.txt
+/data/hebrew_diacritized/modern/blogs/8.txt
+/data/hebrew_diacritized/modern/blogs/9.txt
+/data/hebrew_diacritized/modern/blogs/NakdanResults13536484.txt
+/data/hebrew_diacritized/modern/blogs/NakdanResults20632881.txt
+/data/hebrew_diacritized/modern/blogs/NakdanResults40695319.txt
+/data/hebrew_diacritized/modern/blogs/NakdanResults70059545.txt
+/data/hebrew_diacritized/modern/blogs/NakdanResults74938220.txt
+/data/hebrew_diacritized/modern/blogs/NakdanResults7996526.txt
+/data/hebrew_diacritized/modern/blogs/NakdanResults91607826.txt
+/data/hebrew_diacritized/modern/blogs/modern_blogs_23.txt
+/data/hebrew_diacritized/modern/blogs/modern_blogs_3.txt
+/data/hebrew_diacritized/modern/blogs/modern_blogs_38.txt
+/data/hebrew_diacritized/modern/blogs/modern_blogs_5.txt
+/data/hebrew_diacritized/modern/blogs/modern_blogs_NakdanResults10791916.txt
+/data/hebrew_diacritized/modern/books/1.txt
+/data/hebrew_diacritized/modern/books/3.txt
+/data/hebrew_diacritized/modern/books/4.txt
+/data/hebrew_diacritized/modern/books/5.txt
+/data/hebrew_diacritized/modern/books/7.txt
+/data/hebrew_diacritized/modern/books/8.txt
+/data/hebrew_diacritized/modern/books/contact.txt
+/data/hebrew_diacritized/modern/bsheva/NakdanResults24655776.txt
+/data/hebrew_diacritized/modern/bsheva/NakdanResults34957886.txt
+/data/hebrew_diacritized/modern/bsheva/NakdanResults51996164.txt
+/data/hebrew_diacritized/modern/bsheva/NakdanResults57598367.txt
+/data/hebrew_diacritized/modern/bsheva/NakdanResults67354063.txt
+/data/hebrew_diacritized/modern/bsheva/NakdanResults80448407.txt
+/data/hebrew_diacritized/modern/critics/NakdanResults14926668.txt
+/data/hebrew_diacritized/modern/critics/NakdanResults37881794.txt
+/data/hebrew_diacritized/modern/critics/NakdanResults44251250.txt
+/data/hebrew_diacritized/modern/critics/NakdanResults50503235.txt
+/data/hebrew_diacritized/modern/critics/NakdanResults96666800.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults13470191.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults14375264.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults15241364.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults16569088.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults16903731.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults19612688.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults21095248.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults22106978.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults28304305.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults31696941.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults32675234.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults32863849.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults33648217.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults34702229.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults3483715.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults36014655.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults38401317.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults38765851.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults40911987.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults4307498.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults43141035.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults43389321.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults48093881.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults48986236.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults50316799.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults50542498.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults50685827.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults51230096.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults5264774.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults55128951.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults5693380.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults57227396.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults59748893.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults60002427.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults6247435.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults63087413.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults64437226.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults65890019.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults66149744.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults66259022.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults67331259.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults67739474.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults69067000.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults69111959.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults70860257.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults71596208.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults71619249.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults75830951.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults75944533.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults76705088.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults78902808.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults81409155.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults81652031.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults84747021.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults86909486.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults88721350.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults931387.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults93255105.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults94980173.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults96193178.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults96604993.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults97384572.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults97918250.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults98130089.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults98935302.txt
+/data/hebrew_diacritized/modern/dont_panic/NakdanResults9910478.txt
+/data/hebrew_diacritized/modern/forums/1.txt
+/data/hebrew_diacritized/modern/forums/10.txt
+/data/hebrew_diacritized/modern/forums/11.txt
+/data/hebrew_diacritized/modern/forums/12.txt
+/data/hebrew_diacritized/modern/forums/2.txt
+/data/hebrew_diacritized/modern/forums/3.txt
+/data/hebrew_diacritized/modern/forums/4.txt
+/data/hebrew_diacritized/modern/forums/5.txt
+/data/hebrew_diacritized/modern/forums/6.txt
+/data/hebrew_diacritized/modern/forums/7.txt
+/data/hebrew_diacritized/modern/forums/8.txt
+/data/hebrew_diacritized/modern/forums/9.txt
+/data/hebrew_diacritized/modern/govil/formal.txt
+/data/hebrew_diacritized/modern/govil/informal.txt
+/data/hebrew_diacritized/modern/hadrei-haredim/NakdanResults20706023.txt
+/data/hebrew_diacritized/modern/hadrei-haredim/NakdanResults34749618.txt
+/data/hebrew_diacritized/modern/hadrei-haredim/NakdanResults68032366.txt
+/data/hebrew_diacritized/modern/hadrei-haredim/NakdanResults83348187.txt
+/data/hebrew_diacritized/modern/news/1.txt
+/data/hebrew_diacritized/modern/news/10.txt
+/data/hebrew_diacritized/modern/news/11.txt
+/data/hebrew_diacritized/modern/news/12.txt
+/data/hebrew_diacritized/modern/news/13.txt
+/data/hebrew_diacritized/modern/news/14.txt
+/data/hebrew_diacritized/modern/news/15.txt
+/data/hebrew_diacritized/modern/news/16.txt
+/data/hebrew_diacritized/modern/news/17.txt
+/data/hebrew_diacritized/modern/news/18.txt
+/data/hebrew_diacritized/modern/news/19.txt
+/data/hebrew_diacritized/modern/news/2.txt
+/data/hebrew_diacritized/modern/news/20.txt
+/data/hebrew_diacritized/modern/news/21.txt
+/data/hebrew_diacritized/modern/news/22.txt
+/data/hebrew_diacritized/modern/news/23.txt
+/data/hebrew_diacritized/modern/news/24.txt
+/data/hebrew_diacritized/modern/news/25.txt
+/data/hebrew_diacritized/modern/news/27.txt
+/data/hebrew_diacritized/modern/news/28.txt
+/data/hebrew_diacritized/modern/news/29.txt
+/data/hebrew_diacritized/modern/news/3.txt
+/data/hebrew_diacritized/modern/news/32.txt
+/data/hebrew_diacritized/modern/news/33.txt
+/data/hebrew_diacritized/modern/news/34.txt
+/data/hebrew_diacritized/modern/news/4.txt
+/data/hebrew_diacritized/modern/news/5.txt
+/data/hebrew_diacritized/modern/news/6.txt
+/data/hebrew_diacritized/modern/news/7.txt
+/data/hebrew_diacritized/modern/news/8.txt
+/data/hebrew_diacritized/modern/news/9.txt
+/data/hebrew_diacritized/modern/news/flash1.txt
+/data/hebrew_diacritized/modern/news/flash2.txt
+/data/hebrew_diacritized/modern/news/flash3.txt
+/data/hebrew_diacritized/modern/news/flash4.txt
+/data/hebrew_diacritized/modern/news/modern_news_26.txt
+/data/hebrew_diacritized/modern/news/modern_news_30.txt
+/data/hebrew_diacritized/modern/news/modern_news_31.txt
+/data/hebrew_diacritized/modern/random_internet/1.txt
+/data/hebrew_diacritized/modern/random_internet/10.txt
+/data/hebrew_diacritized/modern/random_internet/11.txt
+/data/hebrew_diacritized/modern/random_internet/12.txt
+/data/hebrew_diacritized/modern/random_internet/13.txt
+/data/hebrew_diacritized/modern/random_internet/14.txt
+/data/hebrew_diacritized/modern/random_internet/15.txt
+/data/hebrew_diacritized/modern/random_internet/16.txt
+/data/hebrew_diacritized/modern/random_internet/17.txt
+/data/hebrew_diacritized/modern/random_internet/18.txt
+/data/hebrew_diacritized/modern/random_internet/19.txt
+/data/hebrew_diacritized/modern/random_internet/2.txt
+/data/hebrew_diacritized/modern/random_internet/20.txt
+/data/hebrew_diacritized/modern/random_internet/23.txt
+/data/hebrew_diacritized/modern/random_internet/24.txt
+/data/hebrew_diacritized/modern/random_internet/25.txt
+/data/hebrew_diacritized/modern/random_internet/26.txt
+/data/hebrew_diacritized/modern/random_internet/27.txt
+/data/hebrew_diacritized/modern/random_internet/28.txt
+/data/hebrew_diacritized/modern/random_internet/29.txt
+/data/hebrew_diacritized/modern/random_internet/3.txt
+/data/hebrew_diacritized/modern/random_internet/30.txt
+/data/hebrew_diacritized/modern/random_internet/31.txt
+/data/hebrew_diacritized/modern/random_internet/32.txt
+/data/hebrew_diacritized/modern/random_internet/33.txt
+/data/hebrew_diacritized/modern/random_internet/34.txt
+/data/hebrew_diacritized/modern/random_internet/35.txt
+/data/hebrew_diacritized/modern/random_internet/37.txt
+/data/hebrew_diacritized/modern/random_internet/39.txt
+/data/hebrew_diacritized/modern/random_internet/4.txt
+/data/hebrew_diacritized/modern/random_internet/40.txt
+/data/hebrew_diacritized/modern/random_internet/41.txt
+/data/hebrew_diacritized/modern/random_internet/43.txt
+/data/hebrew_diacritized/modern/random_internet/5.txt
+/data/hebrew_diacritized/modern/random_internet/6.txt
+/data/hebrew_diacritized/modern/random_internet/7.txt
+/data/hebrew_diacritized/modern/random_internet/8.txt
+/data/hebrew_diacritized/modern/random_internet/9.txt
+/data/hebrew_diacritized/modern/random_internet/ali_baba.txt
+/data/hebrew_diacritized/modern/random_internet/imagination.txt
+/data/hebrew_diacritized/modern/random_internet/modern_random_internet_21.txt
+/data/hebrew_diacritized/modern/random_internet/modern_random_internet_22.txt
+/data/hebrew_diacritized/modern/random_internet/modern_random_internet_36.txt
+/data/hebrew_diacritized/modern/random_internet/modern_random_internet_38.txt
+/data/hebrew_diacritized/modern/random_internet/modern_random_internet_42.txt
+/data/hebrew_diacritized/modern/wiki/1.txt
+/data/hebrew_diacritized/modern/wiki/10.txt
+/data/hebrew_diacritized/modern/wiki/11.txt
+/data/hebrew_diacritized/modern/wiki/12.txt
+/data/hebrew_diacritized/modern/wiki/13.txt
+/data/hebrew_diacritized/modern/wiki/14.txt
+/data/hebrew_diacritized/modern/wiki/15.txt
+/data/hebrew_diacritized/modern/wiki/16.txt
+/data/hebrew_diacritized/modern/wiki/17.txt
+/data/hebrew_diacritized/modern/wiki/18.txt
+/data/hebrew_diacritized/modern/wiki/19.txt
+/data/hebrew_diacritized/modern/wiki/2.txt
+/data/hebrew_diacritized/modern/wiki/20.txt
+/data/hebrew_diacritized/modern/wiki/21.txt
+/data/hebrew_diacritized/modern/wiki/22.txt
+/data/hebrew_diacritized/modern/wiki/23.txt
+/data/hebrew_diacritized/modern/wiki/24.txt
+/data/hebrew_diacritized/modern/wiki/25.txt
+/data/hebrew_diacritized/modern/wiki/26.txt
+/data/hebrew_diacritized/modern/wiki/27.txt
+/data/hebrew_diacritized/modern/wiki/28.txt
+/data/hebrew_diacritized/modern/wiki/29.txt
+/data/hebrew_diacritized/modern/wiki/3.txt
+/data/hebrew_diacritized/modern/wiki/30.txt
+/data/hebrew_diacritized/modern/wiki/31.txt
+/data/hebrew_diacritized/modern/wiki/32.txt
+/data/hebrew_diacritized/modern/wiki/33.txt
+/data/hebrew_diacritized/modern/wiki/34.txt
+/data/hebrew_diacritized/modern/wiki/36.txt
+/data/hebrew_diacritized/modern/wiki/37.txt
+/data/hebrew_diacritized/modern/wiki/38.txt
+/data/hebrew_diacritized/modern/wiki/39.txt
+/data/hebrew_diacritized/modern/wiki/40.txt
+/data/hebrew_diacritized/modern/wiki/5.txt
+/data/hebrew_diacritized/modern/wiki/7.txt
+/data/hebrew_diacritized/modern/wiki/8.txt
+/data/hebrew_diacritized/modern/wiki/9.txt
+/data/hebrew_diacritized/modern/yanshuf/0.txt
+/data/hebrew_diacritized/modern/yanshuf/1.txt
+/data/hebrew_diacritized/modern/yanshuf/10.txt
+/data/hebrew_diacritized/modern/yanshuf/11.txt
+/data/hebrew_diacritized/modern/yanshuf/12.txt
+/data/hebrew_diacritized/modern/yanshuf/13.txt
+/data/hebrew_diacritized/modern/yanshuf/14.txt
+/data/hebrew_diacritized/modern/yanshuf/15.txt
+/data/hebrew_diacritized/modern/yanshuf/16.txt
+/data/hebrew_diacritized/modern/yanshuf/17.txt
+/data/hebrew_diacritized/modern/yanshuf/18.txt
+/data/hebrew_diacritized/modern/yanshuf/19.txt
+/data/hebrew_diacritized/modern/yanshuf/2.txt
+/data/hebrew_diacritized/modern/yanshuf/20.txt
+/data/hebrew_diacritized/modern/yanshuf/21.txt
+/data/hebrew_diacritized/modern/yanshuf/22.txt
+/data/hebrew_diacritized/modern/yanshuf/23.txt
+/data/hebrew_diacritized/modern/yanshuf/24.txt
+/data/hebrew_diacritized/modern/yanshuf/26.txt
+/data/hebrew_diacritized/modern/yanshuf/27.txt
+/data/hebrew_diacritized/modern/yanshuf/29.txt
+/data/hebrew_diacritized/modern/yanshuf/3.txt
+/data/hebrew_diacritized/modern/yanshuf/30.txt
+/data/hebrew_diacritized/modern/yanshuf/31.txt
+/data/hebrew_diacritized/modern/yanshuf/32.txt
+/data/hebrew_diacritized/modern/yanshuf/36.txt
+/data/hebrew_diacritized/modern/yanshuf/37.txt
+/data/hebrew_diacritized/modern/yanshuf/38.txt
+/data/hebrew_diacritized/modern/yanshuf/39.txt
+/data/hebrew_diacritized/modern/yanshuf/4.txt
+/data/hebrew_diacritized/modern/yanshuf/48.txt
+/data/hebrew_diacritized/modern/yanshuf/49.txt
+/data/hebrew_diacritized/modern/yanshuf/51.txt
+/data/hebrew_diacritized/modern/yanshuf/52.txt
+/data/hebrew_diacritized/modern/yanshuf/53.txt
+/data/hebrew_diacritized/modern/yanshuf/54.txt
+/data/hebrew_diacritized/modern/yanshuf/55.txt
+/data/hebrew_diacritized/modern/yanshuf/57.txt
+/data/hebrew_diacritized/modern/yanshuf/58.txt
+/data/hebrew_diacritized/modern/yanshuf/59.txt
+/data/hebrew_diacritized/modern/yanshuf/6.txt
+/data/hebrew_diacritized/modern/yanshuf/60.txt
+/data/hebrew_diacritized/modern/yanshuf/61.txt
+/data/hebrew_diacritized/modern/yanshuf/62.txt
+/data/hebrew_diacritized/modern/yanshuf/63.txt
+/data/hebrew_diacritized/modern/yanshuf/64.txt
+/data/hebrew_diacritized/modern/yanshuf/65.txt
+/data/hebrew_diacritized/modern/yanshuf/67.txt
+/data/hebrew_diacritized/modern/yanshuf/7.txt
+/data/hebrew_diacritized/modern/yanshuf/70.txt
+/data/hebrew_diacritized/modern/yanshuf/71.txt
+/data/hebrew_diacritized/modern/yanshuf/73.txt
+/data/hebrew_diacritized/modern/yanshuf/75.txt
+/data/hebrew_diacritized/modern/yanshuf/76.txt
+/data/hebrew_diacritized/modern/yanshuf/77.txt
+/data/hebrew_diacritized/modern/yanshuf/78.txt
+/data/hebrew_diacritized/modern/yanshuf/79.txt
+/data/hebrew_diacritized/modern/yanshuf/8.txt
+/data/hebrew_diacritized/modern/yanshuf/80.txt
+/data/hebrew_diacritized/modern/yanshuf/81.txt
+/data/hebrew_diacritized/modern/yanshuf/82.txt
+/data/hebrew_diacritized/modern/yanshuf/83.txt
+/data/hebrew_diacritized/modern/yanshuf/84.txt
+/data/hebrew_diacritized/modern/yanshuf/85.txt
+/data/hebrew_diacritized/modern/yanshuf/86.txt
+/data/hebrew_diacritized/modern/yanshuf/87.txt
+/data/hebrew_diacritized/modern/yanshuf/88.txt
+/data/hebrew_diacritized/modern/yanshuf/89.txt
+/data/hebrew_diacritized/modern/yanshuf/9.txt
+/data/hebrew_diacritized/modern/yanshuf/90.txt
+/data/hebrew_diacritized/modern/yanshuf/91.txt
+/data/hebrew_diacritized/modern/yanshuf/modern_yanshuf_28.txt
+/data/hebrew_diacritized/modern/yanshuf/modern_yanshuf_35.txt
+/data/hebrew_diacritized/modern/yanshuf/modern_yanshuf_41.txt
+/data/hebrew_diacritized/modern/yanshuf/modern_yanshuf_5.txt
+/data/hebrew_diacritized/modern/yanshuf/modern_yanshuf_69.txt
+/data/hebrew_diacritized/modern/yanshuf/modern_yanshuf_72.txt
+/data/hebrew_diacritized/modern/yanshuf/modern_yanshuf_74.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults11295865.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults13188600.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults14042605.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults15630846.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults18133635.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults2188481.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults2967122.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults31197714.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults35022986.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults37329221.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults41306896.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults44594866.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults51035336.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults54170419.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults552237.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults58518818.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults66622990.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults76092543.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults77374728.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults94356720.txt
+/data/hebrew_diacritized/modern/yisrael-hayom/NakdanResults95902989.txt
+/data/hebrew_diacritized/modern/ynet/1.txt
+/data/hebrew_diacritized/modern/ynet/10.txt
+/data/hebrew_diacritized/modern/ynet/108648.txt
+/data/hebrew_diacritized/modern/ynet/1564309.txt
+/data/hebrew_diacritized/modern/ynet/1813670.txt
+/data/hebrew_diacritized/modern/ynet/2.txt
+/data/hebrew_diacritized/modern/ynet/2386073.txt
+/data/hebrew_diacritized/modern/ynet/2431773.txt
+/data/hebrew_diacritized/modern/ynet/2868068.txt
+/data/hebrew_diacritized/modern/ynet/3.txt
+/data/hebrew_diacritized/modern/ynet/3041018.txt
+/data/hebrew_diacritized/modern/ynet/3052589.txt
+/data/hebrew_diacritized/modern/ynet/3088195.txt
+/data/hebrew_diacritized/modern/ynet/3424241.txt
+/data/hebrew_diacritized/modern/ynet/3539022.txt
+/data/hebrew_diacritized/modern/ynet/3596049.txt
+/data/hebrew_diacritized/modern/ynet/3724232.txt
+/data/hebrew_diacritized/modern/ynet/3899819.txt
+/data/hebrew_diacritized/modern/ynet/3958513.txt
+/data/hebrew_diacritized/modern/ynet/4.txt
+/data/hebrew_diacritized/modern/ynet/4172198.txt
+/data/hebrew_diacritized/modern/ynet/4259646.txt
+/data/hebrew_diacritized/modern/ynet/4297701.txt
+/data/hebrew_diacritized/modern/ynet/433748.txt
+/data/hebrew_diacritized/modern/ynet/4383293.txt
+/data/hebrew_diacritized/modern/ynet/4574590.txt
+/data/hebrew_diacritized/modern/ynet/4774446.txt
+/data/hebrew_diacritized/modern/ynet/4861835.txt
+/data/hebrew_diacritized/modern/ynet/4863504.txt
+/data/hebrew_diacritized/modern/ynet/4867132.txt
+/data/hebrew_diacritized/modern/ynet/4881944.txt
+/data/hebrew_diacritized/modern/ynet/4894479.txt
+/data/hebrew_diacritized/modern/ynet/4896880.txt
+/data/hebrew_diacritized/modern/ynet/4903241.txt
+/data/hebrew_diacritized/modern/ynet/4903480.txt
+/data/hebrew_diacritized/modern/ynet/4950718.txt
+/data/hebrew_diacritized/modern/ynet/5.txt
+/data/hebrew_diacritized/modern/ynet/5061403.txt
+/data/hebrew_diacritized/modern/ynet/5069652.txt
+/data/hebrew_diacritized/modern/ynet/5227218.txt
+/data/hebrew_diacritized/modern/ynet/5265624.txt
+/data/hebrew_diacritized/modern/ynet/5272946.txt
+/data/hebrew_diacritized/modern/ynet/5311426.txt
+/data/hebrew_diacritized/modern/ynet/5421268.txt
+/data/hebrew_diacritized/modern/ynet/5490378.txt
+/data/hebrew_diacritized/modern/ynet/5645899.txt
+/data/hebrew_diacritized/modern/ynet/6.txt
+/data/hebrew_diacritized/modern/ynet/7.txt
+/data/hebrew_diacritized/modern/ynet/8.txt
+/data/hebrew_diacritized/modern/ynet/9.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults11497257.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults16678833.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults24906814.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults33253082.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults39601345.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults40111133.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults42242411.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults44635267.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults45475088.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults46588483.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults48007534.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults52683363.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults5839004.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults61679066.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults6896850.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults74492960.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults93755865.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults93901954.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults96228122.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults96253449.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults96790820.txt
+/data/hebrew_diacritized/modern/ynet/NakdanResults97557509.txt
+/data/hebrew_diacritized/modern/ynet/insurance.txt
+/data/hebrew_diacritized/poetry/1.txt
+/data/hebrew_diacritized/poetry/10.txt
+/data/hebrew_diacritized/poetry/11.txt
+/data/hebrew_diacritized/poetry/12.txt
+/data/hebrew_diacritized/poetry/13.txt
+/data/hebrew_diacritized/poetry/14.txt
+/data/hebrew_diacritized/poetry/15.txt
+/data/hebrew_diacritized/poetry/16.txt
+/data/hebrew_diacritized/poetry/17.txt
+/data/hebrew_diacritized/poetry/18.txt
+/data/hebrew_diacritized/poetry/19.txt
+/data/hebrew_diacritized/poetry/1_slomo_artzi.txt
+/data/hebrew_diacritized/poetry/2.txt
+/data/hebrew_diacritized/poetry/20.txt
+/data/hebrew_diacritized/poetry/21.txt
+/data/hebrew_diacritized/poetry/22.txt
+/data/hebrew_diacritized/poetry/23.txt
+/data/hebrew_diacritized/poetry/24.txt
+/data/hebrew_diacritized/poetry/25.txt
+/data/hebrew_diacritized/poetry/26.txt
+/data/hebrew_diacritized/poetry/27.txt
+/data/hebrew_diacritized/poetry/28.txt
+/data/hebrew_diacritized/poetry/29.txt
+/data/hebrew_diacritized/poetry/2_slomo_artzi.txt
+/data/hebrew_diacritized/poetry/3.txt
+/data/hebrew_diacritized/poetry/30.txt
+/data/hebrew_diacritized/poetry/31.txt
+/data/hebrew_diacritized/poetry/32.txt
+/data/hebrew_diacritized/poetry/33.txt
+/data/hebrew_diacritized/poetry/34.txt
+/data/hebrew_diacritized/poetry/35.txt
+/data/hebrew_diacritized/poetry/36.txt
+/data/hebrew_diacritized/poetry/37.txt
+/data/hebrew_diacritized/poetry/38.txt
+/data/hebrew_diacritized/poetry/39.txt
+/data/hebrew_diacritized/poetry/3_slomo_artzi.txt
+/data/hebrew_diacritized/poetry/4.txt
+/data/hebrew_diacritized/poetry/40.txt
+/data/hebrew_diacritized/poetry/41.txt
+/data/hebrew_diacritized/poetry/43.txt
+/data/hebrew_diacritized/poetry/44.txt
+/data/hebrew_diacritized/poetry/45.txt
+/data/hebrew_diacritized/poetry/46.txt
+/data/hebrew_diacritized/poetry/47.txt
+/data/hebrew_diacritized/poetry/48.txt
+/data/hebrew_diacritized/poetry/5.txt
+/data/hebrew_diacritized/poetry/6.txt
+/data/hebrew_diacritized/poetry/7.txt
+/data/hebrew_diacritized/poetry/8.txt
+/data/hebrew_diacritized/poetry/9.txt
+/data/hebrew_diacritized/poetry/agada.txt
+/data/hebrew_diacritized/poetry/i_have_a_dream.txt
+/data/hebrew_diacritized/poetry/katarsis.txt
+/data/hebrew_diacritized/poetry/ricky.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/1213.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/1533.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/1833.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/1891.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/2155.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/222.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/2463.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/2779.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/2909.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/3099.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/3423.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/3667.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/3729.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/4377.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/4703.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/5082.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/5203.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/5395.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/5396.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/5642.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/5756.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/6287.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/6363.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/6552.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/6609.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/6688.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/687.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/688.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/7016.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/7269.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/7666.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/7910.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/7915.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/8117.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/8237.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/8559.txt
+/data/hebrew_diacritized/pre_modern/abraham_regelson/muse.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1156.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1158.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1160.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1162.txt
+/data/hebrew_diacritized/pre_modern/bialik/m11873.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1229.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1231.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1232.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1287.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1348.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1350.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1422.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1483.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1487.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1598.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1600.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1657.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1719.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1723.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1781.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1784.txt
+/data/hebrew_diacritized/pre_modern/bialik/m181.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1842.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1843.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1846.txt
+/data/hebrew_diacritized/pre_modern/bialik/m186.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1905.txt
+/data/hebrew_diacritized/pre_modern/bialik/m194.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1968.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1970.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1972.txt
+/data/hebrew_diacritized/pre_modern/bialik/m1974.txt
+/data/hebrew_diacritized/pre_modern/bialik/m20.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2037.txt
+/data/hebrew_diacritized/pre_modern/bialik/m209.txt
+/data/hebrew_diacritized/pre_modern/bialik/m21.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2101.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2103.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2138.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2164.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2224.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2228.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2286.txt
+/data/hebrew_diacritized/pre_modern/bialik/m23.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2349.txt
+/data/hebrew_diacritized/pre_modern/bialik/m24.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2411.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2414.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2474.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2475.txt
+/data/hebrew_diacritized/pre_modern/bialik/m25.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2542.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2597(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2597.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2599(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2599.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2601(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2601.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2661(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2661.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2663(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2663.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2665(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2665.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2727(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2727.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2729(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2729.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2789(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2789.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2792.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2793.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2851.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2853(1).txt
+/data/hebrew_diacritized/pre_modern/bialik/m2853.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2855.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2918.txt
+/data/hebrew_diacritized/pre_modern/bialik/m2975.txt
+/data/hebrew_diacritized/pre_modern/bialik/m300.txt
+/data/hebrew_diacritized/pre_modern/bialik/m302.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3033.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3048.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3175.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3177.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3225.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3241.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3298.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3365.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3413.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3414.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3415.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3418.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3490.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3492.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3604.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3608.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3611.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3680.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3684.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3686.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3730.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3731.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3732.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3808.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3810.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3868.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3870.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3932.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3942.txt
+/data/hebrew_diacritized/pre_modern/bialik/m3991.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4014.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4015.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4048.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4052.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4055.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4108.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4173.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4191.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4192.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4236.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4238.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4317.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4320.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4323.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4364.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4367.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4387.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4448.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4450.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4452.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4497.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4502.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4515.txt
+/data/hebrew_diacritized/pre_modern/bialik/m456.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4567.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4569.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4570.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4650.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4710.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4712.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4713.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4771.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4774.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4846.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4850.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4854.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4948.txt
+/data/hebrew_diacritized/pre_modern/bialik/m4953.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5017.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5019.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5021.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5060.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5067.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5068.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5089.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5150.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5151.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5217.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5219.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5277.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5341.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5344.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5346.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5353.txt
+/data/hebrew_diacritized/pre_modern/bialik/m54.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5405.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5411.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5418.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5457.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5474.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5530.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5532.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5534.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5594.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5595.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5597.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5606.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5656.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5662.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5666.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5716.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5717.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5718.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5791.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5793.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5856.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5858.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5860.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5919.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5920.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5924.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5987.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5989.txt
+/data/hebrew_diacritized/pre_modern/bialik/m5991.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6053.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6055.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6113.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6115.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6177.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6182.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6240.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6241.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6243.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6309.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6311.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6313.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6373.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6375.txt
+/data/hebrew_diacritized/pre_modern/bialik/m642.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6439.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6503.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6506.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6564.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6565.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6567.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6629.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6631.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6633.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6702.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6768.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6770.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6830.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6831.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6899.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6902.txt
+/data/hebrew_diacritized/pre_modern/bialik/m6968.txt
+/data/hebrew_diacritized/pre_modern/bialik/m697.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7026.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7028.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7030.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7093.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7158.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7160.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7162.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7164.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7224.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7225.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7289.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7291.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7355.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7361.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7423.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7425.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7427.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7488.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7491.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7493.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7550.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7552.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7553.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7613.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7617.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7676.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7678.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7742.txt
+/data/hebrew_diacritized/pre_modern/bialik/m778.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7808.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7814.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7872.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7933.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7935.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7995.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7997.txt
+/data/hebrew_diacritized/pre_modern/bialik/m7999.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8061.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8128.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8130.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8134.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8190.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8191.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8193.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8194.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8259.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8322.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8385.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8386.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8388.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8453.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8513.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8514.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8516.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8578.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8580.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8582.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8643.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8647.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8649.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8864.txt
+/data/hebrew_diacritized/pre_modern/bialik/m891.txt
+/data/hebrew_diacritized/pre_modern/bialik/m8944.txt
+/data/hebrew_diacritized/pre_modern/bialik/m895.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9013.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9014.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9015.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9016.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9017.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9018.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9053.txt
+/data/hebrew_diacritized/pre_modern/bialik/m921.txt
+/data/hebrew_diacritized/pre_modern/bialik/m925.txt
+/data/hebrew_diacritized/pre_modern/bialik/m9418.txt
+/data/hebrew_diacritized/pre_modern/bialik/m954.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/banan_thief.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/banana_transport.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/competition.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/coypu.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/first_punishment.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/gift.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/kakun_watermelon.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/or.txt
+/data/hebrew_diacritized/pre_modern/elisha_porat/scent.txt
+/data/hebrew_diacritized/pre_modern/itzhak_berkman/13946.txt
+/data/hebrew_diacritized/pre_modern/itzhak_berkman/13947.txt
+/data/hebrew_diacritized/pre_modern/itzhak_berkman/13948.txt
+/data/hebrew_diacritized/pre_modern/pesah_kaplan/1285.txt
+/data/hebrew_diacritized/pre_modern/pesah_kaplan/2419.txt
+/data/hebrew_diacritized/pre_modern/pesah_kaplan/2733.txt
+/data/hebrew_diacritized/pre_modern/pesah_kaplan/3051.txt
+/data/hebrew_diacritized/pre_modern/pesah_kaplan/3371.txt
+/data/hebrew_diacritized/pre_modern/pesah_kaplan/779.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11129.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11130.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11131.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11132.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11133.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11134.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11135.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11136.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11137.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11138.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11139.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11140.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11141.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11142.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11143.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11144.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11145.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11146.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11147.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11148.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11149.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11150.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11151.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11152.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11153.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11154.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11155.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11156.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11157.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11158.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11159.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11160.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11161.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11162.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m11163.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1152.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1154.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1223.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1227.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1279.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1281.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1286.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1342.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1344.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13597.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13598.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13599.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13600.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13601.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13602.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13603.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13604.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13605.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13606.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13607.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13608.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13609.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13610.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13611.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13612.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13613.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13614.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13615.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13616.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13617.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13618.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13619.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13620.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13622.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13623.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13624.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13625.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13626.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13627.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13628.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13629.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13630.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13631.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m13632.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1416.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1418.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1477.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1479.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m149.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1538.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1540.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1593.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1595.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1601.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1653.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1655.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1713.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1715.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m174.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m175.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1776.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1778.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1838.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1839.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1898.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1900.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1906.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1964.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m1966.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2030.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2031.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m205.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m207.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2096.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2098.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m213.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2160.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2162.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2219.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2221.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2227.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2280.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2282.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2343.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2345.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2407.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2409.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2468.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2470.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2528.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2530.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2541.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2593.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2595.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2656.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2658.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2722.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2724.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2772.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2785.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2787.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2846.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2848.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2854.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2912.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2914.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m294.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2966.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m297.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m2976.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3030.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3044.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3092.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3104.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3106.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3168.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3170.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3176.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3239.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3293.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3295.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3360.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3362.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3408.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3417.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3435.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3485.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3487.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3491.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3545.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3547.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3615.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3617.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3675.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3677.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m370.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3734.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3735.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3803.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3805.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3811.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3896.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3898.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3925.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m3937.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4008.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4010.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4062.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4064.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4123.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4124.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4129.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4181.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4186.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4242.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4246.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4312.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4314.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4382.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4384.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4443.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4445.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4451.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m450.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m451.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4512.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4513.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4568.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4579.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4581.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4639.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4641.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4714.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4716.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4776.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4777.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4778.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4842.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4844.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4942.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4944.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m4946.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m50.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5010.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5012.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5085.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5087.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5145.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5147.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5152.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5210.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5212.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5271.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5273.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5275.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5336.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5338.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5401.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5403.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5451.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5452.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5461.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m549.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m551.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5526.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5528.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5588.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5590.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5592.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5651.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5653.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5712.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5713.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5784.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5785.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5794.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5852.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5854.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5913.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5915.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5917.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5980.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m5982.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6045.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6047.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6101.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6110.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6116.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6173.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6175.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6234.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6236.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6238.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6302.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6304.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m636.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6369.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6371.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m638.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6433.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6435.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6440.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6497.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6499.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6557.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6559.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6562.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6624.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6626.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6694.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6696.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6761.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6763.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6769.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6827.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6829.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6894.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6896.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6897.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m693.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m695.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6958.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m6960.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7022.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7085.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7087.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7094.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7152.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7153.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7155.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7219.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7221.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7222.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7284.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7286.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7351.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7353.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7416.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7418.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7484.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7486.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7545.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7547.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7548.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7608.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7610.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7672.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7674.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m773.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7736.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7738.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m775.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7803.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7805.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m781.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7866.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7868.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7869.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7923.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7925.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7989.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m7991.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8055.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8057.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8062.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8124.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8126.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8185.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8187.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8188.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8250.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8252.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8316.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8318.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8379.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8381.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8446.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8448.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8508.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8510.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8511.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8573.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8575.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8639.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m8641.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m880.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m884.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m959.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m960.txt
+/data/hebrew_diacritized/pre_modern/shaul_tchernichovsky/m9661.txt
+/data/hebrew_diacritized/pre_modern/uriel_ofek/12629.txt
+/data/hebrew_diacritized/pre_modern/uriel_ofek/12630.txt
+/data/hebrew_diacritized/pre_modern/uriel_ofek/12631.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11440.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11470.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11471.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11472.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11473.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11474.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11475.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11476.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11477.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11478.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11479.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11480.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11481.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11482.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11483.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11484.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11485.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11486.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11487.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11488.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11489.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11490.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11491.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11492.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11493.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11494.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11495.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11496.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11497.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11498.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11499.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11500.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11501.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11502.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11503.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11504.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11505.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11506.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11507.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11508.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11509.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11510.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11511.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11512.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11513.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11514.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11515.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11516.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11517.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11518.txt
+/data/hebrew_diacritized/pre_modern/yisrael_dushman/m11519.txt
+/data/hebrew_diacritized/pre_modern/zvi_zviri/m11765.txt
+/data/hebrew_diacritized/pre_modern/zvi_zviri/m11766.txt
+/data/hebrew_diacritized/pre_modern/zvi_zviri/m11767.txt
+/data/hebrew_diacritized/pre_modern/zvi_zviri/m11768.txt
+/data/hebrew_diacritized/pre_modern/zvi_zviri/m11769.txt
+/data/hebrew_diacritized/pre_modern/zvi_zviri/m11770.txt
+/data/hebrew_diacritized/pre_modern/zvi_zviri/m11771.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/אדית נסביט - משחררי הממלכה.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/אדית נסביט - ספר היצורים.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/אדית נסביט - רקס פורטונטוס ושות_.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/אלכסנדר קופרין - הפיל.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/אנטון צ_כוב - הנערים.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/בנג_מין רוזנבאום - מולי והכובע האדום.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ג_ואל צ_נדלר הריס - דון ארנב ומר דב.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ג_ואל צ_נדלר הריס - דון ארנב.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ג_ואל צ_נדלר הריס - המעשה בארנבים הקטנים.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ג_וני גרול - סמרטותי לומדת לקח.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/דניאיל חארמס - ראשית, שנית.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ינץ לוי - הסבא והסביון.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ל. פרנק באום - ההיפופוטם הצוחק.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ל. פרנק באום - לכידתו של אבא-זמן.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/מרי דה מורגן - נסיכת הצעצוע.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/נורית זרחי - אמורי אשיג אטוסה.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/נורית זרחי - להתראות באנטארקטיקה.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/ס. יזהר - עלילות חומית.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/קורנל מקושינסקי - חוטחוטון.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/רודיארד קיפלינג - החתול שהלך לבדו.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/שהם סמיט - איסיס.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/תהל פרוש - ריצ_רד ניקסון, אמא שלי.txt
+/data/hebrew_diacritized/shortstoryproject_predotted/תמר הוכשטטר - כונפוסה הנוראה.txt
+/data/old/dev/biblical/biblical.txt
+/data/old/dev/biblical/rabanit/rabanit.txt
+/data/old/dev/biblical/religious/religious.txt
+/data/old/dev/biblical/zevi_scharfstein/zevi_scharfstein.txt
+/data/old/dev/dicta/dictaTestCorpus/dictaTestCorpus.txt
+/data/old/dev/dicta/haser/haser.txt
+/data/old/dev/dicta/male/male.txt
+/data/old/dev/dicta/shortstoryproject_Dicta/shortstoryproject_Dicta.txt
+/data/old/dev/law/law.txt
+/data/old/dev/male_female/female/female.txt
+/data/old/dev/male_female/male/male.txt
+/data/old/dev/modern/blogs/blogs.txt
+/data/old/dev/modern/books/books.txt
+/data/old/dev/modern/bsheva/bsheva.txt
+/data/old/dev/modern/critics/critics.txt
+/data/old/dev/modern/dont_panic/dont_panic.txt
+/data/old/dev/modern/eureka/eureka.txt
+/data/old/dev/modern/forums/forums.txt
+/data/old/dev/modern/govil/govil.txt
+/data/old/dev/modern/hadrei-haredim/hadrei-haredim.txt
+/data/old/dev/modern/kol-briut/kol-briut.txt
+/data/old/dev/modern/kol/kol.txt
+/data/old/dev/modern/news/news.txt
+/data/old/dev/modern/nrg/nrg.txt
+/data/old/dev/modern/president/president.txt
+/data/old/dev/modern/random_internet/random_internet.txt
+/data/old/dev/modern/saloona/saloona.txt
+/data/old/dev/modern/subs/subs.txt
+/data/old/dev/modern/tapuz/tapuz.txt
+/data/old/dev/modern/verdicts/verdicts.txt
+/data/old/dev/modern/wiki/wiki.txt
+/data/old/dev/modern/yanshuf/yanshuf.txt
+/data/old/dev/modern/yisrael-hayom/yisrael-hayom.txt
+/data/old/dev/modern/ynet/ynet.txt
+/data/old/dev/poetry/poetry.txt
+/data/old/dev/pre_modern/abraham_regelson/abraham_regelson.txt
+/data/old/dev/pre_modern/bialik/bialik.txt
+/data/old/dev/pre_modern/elisha_porat/elisha_porat.txt
+/data/old/dev/pre_modern/itzhak_berkman/itzhak_berkman.txt
+/data/old/dev/pre_modern/pesah_kaplan/pesah_kaplan.txt
+/data/old/dev/pre_modern/shaul_tchernichovsky/shaul_tchernichovsky.txt
+/data/old/dev/pre_modern/uriel_ofek/uriel_ofek.txt
+/data/old/dev/pre_modern/yisrael_dushman/yisrael_dushman.txt
+/data/old/dev/pre_modern/zvi_zviri/zvi_zviri.txt
+/data/old/dev/shortstoryproject_predotted/shortstoryproject_predotted.txt
+/data/old/hebrew_diacritized
+/data/old/test/biblical/biblical.txt
+/data/old/test/biblical/rabanit/rabanit.txt
+/data/old/test/biblical/religious/religious.txt
+/data/old/test/biblical/zevi_scharfstein/zevi_scharfstein.txt
+/data/old/test/dicta/dictaTestCorpus/dictaTestCorpus.txt
+/data/old/test/dicta/haser/haser.txt
+/data/old/test/dicta/male/male.txt
+/data/old/test/dicta/shortstoryproject_Dicta/shortstoryproject_Dicta.txt
+/data/old/test/law/law.txt
+/data/old/test/male_female/female/female.txt
+/data/old/test/male_female/male/male.txt
+/data/old/test/modern/blogs/blogs.txt
+/data/old/test/modern/books/books.txt
+/data/old/test/modern/bsheva/bsheva.txt
+/data/old/test/modern/critics/critics.txt
+/data/old/test/modern/dont_panic/dont_panic.txt
+/data/old/test/modern/eureka/eureka.txt
+/data/old/test/modern/forums/forums.txt
+/data/old/test/modern/govil/govil.txt
+/data/old/test/modern/hadrei-haredim/hadrei-haredim.txt
+/data/old/test/modern/kol-briut/kol-briut.txt
+/data/old/test/modern/kol/kol.txt
+/data/old/test/modern/news/news.txt
+/data/old/test/modern/nrg/nrg.txt
+/data/old/test/modern/president/president.txt
+/data/old/test/modern/random_internet/random_internet.txt
+/data/old/test/modern/saloona/saloona.txt
+/data/old/test/modern/subs/subs.txt
+/data/old/test/modern/tapuz/tapuz.txt
+/data/old/test/modern/verdicts/verdicts.txt
+/data/old/test/modern/wiki/wiki.txt
+/data/old/test/modern/yanshuf/yanshuf.txt
+/data/old/test/modern/yisrael-hayom/yisrael-hayom.txt
+/data/old/test/modern/ynet/ynet.txt
+/data/old/test/poetry/poetry.txt
+/data/old/test/pre_modern/abraham_regelson/abraham_regelson.txt
+/data/old/test/pre_modern/bialik/bialik.txt
+/data/old/test/pre_modern/elisha_porat/elisha_porat.txt
+/data/old/test/pre_modern/itzhak_berkman/itzhak_berkman.txt
+/data/old/test/pre_modern/pesah_kaplan/pesah_kaplan.txt
+/data/old/test/pre_modern/shaul_tchernichovsky/shaul_tchernichovsky.txt
+/data/old/test/pre_modern/uriel_ofek/uriel_ofek.txt
+/data/old/test/pre_modern/yisrael_dushman/yisrael_dushman.txt
+/data/old/test/pre_modern/zvi_zviri/zvi_zviri.txt
+/data/old/test/shortstoryproject_predotted/shortstoryproject_predotted.txt
+/data/old/train/biblical/biblical.txt
+/data/old/train/biblical/rabanit/rabanit.txt
+/data/old/train/biblical/religious/religious.txt
+/data/old/train/biblical/zevi_scharfstein/zevi_scharfstein.txt
+/data/old/train/dicta/dictaTestCorpus/dictaTestCorpus.txt
+/data/old/train/dicta/haser/haser.txt
+/data/old/train/dicta/male/male.txt
+/data/old/train/dicta/shortstoryproject_Dicta/shortstoryproject_Dicta.txt
+/data/old/train/law/law.txt
+/data/old/train/male_female/female/female.txt
+/data/old/train/male_female/male/male.txt
+/data/old/train/modern/blogs/blogs.txt
+/data/old/train/modern/books/books.txt
+/data/old/train/modern/bsheva/bsheva.txt
+/data/old/train/modern/critics/critics.txt
+/data/old/train/modern/dont_panic/dont_panic.txt
+/data/old/train/modern/eureka/eureka.txt
+/data/old/train/modern/forums/forums.txt
+/data/old/train/modern/govil/govil.txt
+/data/old/train/modern/hadrei-haredim/hadrei-haredim.txt
+/data/old/train/modern/kol-briut/kol-briut.txt
+/data/old/train/modern/kol/kol.txt
+/data/old/train/modern/news/news.txt
+/data/old/train/modern/nrg/nrg.txt
+/data/old/train/modern/president/president.txt
+/data/old/train/modern/random_internet/random_internet.txt
+/data/old/train/modern/saloona/saloona.txt
+/data/old/train/modern/subs/subs.txt
+/data/old/train/modern/tapuz/tapuz.txt
+/data/old/train/modern/verdicts/verdicts.txt
+/data/old/train/modern/wiki/wiki.txt
+/data/old/train/modern/yanshuf/yanshuf.txt
+/data/old/train/modern/yisrael-hayom/yisrael-hayom.txt
+/data/old/train/modern/ynet/ynet.txt
+/data/old/train/poetry/poetry.txt
+/data/old/train/pre_modern/abraham_regelson/abraham_regelson.txt
+/data/old/train/pre_modern/bialik/bialik.txt
+/data/old/train/pre_modern/elisha_porat/elisha_porat.txt
+/data/old/train/pre_modern/itzhak_berkman/itzhak_berkman.txt
+/data/old/train/pre_modern/pesah_kaplan/pesah_kaplan.txt
+/data/old/train/pre_modern/shaul_tchernichovsky/shaul_tchernichovsky.txt
+/data/old/train/pre_modern/uriel_ofek/uriel_ofek.txt
+/data/old/train/pre_modern/yisrael_dushman/yisrael_dushman.txt
+/data/old/train/pre_modern/zvi_zviri/zvi_zviri.txt
+/data/old/train/shortstoryproject_predotted/shortstoryproject_predotted.txt
+/data/test/biblical/biblical.txt
+/data/test/biblical/rabanit/rabanit.txt
+/data/test/biblical/religious/religious.txt
+/data/test/biblical/zevi_scharfstein/zevi_scharfstein.txt
+/data/test/dicta/dictaTestCorpus/dictaTestCorpus.txt
+/data/test/dicta/male/male.txt
+/data/test/dicta/shortstoryproject_Dicta/shortstoryproject_Dicta.txt
+/data/test/law/law.txt
+/data/test/male_female/female/female.txt
+/data/test/male_female/male/male.txt
+/data/test/modern/blogs/blogs.txt
+/data/test/modern/books/books.txt
+/data/test/modern/bsheva/bsheva.txt
+/data/test/modern/critics/critics.txt
+/data/test/modern/dont_panic/dont_panic.txt
+/data/test/modern/forums/forums.txt
+/data/test/modern/govil/govil.txt
+/data/test/modern/hadrei-haredim/hadrei-haredim.txt
+/data/test/modern/news/news.txt
+/data/test/modern/random_internet/random_internet.txt
+/data/test/modern/wiki/wiki.txt
+/data/test/modern/yanshuf/yanshuf.txt
+/data/test/modern/yisrael-hayom/yisrael-hayom.txt
+/data/test/modern/ynet/ynet.txt
+/data/test/poetry/poetry.txt
+/data/test/pre_modern/abraham_regelson/abraham_regelson.txt
+/data/test/pre_modern/bialik/bialik.txt
+/data/test/pre_modern/elisha_porat/elisha_porat.txt
+/data/test/pre_modern/itzhak_berkman/itzhak_berkman.txt
+/data/test/pre_modern/pesah_kaplan/pesah_kaplan.txt
+/data/test/pre_modern/shaul_tchernichovsky/shaul_tchernichovsky.txt
+/data/test/pre_modern/uriel_ofek/uriel_ofek.txt
+/data/test/pre_modern/yisrael_dushman/yisrael_dushman.txt
+/data/test/pre_modern/zvi_zviri/zvi_zviri.txt
+/data/test/shortstoryproject_predotted/shortstoryproject_predotted.txt
+/data/test_modern/books/1.txt
+/data/test_modern/books/10.txt
+/data/test_modern/books/2.txt
+/data/test_modern/books/3.txt
+/data/test_modern/books/4.txt
+/data/test_modern/books/5.txt
+/data/test_modern/books/6.txt
+/data/test_modern/books/7.txt
+/data/test_modern/books/8.txt
+/data/test_modern/books/9.txt
+/data/test_modern/eureka/1.txt
+/data/test_modern/eureka/10.txt
+/data/test_modern/eureka/2.txt
+/data/test_modern/eureka/3.txt
+/data/test_modern/eureka/4.txt
+/data/test_modern/eureka/5.txt
+/data/test_modern/eureka/6.txt
+/data/test_modern/eureka/7.txt
+/data/test_modern/eureka/8.txt
+/data/test_modern/eureka/9.txt
+/data/test_modern/kol/1.txt
+/data/test_modern/kol/10.txt
+/data/test_modern/kol/2.txt
+/data/test_modern/kol/3.txt
+/data/test_modern/kol/4.txt
+/data/test_modern/kol/5.txt
+/data/test_modern/kol/6.txt
+/data/test_modern/kol/7.txt
+/data/test_modern/kol/8.txt
+/data/test_modern/kol/9.txt
+/data/test_modern/nrg/1.txt
+/data/test_modern/nrg/10.txt
+/data/test_modern/nrg/2.txt
+/data/test_modern/nrg/3.txt
+/data/test_modern/nrg/4.txt
+/data/test_modern/nrg/5.txt
+/data/test_modern/nrg/6.txt
+/data/test_modern/nrg/7.txt
+/data/test_modern/nrg/8.txt
+/data/test_modern/nrg/9.txt
+/data/test_modern/president/1.txt
+/data/test_modern/president/10.txt
+/data/test_modern/president/2.txt
+/data/test_modern/president/3.txt
+/data/test_modern/president/4.txt
+/data/test_modern/president/5.txt
+/data/test_modern/president/6.txt
+/data/test_modern/president/7.txt
+/data/test_modern/president/8.txt
+/data/test_modern/president/9.txt
+/data/test_modern/saloona/1.txt
+/data/test_modern/saloona/10.txt
+/data/test_modern/saloona/2.txt
+/data/test_modern/saloona/3.txt
+/data/test_modern/saloona/4.txt
+/data/test_modern/saloona/5.txt
+/data/test_modern/saloona/6.txt
+/data/test_modern/saloona/7.txt
+/data/test_modern/saloona/8.txt
+/data/test_modern/saloona/9.txt
+/data/test_modern/subs/1.txt
+/data/test_modern/subs/10.txt
+/data/test_modern/subs/2.txt
+/data/test_modern/subs/3.txt
+/data/test_modern/subs/4.txt
+/data/test_modern/subs/5.txt
+/data/test_modern/subs/6.txt
+/data/test_modern/subs/7.txt
+/data/test_modern/subs/8.txt
+/data/test_modern/subs/9.txt
+/data/test_modern/tapuz/1.txt
+/data/test_modern/tapuz/10.txt
+/data/test_modern/tapuz/2.txt
+/data/test_modern/tapuz/3.txt
+/data/test_modern/tapuz/4.txt
+/data/test_modern/tapuz/5.txt
+/data/test_modern/tapuz/6.txt
+/data/test_modern/tapuz/7.txt
+/data/test_modern/tapuz/8.txt
+/data/test_modern/tapuz/9.txt
+/data/test_modern/verdicts/1.txt
+/data/test_modern/verdicts/10.txt
+/data/test_modern/verdicts/2.txt
+/data/test_modern/verdicts/3.txt
+/data/test_modern/verdicts/4.txt
+/data/test_modern/verdicts/5.txt
+/data/test_modern/verdicts/6.txt
+/data/test_modern/verdicts/7.txt
+/data/test_modern/verdicts/8.txt
+/data/test_modern/verdicts/9.txt
+/data/test_modern/wiki/1.txt
+/data/test_modern/wiki/10.txt
+/data/test_modern/wiki/2.txt
+/data/test_modern/wiki/3.txt
+/data/test_modern/wiki/4.txt
+/data/test_modern/wiki/5.txt
+/data/test_modern/wiki/6.txt
+/data/test_modern/wiki/7.txt
+/data/test_modern/wiki/8.txt
+/data/test_modern/wiki/9.txt
+/data/test_modern/ynet/1.txt
+/data/test_modern/ynet/10.txt
+/data/test_modern/ynet/2.txt
+/data/test_modern/ynet/3.txt
+/data/test_modern/ynet/4.txt
+/data/test_modern/ynet/5.txt
+/data/test_modern/ynet/6.txt
+/data/test_modern/ynet/7.txt
+/data/test_modern/ynet/8.txt
+/data/test_modern/ynet/9.txt
+/data/train/biblical/biblical_not_use/biblical.txt
+/data/train/biblical/rabanit/rabanit.txt
+/data/train/biblical/religious/religious.txt
+/data/train/biblical/zevi_scharfstein/zevi_scharfstein.txt
+/data/train/dicta/dictaTestCorpus/dictaTestCorpus.txt
+/data/train/dicta/haser_not_use/haser.txt
+/data/train/dicta/male/male.txt
+/data/train/dicta/male_nakdimon/male_nakdimon.txt
+/data/train/dicta/shortstoryproject_Dicta/shortstoryproject_Dicta.txt
+/data/train/law/law.txt
+/data/train/male_female/female_not_use/female.txt
+/data/train/male_female/male/male.txt
+/data/train/modern/blogs/blogs.txt
+/data/train/modern/books/books.txt
+/data/train/modern/bsheva/bsheva.txt
+/data/train/modern/critics/critics.txt
+/data/train/modern/dont_panic/dont_panic.txt
+/data/train/modern/forums/forums.txt
+/data/train/modern/govil/govil.txt
+/data/train/modern/hadrei-haredim/hadrei-haredim.txt
+/data/train/modern/news/news.txt
+/data/train/modern/random_internet/random_internet.txt
+/data/train/modern/wiki/wiki.txt
+/data/train/modern/yanshuf/yanshuf.txt
+/data/train/modern/yisrael-hayom/yisrael-hayom.txt
+/data/train/modern/ynet/ynet.txt
+/data/train/poetry/poetry.txt
+/data/train/pre_modern/abraham_regelson/abraham_regelson.txt
+/data/train/pre_modern/bialik/bialik.txt
+/data/train/pre_modern/elisha_porat/elisha_porat.txt
+/data/train/pre_modern/itzhak_berkman/itzhak_berkman.txt
+/data/train/pre_modern/pesah_kaplan/pesah_kaplan.txt
+/data/train/pre_modern/shaul_tchernichovsky/shaul_tchernichovsky.txt
+/data/train/pre_modern/uriel_ofek/uriel_ofek.txt
+/data/train/pre_modern/yisrael_dushman/yisrael_dushman.txt
+/data/train/pre_modern/zvi_zviri/zvi_zviri.txt
+/data/train/shortstoryproject_predotted/shortstoryproject_predotted.txt
+/data/try_find_bug/5.txt
+/data/try_find_bug2/5.txt
+/data/try_find_bug2/7.txt
+/epochs_data/accuracy_dev_values.json
+/epochs_data/epochs_loss_train_values.json
+/epochs_data/loss_dev_values.json
+/epochs_data/steps_loss_train_values.json
+/letter.png
+/logging/Diacritization_Model_DEBUG.log
+/logging/evaluate_WikipediaHebrewWithVocalization.txt_12_08_23__01_23/Diacritization_Model_DEBUG.log
+/logging/evaluate_WikipediaHebrewWithVocalization.txt_12_08_23__01_28/Diacritization_Model_DEBUG.log
+/logging/evaluate_WikipediaHebrewWithVocalization.txt_12_08_23__09_00/Diacritization_Model_DEBUG.log
+/logging/evaluate_WikipediaHebrewWithVocalization.txt_12_08_23__09_08/Diacritization_Model_DEBUG.log
+/logging/evaluate_WikipediaHebrewWithVocalization.txt_12_08_23__09_09/Diacritization_Model_DEBUG.log
+/logging/evaluate_biblical_19_08_23__17_17/Diacritization_Model_DEBUG.log
+/logging/evaluate_biblical_19_08_23__17_19/Diacritization_Model_DEBUG.log
+/logging/evaluate_biblical_19_08_23__17_20/Diacritization_Model_DEBUG.log
+/logging/evaluate_biblical_19_08_23__17_23/Diacritization_Model_DEBUG.log
+/logging/evaluate_biblical_19_08_23__17_33/Diacritization_Model_DEBUG.log
+/logging/evaluate_biblical_19_08_23__21_10/Diacritization_Model_DEBUG.log
+/logging/evaluate_biblical_20_08_23__18_55/Diacritization_Model_DEBUG.log
+/logging/evaluate_dicta_19_08_23__17_17/Diacritization_Model_DEBUG.log
+/logging/evaluate_dicta_19_08_23__17_20/Diacritization_Model_DEBUG.log
+/logging/evaluate_dicta_19_08_23__17_23/Diacritization_Model_DEBUG.log
+/logging/evaluate_dicta_19_08_23__17_35/Diacritization_Model_DEBUG.log
+/logging/evaluate_dicta_19_08_23__21_12/Diacritization_Model_DEBUG.log
+/logging/evaluate_dicta_20_08_23__18_57/Diacritization_Model_DEBUG.log
+/logging/evaluate_female_12_08_23__13_12/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__17_18/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__17_22/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__17_24/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__17_29/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__17_32/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__17_36/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__20_38/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__21_00/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__21_05/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_19_08_23__21_14/Diacritization_Model_DEBUG.log
+/logging/evaluate_law_20_08_23__18_59/Diacritization_Model_DEBUG.log
+/logging/evaluate_male_12_08_23__13_14/Diacritization_Model_DEBUG.log
+/logging/evaluate_male_female_19_08_23__17_36/Diacritization_Model_DEBUG.log
+/logging/evaluate_male_female_19_08_23__21_14/Diacritization_Model_DEBUG.log
+/logging/evaluate_male_female_20_08_23__18_59/Diacritization_Model_DEBUG.log
+/logging/evaluate_modern_19_08_23__17_37/Diacritization_Model_DEBUG.log
+/logging/evaluate_modern_19_08_23__21_14/Diacritization_Model_DEBUG.log
+/logging/evaluate_modern_20_08_23__18_59/Diacritization_Model_DEBUG.log
+/logging/evaluate_poetry_19_08_23__17_37/Diacritization_Model_DEBUG.log
+/logging/evaluate_poetry_19_08_23__21_15/Diacritization_Model_DEBUG.log
+/logging/evaluate_poetry_20_08_23__19_00/Diacritization_Model_DEBUG.log
+/logging/evaluate_pre_modern_19_08_23__17_37/Diacritization_Model_DEBUG.log
+/logging/evaluate_pre_modern_19_08_23__21_15/Diacritization_Model_DEBUG.log
+/logging/evaluate_pre_modern_20_08_23__19_00/Diacritization_Model_DEBUG.log
+/logging/evaluate_shortstoryproject_predotted_19_08_23__17_38/Diacritization_Model_DEBUG.log
+/logging/evaluate_shortstoryproject_predotted_19_08_23__21_16/Diacritization_Model_DEBUG.log
+/logging/evaluate_shortstoryproject_predotted_20_08_23__19_01/Diacritization_Model_DEBUG.log
+/logging/evaluate_test_modern_12_08_23__13_03/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__08_38/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__10_37/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__10_39/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__10_47/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__11_02/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__11_03/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__11_07/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__11_15/Diacritization_Model_DEBUG.log
+/logging/log_model_EVAL_23_08_23__11_37/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_22_08_23__23_59/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__00_01/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__00_05/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__00_08/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__00_12/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_40/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_41/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_42/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_43/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_44/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_45/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_46/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_47/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_48/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_49/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_50/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_51/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_52/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_53/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_54/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_55/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_56/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_57/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_58/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__01_59/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__02_00/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__02_01/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__02_02/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__02_03/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__02_04/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_24/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_25/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_26/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_27/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_29/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_30/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_31/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_32/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_33/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_34/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_35/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_36/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_37/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_38/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_40/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_44/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_51/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__08_58/Diacritization_Model_DEBUG.log
+/logging/log_model_PREDICT_23_08_23__09_06/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_26/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_28/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_30/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_34/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_36/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_38/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_39/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_41/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_43/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_44/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_48/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_49/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_50/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_22_08_23__00_52/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_23_08_23__00_35/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_23_08_23__01_01/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_23_08_23__01_15/Diacritization_Model_DEBUG.log
+/logging/log_model_evaluate_23_08_23__01_17/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.0001_bs_16_nfl_5_07_08_23__13_02/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.0001_bs_8_nfl_3_07_08_23__12_38/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__16_10/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__16_30/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__17_23/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__17_25/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__17_33/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__17_35/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__17_38/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__17_41/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_16_07_08_23__17_45/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_07_08_23__16_02/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_07_08_23__21_01/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_07_08_23__21_15/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_07_08_23__21_39/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_07_08_23__22_18/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_12_08_23__10_39/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_12_08_23__10_49/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_12_08_23__10_52/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_12_08_23__11_09/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_12_08_23__11_11/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_12_08_23__11_33/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_12_08_23__11_36/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_14_08_23__22_53/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_14_08_23__22_59/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_14_08_23__23_50/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_15_08_23__12_15/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_15_08_23__12_16/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_15_08_23__12_17/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_15_08_23__12_37/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_15_08_23__12_39/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_15_08_23__14_12/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_15_08_23__14_13/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_32_19_08_23__09_13/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.001_bs_8_nfl_3_06_08_23__23_32/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.01_bs_8_nfl_9_05_08_23__13_50/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_0.01_bs_8_nfl_9_07_08_23__13_10/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_1e-05_bs_16_nfl_5_07_08_23__12_53/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_1e-05_bs_64_nfl_1_06_08_23__23_19/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_1e-05_bs_8_nfl_3_07_08_23__14_44/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_1e-05_bs_8_nfl_5_07_08_23__12_48/Diacritization_Model_DEBUG.log
+/logging/log_model_lr_1e-05_bs_8_nfl_9_05_08_23__14_04/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__13_51/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__13_52/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__13_54/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__13_57/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__14_04/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__14_05/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__14_06/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__14_07/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__14_10/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__14_29/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__15_36/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__15_37/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__15_52/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__16_22/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__16_23/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__16_31/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__16_33/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__16_38/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__16_50/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__16_56/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__17_06/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__17_10/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__17_19/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__17_56/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__17_57/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__17_59/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_04/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_08/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_11/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_13/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_14/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_15/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_16/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_24/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_29/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_32/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_34/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_11_08_23__18_43/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_12_08_23__00_06/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_12_08_23__00_14/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_12_08_23__00_24/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_18_08_23__15_40/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_18_08_23__15_41/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_18_08_23__15_49/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_18_08_23__15_51/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_18_08_23__15_52/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_19_08_23__15_50/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_22_08_23__00_22/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_22_08_23__00_23/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_22_08_23__00_25/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_22_08_23__00_51/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__00_15/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__00_16/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__00_18/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__00_23/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__00_28/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__01_00/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__01_14/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__01_16/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__08_28/Diacritization_Model_DEBUG.log
+/logging/log_model_predict_23_08_23__11_36/Diacritization_Model_DEBUG.log
+/logging/log_model_train_22_08_23__00_57/Diacritization_Model_DEBUG.log
+/logging/log_model_train_22_08_23__00_59/Diacritization_Model_DEBUG.log
+/logging/log_model_train_22_08_23__01_01/Diacritization_Model_DEBUG.log
+/logging/log_model_train_22_08_23__01_02/Diacritization_Model_DEBUG.log
+/logging/log_model_train_22_08_23__01_03/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_10/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_12/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_18/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_19/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_24/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_25/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_28/Diacritization_Model_DEBUG.log
+/logging/log_model_train_25_08_23__01_48/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__10_34/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__10_35/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__12_08/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__12_11/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_09/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_11/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_12/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_17/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_19/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_41/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_44/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_46/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_47/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_51/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__15_52/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__16_07/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__16_09/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__16_32/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__21_15/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__21_42/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__21_55/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__22_05/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__22_24/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__22_25/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_04/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_07/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_08/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_09/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_13/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_14/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_23/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_24/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_12_08_23__23_27/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__00_35/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__00_37/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__08_37/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__08_40/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__08_51/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__11_22/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__11_28/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__22_48/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__22_50/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__22_51/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__22_56/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__22_57/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__22_58/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__23_06/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__23_21/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_13_08_23__23_22/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_14_08_23__11_04/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_14_08_23__22_52/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_17_08_23__18_58/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_17_08_23__19_06/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_17_08_23__19_14/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_17_08_23__19_20/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_18_08_23__13_38/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_18_08_23__15_13/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_18_08_23__15_15/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_18_08_23__16_11/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_18_08_23__16_29/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__08_49/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__09_00/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__09_02/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__15_17/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__15_18/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__15_23/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__15_30/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__15_31/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__15_34/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_03/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_09/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_11/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_13/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_16/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_19/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_25/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_19_08_23__16_37/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_20_08_23__18_46/Diacritization_Model_DEBUG.log
+/logging/log_orgenize_data_21_08_23__20_57/Diacritization_Model_DEBUG.log
+/models/trained/latest/output_models_03_08_23__12_33/best_model.pth
+/models/trained/latest/output_models_03_08_23__12_33/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_03_08_23__12_45/best_model.pth
+/models/trained/latest/output_models_03_08_23__12_45/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_03_08_23__12_58/best_model.pth
+/models/trained/latest/output_models_03_08_23__12_58/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_03_08_23__13_29/best_model.pth
+/models/trained/latest/output_models_03_08_23__13_29/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_05_08_23__18_57/best_model.pth
+/models/trained/latest/output_models_05_08_23__18_57/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_05_08_23__18_57/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_05_08_23__18_57/checkpoints/checkpoint_model_epoch_2.pth
+/models/trained/latest/output_models_05_08_23__18_57/checkpoints/checkpoint_model_epoch_3.pth
+/models/trained/latest/output_models_05_08_23__18_57/checkpoints/checkpoint_model_epoch_4.pth
+/models/trained/latest/output_models_05_08_23__20_05/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_05_08_23__20_05/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_07_08_23__13_10/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_07_08_23__15_35/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_07_08_23__15_47/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_07_08_23__15_47/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_07_08_23__16_02/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_07_08_23__16_30/best_model.pth
+/models/trained/latest/output_models_07_08_23__16_30/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_07_08_23__16_30/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_07_08_23__16_30/checkpoints/checkpoint_model_epoch_2.pth
+/models/trained/latest/output_models_07_08_23__16_30/checkpoints/checkpoint_model_epoch_3.pth
+/models/trained/latest/output_models_07_08_23__16_30/checkpoints/checkpoint_model_epoch_4.pth
+/models/trained/latest/output_models_07_08_23__17_45/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_07_08_23__17_45/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_07_08_23__22_18/best_model.pth
+/models/trained/latest/output_models_07_08_23__22_18/checkpoints/checkpoint_model_epoch_0.pth
+/models/trained/latest/output_models_12_08_23__10_49/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_12_08_23__10_49/checkpoints/checkpoint_model_epoch_2.pth
+/models/trained/latest/output_models_12_08_23__10_49/checkpoints/checkpoint_model_epoch_3.pth
+/models/trained/latest/output_models_12_08_23__10_49/checkpoints/checkpoint_model_epoch_4.pth
+/models/trained/latest/output_models_12_08_23__10_52/best_model.pth
+/models/trained/latest/output_models_12_08_23__10_52/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_12_08_23__10_52/checkpoints/checkpoint_model_epoch_2.pth
+/models/trained/latest/output_models_12_08_23__10_52/checkpoints/checkpoint_model_epoch_3.pth
+/models/trained/latest/output_models_12_08_23__10_52/checkpoints/checkpoint_model_epoch_4.pth
+/models/trained/latest/output_models_12_08_23__10_52/checkpoints/checkpoint_model_epoch_5.pth
+/models/trained/latest/output_models_12_08_23__11_11/best_model.pth
+/models/trained/latest/output_models_12_08_23__11_11/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_12_08_23__11_11/checkpoints/checkpoint_model_epoch_2.pth
+/models/trained/latest/output_models_12_08_23__11_11/checkpoints/checkpoint_model_epoch_3.pth
+/models/trained/latest/output_models_12_08_23__11_11/checkpoints/checkpoint_model_epoch_4.pth
+/models/trained/latest/output_models_12_08_23__11_11/checkpoints/checkpoint_model_epoch_5.pth
+/models/trained/latest/output_models_12_08_23__11_33/best_model.pth
+/models/trained/latest/output_models_12_08_23__11_33/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_12_08_23__11_36/best_model.pth
+/models/trained/latest/output_models_12_08_23__11_36/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_14_08_23__22_53/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/latest/output_models_14_08_23__22_53/checkpoints/checkpoint_model_epoch_2.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/best_model.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_1.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_10.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_11.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_12.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_13.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_14.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_15.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_16.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_17.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_18.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_19.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_2.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_20.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_21.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_22.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_23.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_24.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_25.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_3.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_4.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_5.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_6.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_7.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_8.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/checkpoint_model_epoch_9.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/v4.pth
+/models/trained/output_models_19_08_23__08_47/output_models_19_08_23__08_47/checkpoints/v8.pth
+/models/trained/prod/checkpoint_model_epoch_2.pth
+/models/trained/prod/dnikud_v1.pth
+/models/trained/prod/dnikud_v2.pth
+/models/trained/prod/dnikud_v3.pth
+/models/trained/prod/dnikud_v4.pth
+/models/trained/prod/dnikud_v8.pth
+/models/trained/try.pth
+/models/trained/try2.pth
+/plots/Confusion_Matrix_dagesh.jpg
+/plots/Confusion_Matrix_nikud.jpg
+/plots/Confusion_Matrix_sin.jpg
+/plots/debug_plots_12_08_23__11_33/Train_epochs_loss_plot.jpg
+/plots/debug_plots_12_08_23__11_33/show_data_labels.jpg
+/plots/debug_plots_12_08_23__11_36/Confusion_Matrix_dagesh.jpg
+/plots/debug_plots_12_08_23__11_36/Confusion_Matrix_nikud.jpg
+/plots/debug_plots_12_08_23__11_36/Confusion_Matrix_sin.jpg
+/plots/debug_plots_12_08_23__11_36/Dev_accuracy_plot.jpg
+/plots/debug_plots_12_08_23__11_36/Dev_epochs_loss_plot.jpg
+/plots/debug_plots_12_08_23__11_36/Train_epochs_loss_plot.jpg
+/plots/debug_plots_12_08_23__11_36/Train_steps_loss_plot.jpg
+/plots/debug_plots_12_08_23__11_36/show_data_labels.jpg
+/plots/debug_plots_12_08_23__11_36/word_and_letter_accuracy_plot.jpg
+/plots/debug_plots_19_08_23__09_13/show_data_labels.jpg
+/plots/show_data_labels.jpg
+/plots/validation_haser/confusion matrix dagesh.png
+/plots/validation_haser/confusion matrix sin.png
+/plots/validation_haser/confusion matrix.png
+/results_dev 
+/results_test 
+/src/__pycache__/models.cpython-310.pyc
+/src/__pycache__/models_utils.cpython-310.pyc
+/src/__pycache__/plot_helpers.cpython-310.pyc
+/src/__pycache__/running_params.cpython-310.pyc
+/src/__pycache__/utiles_data.cpython-310.pyc
+/src/playground.py
+/~$Dnikud.docx
+/~WRL3944.tmp
