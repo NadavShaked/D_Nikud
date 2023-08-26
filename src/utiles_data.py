@@ -1,5 +1,7 @@
 # general
 import os.path
+from datetime import datetime
+from pathlib import Path
 from typing import List, Tuple
 from uuid import uuid1
 import re
@@ -515,3 +517,11 @@ def extract_text_to_compare_nakdimon(text):
     res = res.replace('יְהוָֹה', 'יהוה')
 
     return res
+
+
+def orgenize_data(main_folder, logger):
+    x = NikudDataset(None)
+    x.delete_files(os.path.join(Path(main_folder).parent, "train"))
+    x.delete_files(os.path.join(Path(main_folder).parent, "dev"))
+    x.delete_files(os.path.join(Path(main_folder).parent, "test"))
+    x.split_data(main_folder, main_folder_name=os.path.basename(main_folder), logger=logger)
