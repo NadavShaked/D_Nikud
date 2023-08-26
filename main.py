@@ -217,8 +217,7 @@ def do_evaluate(input_path, logger, dnikud_model, tokenizer_tavbert, plots_folde
 
 
 def do_train(logger, plots_folder, dir_model_config, tokenizer_tavbert, dnikud_model, output_trained_model_dir,
-             data_folder,
-             n_epochs, checkpoints_frequency, learning_rate, batch_size):
+             data_folder, n_epochs, checkpoints_frequency, learning_rate, batch_size):
     msg = 'Loading data...'
     logger.debug(msg)
 
