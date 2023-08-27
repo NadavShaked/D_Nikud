@@ -310,7 +310,7 @@ if __name__ == '__main__':
     parser_predict.add_argument('input_path', help='input file or folder')
     parser_predict.add_argument('output_path', help='output file')
     parser_predict.add_argument('-ptmp', '--pretrain_model_path', type=str,
-                                default=os.path.join(Path(__file__).parent, 'models', 'prod', 'best_model.pth'),
+                                default=os.path.join(Path(__file__).parent, 'models', 'prod', 'Dnikud_best_model.pth'),
                                 help='pre-train model path - use only if you want to use trained model weights')
     parser_predict.add_argument('-c', '--compare', dest='compare_nakdimon',
                                 default=False, help='predict text for comparing with Nakdimon')
@@ -319,7 +319,7 @@ if __name__ == '__main__':
     parser_evaluate = subparsers.add_parser('evaluate', help='evaluate D-nikud')
     parser_evaluate.add_argument('input_path', help='input file or folder')
     parser_evaluate.add_argument('-ptmp', '--pretrain_model_path', type=str,
-                                default=os.path.join(Path(__file__).parent, 'models', 'prod', 'best_model.pth'),
+                                default=os.path.join(Path(__file__).parent, 'models', 'prod', 'Dnikud_best_model.pth'),
                                 help='pre-train model path - use only if you want to use trained model weights')
     parser_evaluate.add_argument('-df', '--plots_folder', dest='plots_folder',
                                  default=os.path.join(Path(__file__).parent, 'plots'), help='set the debug folder')
