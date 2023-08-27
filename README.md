@@ -4,17 +4,21 @@ Welcome to the D-Nikud Diacritization Model main code repository! This repositor
 
 The code provided here encompasses various functionalities, including prediction, evaluation, and training of the D-Nikud diacritization model. 
 
+Repository for the paper [D-Nikud: Enhancing Hebrew Diacritization with LSTM and
+Pretrained Models](https://drive.google.com/drive/folders/1osK503txvsEWlZASBViSqOiNJMzAlD0F) by Nadav Shaked and Adi Rosenthal.
+
 ## Prerequisites
 
 Before running the script, make sure you have the following installed:
 
-- Python 3.6 or higher
+- Tested with Python 3.10
 - `torch` library (PyTorch)
 - `transformers` library
 - Required Python packages (Install using `pip install -r requirements.txt`)
 
 ## Table of Contents
 - [Introduction](#introduction)
+- [Pre-Trained model](#Pre-Trained model)
 - [Usage](#usage)
   - [Predict](#predict)
   - [Evaluate](#evaluate)
@@ -25,6 +29,10 @@ Before running the script, make sure you have the following installed:
 ## Introduction
 
 Our D-Nikud model utilizes the TevBERT architecture and Bi-LSTM for diacritization (nikud) of Hebrew text. Diacritics (nikud) are essential for accurate pronunciation and interpretation of the text. This repository provides the core code for implementing and utilizing the D-Nikud model.
+
+## Pre-Trained model
+
+Our pre-trained D-Nikud model can be found at [Link](https://drive.google.com/drive/folders/1osK503txvsEWlZASBViSqOiNJMzAlD0F). To use it, unzip the downloaded file and copy the contents to the 'models' folder.
 
 ## Usage
 
