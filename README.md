@@ -18,7 +18,7 @@ Before running the script, make sure you have the following installed:
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Pre-Trained model](#Pre_Trained_model)
+- [Pre-Trained model](#Pre-Trained-model)
 - [Usage](#usage)
   - [Predict](#predict)
   - [Evaluate](#evaluate)
@@ -30,7 +30,7 @@ Before running the script, make sure you have the following installed:
 
 Our D-Nikud model utilizes the TevBERT architecture and Bi-LSTM for diacritization (nikud) of Hebrew text. Diacritics (nikud) are essential for accurate pronunciation and interpretation of the text. This repository provides the core code for implementing and utilizing the D-Nikud model.
 
-## Pre_Trained_model
+## Pre Trained model
 
 Our pre-trained D-Nikud model can be found at [Link](https://drive.google.com/drive/folders/1osK503txvsEWlZASBViSqOiNJMzAlD0F). To use it, unzip the downloaded file and copy the contents to the 'models' folder.
 
