@@ -5,7 +5,7 @@ Welcome to the D-Nikud Diacritization Model main code repository! This repositor
 The code provided here encompasses various functionalities, including prediction, evaluation, and training of the D-Nikud diacritization model. 
 
 Repository for the paper [D-Nikud: Enhancing Hebrew Diacritization with LSTM and
-Pretrained Models](https://drive.google.com/drive/folders/1osK503txvsEWlZASBViSqOiNJMzAlD0F) by Nadav Shaked and Adi Rosenthal.
+Pretrained Models](will be published soon) by Nadav Shaked and Adi Rosenthal.
 
 ## Prerequisites
 
