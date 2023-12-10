@@ -19,7 +19,7 @@ from torch.utils.data import Dataset
 
 from src.running_params import DEBUG_MODE, MAX_LENGTH_SEN
 
-matplotlib.use('agg')
+matplotlib.use("agg")
 unique_key = str(uuid1())
 
 
@@ -45,31 +45,39 @@ class Nikud:
     1473 HEBREW POINT SHIN DOT
     1474 HEBREW POINT SIN DOT
     """
-    nikud_dict = {'SHVA': 1456,
-                  'REDUCED_SEGOL': 1457,
-                  'REDUCED_PATAKH': 1458,
-                  'REDUCED_KAMATZ': 1459,
-                  'HIRIK': 1460,
-                  'TZEIRE': 1461,
-                  'SEGOL': 1462,
-                  'PATAKH': 1463,
-                  'KAMATZ': 1464,
-                  'KAMATZ_KATAN': 1479,
-                  'HOLAM': 1465,
-                  'HOLAM HASER VAV': 1466,
-                  'KUBUTZ': 1467,
-                  'DAGESH OR SHURUK': 1468,
-                  'METEG': 1469,
-                  'PUNCTUATION MAQAF': 1470,
-                  'RAFE': 1471,
-                  'PUNCTUATION PASEQ': 1472,
-                  'SHIN_YEMANIT': 1473,
-                  'SHIN_SMALIT': 1474}
 
-    skip_nikud = []    #[nikud_dict["KAMATZ_KATAN"], nikud_dict["HOLAM HASER VAV"], nikud_dict["METEG"], nikud_dict["PUNCTUATION MAQAF"], nikud_dict["PUNCTUATION PASEQ"]]
+    nikud_dict = {
+        "SHVA": 1456,
+        "REDUCED_SEGOL": 1457,
+        "REDUCED_PATAKH": 1458,
+        "REDUCED_KAMATZ": 1459,
+        "HIRIK": 1460,
+        "TZEIRE": 1461,
+        "SEGOL": 1462,
+        "PATAKH": 1463,
+        "KAMATZ": 1464,
+        "KAMATZ_KATAN": 1479,
+        "HOLAM": 1465,
+        "HOLAM HASER VAV": 1466,
+        "KUBUTZ": 1467,
+        "DAGESH OR SHURUK": 1468,
+        "METEG": 1469,
+        "PUNCTUATION MAQAF": 1470,
+        "RAFE": 1471,
+        "PUNCTUATION PASEQ": 1472,
+        "SHIN_YEMANIT": 1473,
+        "SHIN_SMALIT": 1474,
+    }
+
+    skip_nikud = (
+        []
+    )  # [nikud_dict["KAMATZ_KATAN"], nikud_dict["HOLAM HASER VAV"], nikud_dict["METEG"], nikud_dict["PUNCTUATION MAQAF"], nikud_dict["PUNCTUATION PASEQ"]]
     sign_2_name = {sign: name for name, sign in nikud_dict.items()}
     sin = [nikud_dict["RAFE"], nikud_dict["SHIN_YEMANIT"], nikud_dict["SHIN_SMALIT"]]
-    dagesh = [nikud_dict["RAFE"], nikud_dict['DAGESH OR SHURUK']]  # note that DAGESH and SHURUK are one and the same
+    dagesh = [
+        nikud_dict["RAFE"],
+        nikud_dict["DAGESH OR SHURUK"],
+    ]  # note that DAGESH and SHURUK are one and the same
     nikud = []
     for v in nikud_dict.values():
         if v not in sin and v not in skip_nikud:
@@ -77,15 +85,19 @@ class Nikud:
     all_nikud_ord = {v for v in nikud_dict.values()}
     all_nikud_chr = {chr(v) for v in nikud_dict.values()}
 
-    label_2_id = {"nikud": {label: i for i, label in enumerate(nikud + ["WITHOUT"])},
-                  "dagesh": {label: i for i, label in enumerate(dagesh + ["WITHOUT"])},
-                  "sin": {label: i for i, label in enumerate(sin + ["WITHOUT"])}}
-    id_2_label = {"nikud": {i: label for i, label in enumerate(nikud + ["WITHOUT"])},
-                  "dagesh": {i: label for i, label in enumerate(dagesh + ["WITHOUT"])},
-                  "sin": {i: label for i, label in enumerate(sin + ["WITHOUT"])}}
+    label_2_id = {
+        "nikud": {label: i for i, label in enumerate(nikud + ["WITHOUT"])},
+        "dagesh": {label: i for i, label in enumerate(dagesh + ["WITHOUT"])},
+        "sin": {label: i for i, label in enumerate(sin + ["WITHOUT"])},
+    }
+    id_2_label = {
+        "nikud": {i: label for i, label in enumerate(nikud + ["WITHOUT"])},
+        "dagesh": {i: label for i, label in enumerate(dagesh + ["WITHOUT"])},
+        "sin": {i: label for i, label in enumerate(sin + ["WITHOUT"])},
+    }
 
-    DAGESH_LETTER = nikud_dict['DAGESH OR SHURUK']
-    RAFE = nikud_dict['RAFE']
+    DAGESH_LETTER = nikud_dict["DAGESH OR SHURUK"]
+    RAFE = nikud_dict["RAFE"]
     PAD_OR_IRRELEVANT = -1
 
     LEN_NIKUD = len(label_2_id["nikud"])
@@ -97,17 +109,31 @@ class Nikud:
             return ""
 
         label = self.id_2_label[class_type][c]
-        if label != "WITHOUT":
-            return chr(self.id_2_label[class_type][c])
 
+        if label != "WITHOUT":
+            print("Label =", chr(self.id_2_label[class_type][c]))
+            return chr(self.id_2_label[class_type][c])
         return ""
 
 
 class Letters:
-    hebrew = [chr(c) for c in range(0x05d0, 0x05ea + 1)]
-    VALID_LETTERS = [' ', '!', '"', "'", '(', ')', ',', '-', '.', ':', ';', '?'] + hebrew
-    SPECIAL_TOKENS = ['H', 'O', '5', '1']
-    ENDINGS_TO_REGULAR = dict(zip('ךםןףץ', 'כמנפצ'))
+    hebrew = [chr(c) for c in range(0x05D0, 0x05EA + 1)]
+    VALID_LETTERS = [
+        " ",
+        "!",
+        '"',
+        "'",
+        "(",
+        ")",
+        ",",
+        "-",
+        ".",
+        ":",
+        ";",
+        "?",
+    ] + hebrew
+    SPECIAL_TOKENS = ["H", "O", "5", "1"]
+    ENDINGS_TO_REGULAR = dict(zip("ךםןףץ", "כמנפצ"))
     vocab = VALID_LETTERS + SPECIAL_TOKENS
     vocab_size = len(vocab)
 
@@ -121,40 +147,54 @@ class Letter:
         self.nikud = None
 
     def normalize(self, letter):
-        if letter in Letters.VALID_LETTERS: return letter
-        if letter in Letters.ENDINGS_TO_REGULAR: return Letters.ENDINGS_TO_REGULAR[letter]
-        if letter in ['\n', '\t']: return ' '
-        if letter in ['‒', '–', '—', '―', '−', '+']: return '-'
-        if letter == '[': return '('
-        if letter == ']': return ')'
-        if letter in ['´', '‘', '’']: return "'"
-        if letter in ['“', '”', '״']: return '"'
+        if letter in Letters.VALID_LETTERS:
+            return letter
+        if letter in Letters.ENDINGS_TO_REGULAR:
+            return Letters.ENDINGS_TO_REGULAR[letter]
+        if letter in ["\n", "\t"]:
+            return " "
+        if letter in ["‒", "–", "—", "―", "−", "+"]:
+            return "-"
+        if letter == "[":
+            return "("
+        if letter == "]":
+            return ")"
+        if letter in ["´", "‘", "’"]:
+            return "'"
+        if letter in ["“", "”", "״"]:
+            return '"'
         if letter.isdigit():
             if int(letter) == 1:
-                return '1'
+                return "1"
             else:
-                return '5'
-        if letter == '…': return ','
-        if letter in ['ײ', 'װ', 'ױ']: return 'H'
-        return 'O'
+                return "5"
+        if letter == "…":
+            return ","
+        if letter in ["ײ", "װ", "ױ"]:
+            return "H"
+        return "O"
 
     def can_dagesh(self, letter):
-        return letter in ('בגדהוזטיכלמנספצקשת' + 'ךף')
+        return letter in ("בגדהוזטיכלמנספצקשת" + "ךף")
 
     def can_sin(self, letter):
-        return letter == 'ש'
+        return letter == "ש"
 
     def can_nikud(self, letter):
-        return letter in ('אבגדהוזחטיכלמנסעפצקרשת' + 'ךן')
+        return letter in ("אבגדהוזחטיכלמנסעפצקרשת" + "ךן")
 
     def get_label_letter(self, labels):
-        dagesh_sin_nikud = [True if self.can_dagesh(self.letter) else False,
-                            True if self.can_sin(self.letter) else False,
-                            True if self.can_nikud(self.letter) else False]
+        dagesh_sin_nikud = [
+            True if self.can_dagesh(self.letter) else False,
+            True if self.can_sin(self.letter) else False,
+            True if self.can_nikud(self.letter) else False,
+        ]
 
-        labels_ids = {"nikud": Nikud.PAD_OR_IRRELEVANT,
-                      "dagesh": Nikud.PAD_OR_IRRELEVANT,
-                      "sin": Nikud.PAD_OR_IRRELEVANT}
+        labels_ids = {
+            "nikud": Nikud.PAD_OR_IRRELEVANT,
+            "dagesh": Nikud.PAD_OR_IRRELEVANT,
+            "sin": Nikud.PAD_OR_IRRELEVANT,
+        }
 
         normalized = self.normalize(self.letter)
 
@@ -168,9 +208,15 @@ class Letter:
         if Nikud.nikud_dict["METEG"] in labels:
             labels.remove(Nikud.nikud_dict["METEG"])
         if Nikud.nikud_dict["KAMATZ_KATAN"] in labels:
-            labels[labels.index(Nikud.nikud_dict["KAMATZ_KATAN"])] = Nikud.nikud_dict["KAMATZ"]
+            labels[labels.index(Nikud.nikud_dict["KAMATZ_KATAN"])] = Nikud.nikud_dict[
+                "KAMATZ"
+            ]
         for index, (class_name, group) in enumerate(
-                zip(["dagesh", "sin", "nikud"], [[Nikud.DAGESH_LETTER], Nikud.sin, Nikud.nikud])):
+            zip(
+                ["dagesh", "sin", "nikud"],
+                [[Nikud.DAGESH_LETTER], Nikud.sin, Nikud.nikud],
+            )
+        ):
             # notice - order is important: dagesh then sin and then nikud
             if dagesh_sin_nikud[index]:
                 if i < len(labels) and labels[i] in group:
@@ -179,16 +225,27 @@ class Letter:
                 else:
                     labels_ids[class_name] = Nikud.label_2_id[class_name]["WITHOUT"]
 
-        if np.array(dagesh_sin_nikud).all() and len(labels) == 3 and labels[0] in Nikud.sin:
+        if (
+            np.array(dagesh_sin_nikud).all()
+            and len(labels) == 3
+            and labels[0] in Nikud.sin
+        ):
             labels_ids["nikud"] = Nikud.label_2_id["nikud"][labels[2]]
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
 
-        if self.can_sin(self.letter) and len(labels) == 2 and labels[1] == Nikud.DAGESH_LETTER:
+        if (
+            self.can_sin(self.letter)
+            and len(labels) == 2
+            and labels[1] == Nikud.DAGESH_LETTER
+        ):
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"][labels[1]]
             labels_ids["nikud"] = Nikud.label_2_id[class_name]["WITHOUT"]
 
-        if self.letter == 'ו' and labels_ids["dagesh"] == Nikud.DAGESH_LETTER and labels_ids["nikud"] == \
-                Nikud.label_2_id["nikud"]["WITHOUT"]:
+        if (
+            self.letter == "ו"
+            and labels_ids["dagesh"] == Nikud.DAGESH_LETTER
+            and labels_ids["nikud"] == Nikud.label_2_id["nikud"]["WITHOUT"]
+        ):
             labels_ids["dagesh"] = Nikud.label_2_id["dagesh"]["WITHOUT"]
             labels_ids["nikud"] = Nikud.DAGESH_LETTER
 
@@ -198,22 +255,36 @@ class Letter:
         self.nikud = labels_ids["nikud"]
 
     def name_of(self, letter):
-        if 'א' <= letter <= 'ת':
+        if "א" <= letter <= "ת":
             return letter
-        if letter == Nikud.DAGESH_LETTER: return 'דגש\שורוק'
-        if letter == Nikud.KAMATZ: return 'קמץ'
-        if letter == Nikud.PATAKH: return 'פתח'
-        if letter == Nikud.TZEIRE: return 'צירה'
-        if letter == Nikud.SEGOL: return 'סגול'
-        if letter == Nikud.SHVA: return 'שוא'
-        if letter == Nikud.HOLAM: return 'חולם'
-        if letter == Nikud.KUBUTZ: return 'קובוץ'
-        if letter == Nikud.HIRIK: return 'חיריק'
-        if letter == Nikud.REDUCED_KAMATZ: return 'חטף-קמץ'
-        if letter == Nikud.REDUCED_PATAKH: return 'חטף-פתח'
-        if letter == Nikud.REDUCED_SEGOL: return 'חטף-סגול'
-        if letter == Nikud.SHIN_SMALIT: return 'שין-שמאלית'
-        if letter == Nikud.SHIN_YEMANIT: return 'שין-ימנית'
+        if letter == Nikud.DAGESH_LETTER:
+            return "דגש\שורוק"
+        if letter == Nikud.KAMATZ:
+            return "קמץ"
+        if letter == Nikud.PATAKH:
+            return "פתח"
+        if letter == Nikud.TZEIRE:
+            return "צירה"
+        if letter == Nikud.SEGOL:
+            return "סגול"
+        if letter == Nikud.SHVA:
+            return "שוא"
+        if letter == Nikud.HOLAM:
+            return "חולם"
+        if letter == Nikud.KUBUTZ:
+            return "קובוץ"
+        if letter == Nikud.HIRIK:
+            return "חיריק"
+        if letter == Nikud.REDUCED_KAMATZ:
+            return "חטף-קמץ"
+        if letter == Nikud.REDUCED_PATAKH:
+            return "חטף-פתח"
+        if letter == Nikud.REDUCED_SEGOL:
+            return "חטף-סגול"
+        if letter == Nikud.SHIN_SMALIT:
+            return "שין-שמאלית"
+        if letter == Nikud.SHIN_YEMANIT:
+            return "שין-ימנית"
         if letter.isprintable():
             return letter
         return "לא ידוע ({})".format(hex(ord(letter)))
@@ -230,7 +301,9 @@ def combine_sentences(list_sentences, max_length=0, is_train=False):
     while index < len(list_sentences):
         sen = list_sentences[index]
 
-        if not text_contains_nikud(sen) and ('------------------' in sen or sen == '\n'):
+        if not text_contains_nikud(sen) and (
+            "------------------" in sen or sen == "\n"
+        ):
             if len(new_sen) > 0:
                 all_new_sentences.append(new_sen)
                 if not is_train:
@@ -258,7 +331,7 @@ def combine_sentences(list_sentences, max_length=0, is_train=False):
                 else:
                     prev = 0
                     while prev <= len(p):
-                        part = p[prev:(prev + max_length)]
+                        part = p[prev : (prev + max_length)]
                         last_space = 0
                         if " " in part:
                             last_space = part[::-1].index(" ") + 1
@@ -266,7 +339,9 @@ def combine_sentences(list_sentences, max_length=0, is_train=False):
                         part = p[prev:next]
                         good_parts.append(part)
                         prev = next
-            list_sentences = list_sentences[:index] + good_parts + list_sentences[index + 1:]
+            list_sentences = (
+                list_sentences[:index] + good_parts + list_sentences[index + 1 :]
+            )
             continue
         if new_sen == "":
             new_sen = sen
@@ -283,7 +358,15 @@ def combine_sentences(list_sentences, max_length=0, is_train=False):
 
 
 class NikudDataset(Dataset):
-    def __init__(self, tokenizer, folder=None, file=None, logger=None, max_length=0, is_train=False):
+    def __init__(
+        self,
+        tokenizer,
+        folder=None,
+        file=None,
+        logger=None,
+        max_length=0,
+        is_train=False,
+    ):
         self.max_length = max_length
         self.tokenizer = tokenizer
         self.is_train = is_train
@@ -294,7 +377,7 @@ class NikudDataset(Dataset):
         self.prepered_data = None
 
     def read_data_folder(self, folder_path: str, logger=None):
-        all_files = glob2.glob(f'{folder_path}/**/*.txt', recursive=True)
+        all_files = glob2.glob(f"{folder_path}/**/*.txt", recursive=True)
         msg = f"number of files: " + str(len(all_files))
         if logger:
             logger.debug(msg)
@@ -320,7 +403,7 @@ class NikudDataset(Dataset):
             print(msg)
         data = []
         orig_data = []
-        with open(filepath, 'r', encoding='utf-8') as file:
+        with open(filepath, "r", encoding="utf-8") as file:
             file_data = file.read()
         data_list = self.split_text(file_data)
 
@@ -334,21 +417,27 @@ class NikudDataset(Dataset):
             index = 0
             sentence_length = len(sen)
             while index < sentence_length:
-                if ord(sen[index]) == Nikud.nikud_dict['PUNCTUATION MAQAF'] or ord(sen[index]) == Nikud.nikud_dict[
-                    'PUNCTUATION PASEQ'] or ord(sen[index]) == Nikud.nikud_dict['METEG']:
+                if (
+                    ord(sen[index]) == Nikud.nikud_dict["PUNCTUATION MAQAF"]
+                    or ord(sen[index]) == Nikud.nikud_dict["PUNCTUATION PASEQ"]
+                    or ord(sen[index]) == Nikud.nikud_dict["METEG"]
+                ):
                     index += 1
                     continue
 
                 label = []
                 l = Letter(sen[index])
-                if not ( l.letter not in Nikud.all_nikud_chr):
-                    if sen[index-1] == '\n':
+                if not (l.letter not in Nikud.all_nikud_chr):
+                    if sen[index - 1] == "\n":
                         index += 1
                         continue
                 assert l.letter not in Nikud.all_nikud_chr
                 if sen[index] in Letters.hebrew:
                     index += 1
-                    while index < sentence_length and ord(sen[index]) in Nikud.all_nikud_ord:
+                    while (
+                        index < sentence_length
+                        and ord(sen[index]) in Nikud.all_nikud_ord
+                    ):
                         label.append(ord(sen[index]))
                         index += 1
                 else:
@@ -367,21 +456,38 @@ class NikudDataset(Dataset):
     def split_text(self, file_data):
         file_data = file_data.replace("\n", f"\n{unique_key}")
         data_list = file_data.split(unique_key)
-        data_list = combine_sentences(data_list, is_train=self.is_train, max_length=MAX_LENGTH_SEN)
+        data_list = combine_sentences(
+            data_list, is_train=self.is_train, max_length=MAX_LENGTH_SEN
+        )
         return data_list
 
     def show_data_labels(self, plots_folder=None):
-        nikud = [Nikud.id_2_label["nikud"][label.nikud] for _, label_list in self.data for label in label_list if
-                  label.nikud != -1]
-        dagesh = [Nikud.id_2_label["dagesh"][label.dagesh] for _, label_list in self.data for label in label_list if
-                   label.dagesh != -1]
-        sin = [Nikud.id_2_label["sin"][label.sin] for _, label_list in self.data for label in label_list if
-               label.sin != -1]
+        nikud = [
+            Nikud.id_2_label["nikud"][label.nikud]
+            for _, label_list in self.data
+            for label in label_list
+            if label.nikud != -1
+        ]
+        dagesh = [
+            Nikud.id_2_label["dagesh"][label.dagesh]
+            for _, label_list in self.data
+            for label in label_list
+            if label.dagesh != -1
+        ]
+        sin = [
+            Nikud.id_2_label["sin"][label.sin]
+            for _, label_list in self.data
+            for label in label_list
+            if label.sin != -1
+        ]
 
         vowels = nikud + dagesh + sin
         unique_vowels, label_counts = np.unique(vowels, return_counts=True)
-        unique_vowels_names = [Nikud.sign_2_name[int(vowel)] for vowel in unique_vowels if vowel != 'WITHOUT'] + [
-            "WITHOUT"]
+        unique_vowels_names = [
+            Nikud.sign_2_name[int(vowel)]
+            for vowel in unique_vowels
+            if vowel != "WITHOUT"
+        ] + ["WITHOUT"]
         fig, ax = plt.subplots(figsize=(16, 6))
 
         bar_positions = np.arange(len(unique_vowels))
@@ -389,16 +495,16 @@ class NikudDataset(Dataset):
         ax.bar(bar_positions, list(label_counts), bar_width)
 
         ax.set_title("Distribution of Vowels in dataset")
-        ax.set_xlabel('Vowels')
-        ax.set_ylabel('Count')
-        ax.legend(loc='right', bbox_to_anchor=(1, 0.85))
+        ax.set_xlabel("Vowels")
+        ax.set_ylabel("Count")
+        ax.legend(loc="right", bbox_to_anchor=(1, 0.85))
         ax.set_xticks(bar_positions)
-        ax.set_xticklabels(unique_vowels_names, rotation=30, ha='right', fontsize=8)
+        ax.set_xticklabels(unique_vowels_names, rotation=30, ha="right", fontsize=8)
 
         if plots_folder is None:
             plt.show()
         else:
-            plt.savefig(os.path.join(plots_folder, 'show_data_labels.jpg'))
+            plt.savefig(os.path.join(plots_folder, "show_data_labels.jpg"))
 
     def calc_max_length(self, maximum=MAX_LENGTH_SEN):
         if self.max_length > maximum:
@@ -407,24 +513,47 @@ class NikudDataset(Dataset):
 
     def prepare_data(self, name="train"):
         dataset = []
-        for index, (sentence, label) in tqdm(enumerate(self.data), desc=f"prepare data {name}"):
+        for index, (sentence, label) in tqdm(
+            enumerate(self.data), desc=f"prepare data {name}"
+        ):
             encoded_sequence = self.tokenizer.encode_plus(
                 sentence,
                 add_special_tokens=True,
                 max_length=self.max_length,
-                padding='max_length',
+                padding="max_length",
                 truncation=True,
                 return_attention_mask=True,
-                return_tensors='pt'
+                return_tensors="pt",
             )
-            label_lists = [[letter.nikud, letter.dagesh, letter.sin] for letter in label]
+            label_lists = [
+                [letter.nikud, letter.dagesh, letter.sin] for letter in label
+            ]
             label = torch.tensor(
-                [[Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT]] + label_lists[:(
-                        self.max_length - 1)] + [
-                    [Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT, Nikud.PAD_OR_IRRELEVANT] for i in
-                    range(self.max_length - len(label) - 1)])
+                [
+                    [
+                        Nikud.PAD_OR_IRRELEVANT,
+                        Nikud.PAD_OR_IRRELEVANT,
+                        Nikud.PAD_OR_IRRELEVANT,
+                    ]
+                ]
+                + label_lists[: (self.max_length - 1)]
+                + [
+                    [
+                        Nikud.PAD_OR_IRRELEVANT,
+                        Nikud.PAD_OR_IRRELEVANT,
+                        Nikud.PAD_OR_IRRELEVANT,
+                    ]
+                    for i in range(self.max_length - len(label) - 1)
+                ]
+            )
 
-            dataset.append((encoded_sequence['input_ids'][0], encoded_sequence['attention_mask'][0], label))
+            dataset.append(
+                (
+                    encoded_sequence["input_ids"][0],
+                    encoded_sequence["attention_mask"][0],
+                    label,
+                )
+            )
 
         self.prepered_data = dataset
 
@@ -434,9 +563,12 @@ class NikudDataset(Dataset):
         for indx_sentance, (input_ids, _, label) in enumerate(self.prepered_data):
             new_line = ""
             for indx_char, c in enumerate(self.origin_data[indx_sentance]):
-                new_line += (c + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 1], "dagesh") +
-                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 2], "sin") +
-                             nikud.id_2_char(labels[indx_sentance, indx_char + 1, 0], "nikud"))
+                new_line += (
+                    c
+                    + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 1], "dagesh")
+                    + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 2], "sin")
+                    + nikud.id_2_char(labels[indx_sentance, indx_char + 1, 0], "nikud")
+                )
             all_text += new_line
         return all_text
 
@@ -455,6 +587,7 @@ def get_sub_folders_paths(main_folder):
             list_paths.append(path)
             list_paths.extend(get_sub_folders_paths(path))
     return list_paths
+
 
 def create_missing_folders(folder_path):
     # Check if the folder doesn't exist and create it if needed
@@ -476,7 +609,7 @@ def info_folder(folder, num_files, num_hebrew_letters):
     """
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
-        if filename.lower().endswith('.txt') and os.path.isfile(file_path):
+        if filename.lower().endswith(".txt") and os.path.isfile(file_path):
             num_files += 1
             dataset = NikudDataset(None, file=file_path)
             for line in dataset.data:
@@ -491,30 +624,44 @@ def info_folder(folder, num_files, num_hebrew_letters):
             num_hebrew_letters += n2
     return num_files, num_hebrew_letters
 
+
 def extract_text_to_compare_nakdimon(text):
-    res = text.replace('|', '')
-    res = res.replace(chr(Nikud.nikud_dict["KUBUTZ"]) + 'ו' + chr(Nikud.nikud_dict["METEG"]),
-                      'ו' + chr(Nikud.nikud_dict['DAGESH OR SHURUK']))
-    res = res.replace(chr(Nikud.nikud_dict["HOLAM"]) + 'ו' + chr(Nikud.nikud_dict["METEG"]),
-                      'ו')
-    res = res.replace("ו" + chr(Nikud.nikud_dict["HOLAM"]) + chr(Nikud.nikud_dict["KAMATZ"]),
-                      'ו' + chr(Nikud.nikud_dict["KAMATZ"]))
-    res = res.replace(chr(Nikud.nikud_dict["METEG"]), '')
-    res = res.replace(chr(Nikud.nikud_dict["KAMATZ"]) + chr(Nikud.nikud_dict["HIRIK"]),
-                      chr(Nikud.nikud_dict["KAMATZ"]) + 'י' + chr(Nikud.nikud_dict["HIRIK"]))
-    res = res.replace(chr(Nikud.nikud_dict["PATAKH"]) + chr(Nikud.nikud_dict["HIRIK"]),
-                      chr(Nikud.nikud_dict["PATAKH"]) + 'י' + chr(Nikud.nikud_dict["HIRIK"]))
-    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION MAQAF"]), '')
-    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION PASEQ"]), '')
-    res = res.replace(chr(Nikud.nikud_dict["KAMATZ_KATAN"]), chr(Nikud.nikud_dict["KAMATZ"]))
+    res = text.replace("|", "")
+    res = res.replace(
+        chr(Nikud.nikud_dict["KUBUTZ"]) + "ו" + chr(Nikud.nikud_dict["METEG"]),
+        "ו" + chr(Nikud.nikud_dict["DAGESH OR SHURUK"]),
+    )
+    res = res.replace(
+        chr(Nikud.nikud_dict["HOLAM"]) + "ו" + chr(Nikud.nikud_dict["METEG"]), "ו"
+    )
+    res = res.replace(
+        "ו" + chr(Nikud.nikud_dict["HOLAM"]) + chr(Nikud.nikud_dict["KAMATZ"]),
+        "ו" + chr(Nikud.nikud_dict["KAMATZ"]),
+    )
+    res = res.replace(chr(Nikud.nikud_dict["METEG"]), "")
+    res = res.replace(
+        chr(Nikud.nikud_dict["KAMATZ"]) + chr(Nikud.nikud_dict["HIRIK"]),
+        chr(Nikud.nikud_dict["KAMATZ"]) + "י" + chr(Nikud.nikud_dict["HIRIK"]),
+    )
+    res = res.replace(
+        chr(Nikud.nikud_dict["PATAKH"]) + chr(Nikud.nikud_dict["HIRIK"]),
+        chr(Nikud.nikud_dict["PATAKH"]) + "י" + chr(Nikud.nikud_dict["HIRIK"]),
+    )
+    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION MAQAF"]), "")
+    res = res.replace(chr(Nikud.nikud_dict["PUNCTUATION PASEQ"]), "")
+    res = res.replace(
+        chr(Nikud.nikud_dict["KAMATZ_KATAN"]), chr(Nikud.nikud_dict["KAMATZ"])
+    )
 
-    res = re.sub(chr(Nikud.nikud_dict["KUBUTZ"]) + 'ו' + '(?=[א-ת])', 'ו',
-                 res)
-    res = res.replace(chr(Nikud.nikud_dict["REDUCED_KAMATZ"]) + 'ו', 'ו')
+    res = re.sub(chr(Nikud.nikud_dict["KUBUTZ"]) + "ו" + "(?=[א-ת])", "ו", res)
+    res = res.replace(chr(Nikud.nikud_dict["REDUCED_KAMATZ"]) + "ו", "ו")
 
-    res = res.replace(chr(Nikud.nikud_dict["DAGESH OR SHURUK"]) * 2, chr(Nikud.nikud_dict["DAGESH OR SHURUK"]))
-    res = res.replace('\u05be', '-')
-    res = res.replace('יְהוָֹה', 'יהוה')
+    res = res.replace(
+        chr(Nikud.nikud_dict["DAGESH OR SHURUK"]) * 2,
+        chr(Nikud.nikud_dict["DAGESH OR SHURUK"]),
+    )
+    res = res.replace("\u05be", "-")
+    res = res.replace("יְהוָֹה", "יהוה")
 
     return res
 
@@ -524,4 +671,6 @@ def orgenize_data(main_folder, logger):
     x.delete_files(os.path.join(Path(main_folder).parent, "train"))
     x.delete_files(os.path.join(Path(main_folder).parent, "dev"))
     x.delete_files(os.path.join(Path(main_folder).parent, "test"))
-    x.split_data(main_folder, main_folder_name=os.path.basename(main_folder), logger=logger)
+    x.split_data(
+        main_folder, main_folder_name=os.path.basename(main_folder), logger=logger
+    )
