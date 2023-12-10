@@ -94,15 +94,17 @@ def predict_single(model, data, device="cpu"):
 
     all_labels = None
     with torch.no_grad():
-        inputs = data["input_ids"].to(device)
-        attention_mask = data["attention_mask"].to(device)
+        (inputs, attention_mask, labels_demo) = data
+        inputs = inputs.to(device)
+        attention_mask = attention_mask.to(device)
+        labels_demo = labels_demo.to(device)
 
-        # mask_cant_be_nikud = np.array(labels_demo.cpu())[:, :, 0] == -1
-        # mask_cant_be_dagesh = np.array(labels_demo.cpu())[:, :, 1] == -1
-        # mask_cant_be_sin = np.array(labels_demo.cpu())[:, :, 2] == -1
+        mask_cant_be_nikud = np.array(labels_demo.cpu())[:, :, 0] == -1
+        mask_cant_be_dagesh = np.array(labels_demo.cpu())[:, :, 1] == -1
+        mask_cant_be_sin = np.array(labels_demo.cpu())[:, :, 2] == -1
 
         nikud_probs, dagesh_probs, sin_probs = model(inputs, attention_mask)
-        print(nikud_probs, dagesh_probs, sin_probs)
+        print("model output: ", nikud_probs, dagesh_probs, sin_probs)
 
         pred_nikud = np.array(torch.max(nikud_probs, 2).indices.cpu()).reshape(
             inputs.shape[0], inputs.shape[1], 1
@@ -114,9 +116,9 @@ def predict_single(model, data, device="cpu"):
             inputs.shape[0], inputs.shape[1], 1
         )
 
-        # pred_nikud[mask_cant_be_nikud] = -1
-        # pred_dagesh[mask_cant_be_dagesh] = -1
-        # pred_sin[mask_cant_be_sin] = -1
+        pred_nikud[mask_cant_be_nikud] = -1
+        pred_dagesh[mask_cant_be_dagesh] = -1
+        pred_sin[mask_cant_be_sin] = -1
         # print(pred_nikud, pred_dagesh, pred_sin)
         pred_labels = np.concatenate((pred_nikud, pred_dagesh, pred_sin), axis=2)
         print(pred_labels)

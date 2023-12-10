@@ -370,6 +370,8 @@ class NikudDataset(Dataset):
         self.max_length = max_length
         self.tokenizer = tokenizer
         self.is_train = is_train
+        self.data = None
+        self.origin_data = None
         if folder is not None:
             self.data, self.origin_data = self.read_data_folder(folder, logger)
         elif file is not None:
@@ -451,6 +453,65 @@ class NikudDataset(Dataset):
             data.append((text, labels))
             orig_data.append(text_org)
 
+        return data, orig_data
+
+    def read_single_text(self, text: str, logger=None) -> List[Tuple[str, list]]:
+        # msg = f"read file: {filepath}"
+        # if logger:
+        #     logger.debug(msg)
+        # else:
+        #     print(msg)
+        data = []
+        orig_data = []
+        # with open(filepath, "r", encoding="utf-8") as file:
+        #     file_data = file.read()
+        data_list = self.split_text(text)
+        # print("data_list", data_list)
+        for sen in tqdm(data_list, desc=f"Source: {data}"):
+            if sen == "":
+                continue
+
+            labels = []
+            text = ""
+            text_org = ""
+            index = 0
+            sentence_length = len(sen)
+            while index < sentence_length:
+                if (
+                    ord(sen[index]) == Nikud.nikud_dict["PUNCTUATION MAQAF"]
+                    or ord(sen[index]) == Nikud.nikud_dict["PUNCTUATION PASEQ"]
+                    or ord(sen[index]) == Nikud.nikud_dict["METEG"]
+                ):
+                    index += 1
+                    continue
+
+                label = []
+                l = Letter(sen[index])
+                if not (l.letter not in Nikud.all_nikud_chr):
+                    if sen[index - 1] == "\n":
+                        index += 1
+                        continue
+                assert l.letter not in Nikud.all_nikud_chr
+                if sen[index] in Letters.hebrew:
+                    index += 1
+                    while (
+                        index < sentence_length
+                        and ord(sen[index]) in Nikud.all_nikud_ord
+                    ):
+                        label.append(ord(sen[index]))
+                        index += 1
+                else:
+                    index += 1
+
+                l.get_label_letter(label)
+                text += l.normalized
+                text_org += l.letter
+                labels.append(l)
+
+            data.append((text, labels))
+            orig_data.append(text_org)
+        self.data = data
+        self.origin_data = orig_data
         return data, orig_data
 
     def split_text(self, file_data):
