@@ -31,7 +31,7 @@ Our D-Nikud model utilizes the TevBERT architecture and Bi-LSTM for diacritizati
 
 ## Pre Trained model
 
-Our pre-trained D-Nikud model can be found at [Link](https://drive.google.com/drive/folders/1osK503txvsEWlZASBViSqOiNJMzAlD0F). To use it, unzip the downloaded file and copy the contents to the 'models' folder.
+Our pre-trained D-Nikud model can be found at [Link](https://drive.google.com/drive/folders/1IKR-Zz27I5K25OVDOs5mYs70VwrQRjlt?usp=sharing). To use it, unzip the downloaded file and copy the contents to the 'models' folder.
 
 ## Usage
 
